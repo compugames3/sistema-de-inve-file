@@ -142,6 +142,35 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
 
   const hasActiveFilters = dateRange.from !== undefined || dateRange.to !== undefined;
 
+  const historyTotals = useMemo(() => {
+    if (!filteredHistory || filteredHistory.length === 0) {
+      return {
+        totalRevenue: 0,
+        totalCosts: 0,
+        totalNetProfit: 0,
+        totalSalesOrders: 0,
+        totalPurchaseOrders: 0,
+        count: 0
+      };
+    }
+
+    return filteredHistory.reduce((acc, report) => ({
+      totalRevenue: acc.totalRevenue + report.financial.grossRevenue,
+      totalCosts: acc.totalCosts + report.financial.totalCosts,
+      totalNetProfit: acc.totalNetProfit + report.financial.netProfit,
+      totalSalesOrders: acc.totalSalesOrders + report.sales.completedOrders,
+      totalPurchaseOrders: acc.totalPurchaseOrders + report.purchases.completedOrders,
+      count: acc.count + 1
+    }), {
+      totalRevenue: 0,
+      totalCosts: 0,
+      totalNetProfit: 0,
+      totalSalesOrders: 0,
+      totalPurchaseOrders: 0,
+      count: 0
+    });
+  }, [filteredHistory]);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -194,7 +223,71 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                 </Card>
               </div>
 
-              <div className="flex flex-col">
+              <div className="flex flex-col space-y-4">
+                {filteredHistory.length > 0 && (
+                  <Card className="bg-gradient-to-br from-accent/10 via-accent/5 to-transparent border-accent/20">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <CurrencyDollar className="w-5 h-5 text-accent" weight="duotone" />
+                        Resumen Total del Historial
+                      </CardTitle>
+                      <CardDescription>
+                        Suma acumulada de {historyTotals.count} cierre{historyTotals.count !== 1 ? 's' : ''}
+                        {hasActiveFilters && ' (filtrado)'}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1 text-muted-foreground text-sm">
+                            <TrendUp className="w-4 h-4" />
+                            <span>Total Ingresos</span>
+                          </div>
+                          <p className="text-xl font-bold text-success">
+                            {formatCurrency(historyTotals.totalRevenue)}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1 text-muted-foreground text-sm">
+                            <TrendDown className="w-4 h-4" />
+                            <span>Total Costos</span>
+                          </div>
+                          <p className="text-xl font-bold text-destructive">
+                            {formatCurrency(historyTotals.totalCosts)}
+                          </p>
+                        </div>
+                        <div className="space-y-1 col-span-2 lg:col-span-1">
+                          <div className="flex items-center gap-1 text-muted-foreground text-sm">
+                            <CurrencyDollar className="w-4 h-4" weight="duotone" />
+                            <span>Ganancia Neta Total</span>
+                          </div>
+                          <p className={`text-2xl font-bold ${historyTotals.totalNetProfit >= 0 ? 'text-success' : 'text-destructive'}`}>
+                            {formatCurrency(historyTotals.totalNetProfit)}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1 text-muted-foreground text-sm">
+                            <ShoppingCart className="w-4 h-4" />
+                            <span>Total Ventas</span>
+                          </div>
+                          <p className="text-lg font-semibold">
+                            {historyTotals.totalSalesOrders} órdenes
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1 text-muted-foreground text-sm">
+                            <Package className="w-4 h-4" />
+                            <span>Total Compras</span>
+                          </div>
+                          <p className="text-lg font-semibold">
+                            {historyTotals.totalPurchaseOrders} órdenes
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
                 <Card className="flex-1 flex flex-col">
                   <CardHeader>
                     <div className="flex items-start justify-between">
