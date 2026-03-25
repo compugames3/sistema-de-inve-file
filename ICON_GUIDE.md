@@ -1,66 +1,115 @@
-# Configuración del Icono
+# Configuración del Icono para Aplicación Desktop
 
-El archivo `icon.svg` es el icono de la aplicación Josimar Cell. 
+El archivo `icon.svg` es el icono de la aplicación Josimar Cell. Para generar el ejecutable de Windows necesitas un archivo `icon.png`.
 
-## Para la versión Desktop (Electron)
+## 🎨 Opción 1: Usar Herramientas Online (MÁS FÁCIL)
 
-Para generar ejecutables con icono personalizado, necesitas convertir `icon.svg` a los formatos apropiados:
+### Pasos Rápidos:
 
-### Windows (.ico)
-Necesitas un archivo `icon.ico` de 256x256 píxeles.
+1. **Ve a:** https://convertio.co/svg-png/
 
-**Herramientas recomendadas:**
-- https://convertio.co/svg-ico/
-- https://cloudconvert.com/svg-to-ico
+2. **Sube** el archivo `icon.svg` (está en la raíz del proyecto)
 
-### macOS (.icns)
-Necesitas un archivo `icon.icns`.
+3. **Configura** el tamaño de salida: **512x512 píxeles**
 
-**Herramientas recomendadas:**
-- https://cloudconvert.com/svg-to-icns
-- O usar la aplicación "Icon Composer" en macOS
+4. **Descarga** el archivo convertido como `icon.png`
 
-### Linux (.png)
-Linux usa PNG directamente. Exporta `icon.svg` a `icon.png` en 512x512 píxeles.
+5. **Guarda** `icon.png` en la **raíz del proyecto** (junto a icon.svg)
 
-**Herramientas recomendadas:**
-- Inkscape
-- GIMP
-- Online: https://convertio.co/svg-png/
+6. **Listo** - Ya puedes generar el ejecutable
 
-## Conversión rápida con herramientas online
+### Alternativas Online:
+- https://cloudconvert.com/svg-to-png
+- https://image.online-convert.com/convert-to-png
+- https://onlineconvertfree.com/convert-format/svg-to-png/
 
-1. Ve a https://convertio.co/
-2. Sube el archivo `icon.svg`
-3. Convierte a:
-   - `icon.ico` (para Windows)
-   - `icon.icns` (para macOS)
-   - `icon.png` (512x512 para Linux)
-4. Guarda los archivos en la raíz del proyecto
+## 🖼️ Opción 2: Usar Software de Escritorio
 
-## Actualizar package.json
+### Con Inkscape (Gratis):
+1. Descarga Inkscape: https://inkscape.org/
+2. Abre `icon.svg`
+3. Archivo → Exportar PNG
+4. Tamaño: 512x512 píxeles
+5. Guardar como `icon.png` en la raíz del proyecto
 
-Una vez tengas los iconos, actualiza la configuración de `electron-builder` en `package.json`:
+### Con GIMP (Gratis):
+1. Descarga GIMP: https://www.gimp.org/
+2. Abre `icon.svg`
+3. Imagen → Escalar imagen → 512x512
+4. Exportar como `icon.png`
 
-```json
-"build": {
-  "win": {
-    "icon": "icon.ico"
-  },
-  "mac": {
-    "icon": "icon.icns"
-  },
-  "linux": {
-    "icon": "icon.png"
-  }
-}
+### Con Adobe Illustrator:
+1. Abre `icon.svg`
+2. Exportar → Exportar como PNG
+3. Resolución: 512x512
+4. Guardar como `icon.png`
+
+## 📦 Para Todas las Plataformas
+
+Si quieres generar ejecutables para diferentes sistemas:
+
+### Windows
+- Formato: `.ico` o `.png`
+- Tamaño recomendado: 256x256 o 512x512
+- Archivo: `icon.png`
+
+### macOS
+- Formato: `.icns` o `.png`
+- Tamaño recomendado: 512x512 o 1024x1024
+- Herramienta: https://cloudconvert.com/png-to-icns
+
+### Linux
+- Formato: `.png`
+- Tamaño recomendado: 512x512
+- Archivo: `icon.png`
+
+## ⚠️ IMPORTANTE
+
+**Antes de generar el ejecutable, asegúrate de tener `icon.png` en la raíz del proyecto.**
+
+Si no tienes el archivo:
+1. El ejecutable se generará sin icono personalizado
+2. Usará el icono predeterminado de Electron
+3. No habrá errores, pero se verá genérico
+
+## 🎨 Personalizar el Icono
+
+Si quieres cambiar el diseño del icono:
+
+1. Edita `icon.svg` con:
+   - Inkscape (gratis)
+   - Figma (gratis online)
+   - Adobe Illustrator
+
+2. Mantén el tamaño cuadrado (1:1)
+
+3. Usa colores que representen tu marca
+
+4. Exporta a PNG de 512x512 píxeles
+
+## 🔍 Verificar que el Icono Está Listo
+
+Antes de generar el ejecutable:
+
+```batch
+# En Windows CMD/PowerShell, verifica que existe:
+dir icon.png
+
+# Deberías ver algo como:
+# icon.png    (tamaño en bytes)
 ```
 
-## Icono actual
+Si no ves el archivo, conviértelo usando las opciones de arriba.
 
-El icono actual representa:
-- 📱 Un teléfono celular (Josimar **Cell**)
-- 📦 Cajas de inventario (Sistema de **Inventario**)
-- 🎨 Gradiente corporativo (profesional y moderno)
+## 📖 Icono Actual
 
-Puedes personalizarlo editando `icon.svg` con cualquier editor SVG (Inkscape, Figma, Adobe Illustrator, etc.).
+El icono actual de Josimar Cell representa:
+- 📱 **Teléfono celular** (Josimar Cell)
+- 📦 **Cajas de inventario** (Sistema de Inventario)
+- 🎨 **Diseño profesional** (aplicación de negocio)
+
+Puedes mantenerlo o personalizarlo según tus preferencias.
+
+---
+
+**¿Ya tienes icon.png?** ¡Perfecto! Continúa con `generar-ejecutable.bat`

@@ -1,0 +1,159 @@
+═══════════════════════════════════════════════════════════════════
+                 LISTA DE VERIFICACIÓN - EJECUTABLE
+═══════════════════════════════════════════════════════════════════
+
+Sigue esta lista paso a paso para generar tu ejecutable de Windows:
+
+
+┌─────────────────────────────────────────────────────────────────┐
+│  PASO 1: VERIFICAR REQUISITOS                                   │
+└─────────────────────────────────────────────────────────────────┘
+
+☐ Node.js está instalado
+   → Verifica: Abre CMD y escribe: node --version
+   → Si no está instalado: https://nodejs.org/
+
+☐ Estás en la carpeta correcta del proyecto
+   → Debes ver archivos: package.json, icon.svg, etc.
+
+☐ Tienes conexión a internet (solo la primera vez)
+
+☐ Tienes al menos 2 GB de espacio libre en disco
+
+
+┌─────────────────────────────────────────────────────────────────┐
+│  PASO 2: INSTALAR DEPENDENCIAS                                  │
+└─────────────────────────────────────────────────────────────────┘
+
+OPCIÓN A - Script Automático (Recomendado):
+☐ Ejecuta en CMD: setup-desktop.bat
+☐ Espera 5-10 minutos
+☐ Verifica que diga "Instalación Completa"
+
+OPCIÓN B - Manual:
+☐ Ejecuta: npm install --save-dev electron electron-builder
+☐ Espera a que termine
+
+
+┌─────────────────────────────────────────────────────────────────┐
+│  PASO 3: PREPARAR EL ICONO (IMPORTANTE)                         │
+└─────────────────────────────────────────────────────────────────┘
+
+☐ Ve a: https://convertio.co/svg-png/
+
+☐ Sube el archivo: icon.svg (está en la raíz del proyecto)
+
+☐ Configura el tamaño: 512x512 píxeles
+
+☐ Descarga el archivo como: icon.png
+
+☐ Guarda icon.png en la RAÍZ del proyecto (junto a icon.svg)
+
+☐ Verifica que icon.png existe ejecutando: dir icon.png
+
+   NOTA: Si omites este paso, el ejecutable se generará con
+         el icono predeterminado de Electron (funcionará igual)
+
+
+┌─────────────────────────────────────────────────────────────────┐
+│  PASO 4: GENERAR EL EJECUTABLE                                  │
+└─────────────────────────────────────────────────────────────────┘
+
+OPCIÓN A - Script Automático (Recomendado):
+☐ Ejecuta: generar-ejecutable.bat
+☐ Espera 10-20 minutos (la primera vez tarda más)
+☐ Verifica que diga "Ejecutable Generado Exitosamente"
+
+OPCIÓN B - Manual:
+☐ Ejecuta: npm run build
+☐ Espera a que termine
+☐ Ejecuta: npm run electron:build:win
+☐ Espera 10-20 minutos
+
+
+┌─────────────────────────────────────────────────────────────────┐
+│  PASO 5: ENCONTRAR Y PROBAR EL EJECUTABLE                       │
+└─────────────────────────────────────────────────────────────────┘
+
+☐ Ve a la carpeta: release/
+
+☐ Verifica que existen estos archivos:
+   ☐ Josimar Cell - Sistema de Inventario Setup X.X.X.exe
+   ☐ JosimarCell-Portable-X.X.X.exe
+
+☐ Prueba el instalador:
+   ☐ Ejecuta el archivo *Setup*.exe
+   ☐ Sigue el asistente de instalación
+   ☐ Verifica que se crea icono en el escritorio
+
+☐ O prueba la versión portable:
+   ☐ Ejecuta el archivo *Portable*.exe
+   ☐ Verifica que la aplicación abre correctamente
+
+
+┌─────────────────────────────────────────────────────────────────┐
+│  PASO 6: COMPARTIR CON OTROS USUARIOS (OPCIONAL)                │
+└─────────────────────────────────────────────────────────────────┘
+
+☐ Copia los archivos .exe de la carpeta release/
+
+☐ Comparte por:
+   ☐ Unidad USB
+   ☐ Correo electrónico
+   ☐ Google Drive / OneDrive / Dropbox
+   ☐ Red local
+
+☐ Informa a los usuarios que:
+   ☐ NO necesitan Node.js
+   ☐ NO necesitan navegador
+   ☐ Solo ejecutan el .exe y ya está
+
+
+═══════════════════════════════════════════════════════════════════
+                        SOLUCIÓN RÁPIDA DE PROBLEMAS
+═══════════════════════════════════════════════════════════════════
+
+❌ Error: "node no se reconoce como comando"
+   ✅ Instala Node.js desde: https://nodejs.org/
+   ✅ Reinicia CMD después de instalar
+
+❌ Error: "electron-builder not found"
+   ✅ Ejecuta: npm install --save-dev electron-builder
+
+❌ Error: "Cannot find module electron"
+   ✅ Ejecuta: npm install --save-dev electron
+
+❌ El antivirus bloquea el .exe
+   ✅ Es normal (archivo sin firma digital)
+   ✅ Agrega a excepciones del antivirus
+
+❌ Tarda mucho en generar
+   ✅ La primera vez puede tardar 10-20 minutos
+   ✅ Es completamente normal
+
+❌ No aparece la carpeta release/
+   ✅ Verifica que el comando terminó sin errores
+   ✅ Lee los mensajes de error en la consola
+
+❌ El ejecutable no tiene icono personalizado
+   ✅ Verifica que icon.png existe en la raíz
+   ✅ Vuelve a ejecutar: npm run electron:build:win
+
+
+═══════════════════════════════════════════════════════════════════
+                         DOCUMENTACIÓN COMPLETA
+═══════════════════════════════════════════════════════════════════
+
+Para más información detallada:
+
+📖 LEEME_EJECUTABLE.md           - Inicio rápido
+📖 COMO_GENERAR_EJECUTABLE.md    - Guía completa
+📖 ICON_GUIDE.md                 - Convertir iconos
+📖 README_ES.md                  - Info general del proyecto
+
+
+═══════════════════════════════════════════════════════════════════
+
+            ✅ ¿TODO LISTO? ¡Comienza con el PASO 1!
+
+═══════════════════════════════════════════════════════════════════

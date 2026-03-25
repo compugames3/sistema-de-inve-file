@@ -1,0 +1,138 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║         JOSIMAR CELL - GUÍA RÁPIDA PARA GENERAR EJECUTABLE       ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+
+📋 PASOS SIMPLES PARA CREAR TU EJECUTABLE .EXE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+OPCIÓN 1️⃣ - MÁS FÁCIL (RECOMENDADO)
+────────────────────────────────────────────────────────────────────
+
+1. Abre CMD o PowerShell en la carpeta del proyecto
+
+2. Ejecuta:
+   setup-desktop.bat
+
+3. Espera 5-10 minutos a que termine
+
+4. Ejecuta:
+   generar-ejecutable.bat
+
+5. ¡Listo! Busca tu ejecutable en la carpeta "release/"
+
+
+OPCIÓN 2️⃣ - MANUAL (SI TIENES EXPERIENCIA)
+────────────────────────────────────────────────────────────────────
+
+1. Abre CMD o PowerShell
+
+2. Instala dependencias:
+   npm install --save-dev electron electron-builder
+
+3. Genera el ejecutable:
+   npm run electron:build:win
+
+4. Busca el archivo en: release/
+
+
+📦 ¿QUÉ ARCHIVOS RECIBES?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+En la carpeta "release/" encontrarás:
+
+📁 Instalador:
+   • Josimar Cell - Sistema de Inventario Setup 1.0.0.exe
+   • Se instala como programa normal
+   • Crea íconos en escritorio y menú inicio
+
+🎒 Portable:
+   • JosimarCell-Portable-1.0.0.exe
+   • No requiere instalación
+   • Ejecuta directamente
+   • Perfecto para USB
+
+
+💻 REQUISITOS PARA GENERAR EL EJECUTABLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Tu computadora necesita:
+✓ Windows 7 o superior
+✓ Node.js instalado (descargar desde nodejs.org)
+✓ 2 GB de espacio libre
+✓ Internet (solo la primera vez)
+
+
+🎯 REQUISITOS PARA EJECUTAR LA APLICACIÓN (USUARIOS FINALES)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Los usuarios que reciben el ejecutable solo necesitan:
+✓ Windows 7 o superior
+✓ 100 MB de espacio
+
+❌ NO necesitan:
+   • Node.js
+   • Navegador web
+   • Internet
+   • Instalar dependencias
+
+
+🔧 SOLUCIÓN DE PROBLEMAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Error: "node no se reconoce como comando"
+   → Instala Node.js desde: https://nodejs.org/
+
+Error: "electron-builder not found"
+   → Ejecuta: npm install --save-dev electron-builder
+
+El antivirus bloquea el ejecutable
+   → Es normal, agrégalo a excepciones
+
+Tarda mucho en generar
+   → La primera vez tarda 10-20 minutos (es normal)
+
+
+🚀 COMPARTIR CON OTROS USUARIOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Para compartir tu aplicación:
+
+1. Ve a la carpeta "release/"
+
+2. Comparte uno de estos archivos:
+   • *Setup.exe (para instalación normal)
+   • *Portable.exe (para ejecución directa)
+
+3. Los usuarios solo ejecutan el archivo
+
+¡No necesitan instalar nada más!
+
+
+📚 DOCUMENTACIÓN COMPLETA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Para más detalles, lee:
+
+• COMO_GENERAR_EJECUTABLE.md - Guía completa en español
+• ELECTRON_SETUP.md - Documentación técnica
+• README_ES.md - Información general del proyecto
+
+
+💡 COMANDOS ÚTILES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+npm run dev                    → Ejecutar en navegador web
+npm run electron:dev           → Ejecutar como app de escritorio
+npm run electron:build:win     → Generar ejecutable Windows
+npm run build                  → Construir versión web
+
+
+═══════════════════════════════════════════════════════════════════
+
+            ¿DUDAS? Lee COMO_GENERAR_EJECUTABLE.md
+
+═══════════════════════════════════════════════════════════════════

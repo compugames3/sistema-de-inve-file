@@ -2,6 +2,16 @@
 
 Sistema de gestión de inventario profesional con base de datos automática, autenticación de usuarios y seguimiento completo de productos.
 
+## 🎯 ¿Quieres el Ejecutable para Windows?
+
+**👉 Lee primero:** [LEEME_EJECUTABLE.md](./LEEME_EJECUTABLE.md) o [CHECKLIST_EJECUTABLE.txt](./CHECKLIST_EJECUTABLE.txt)
+
+**Inicio rápido:**
+1. Ejecuta: `setup-desktop.bat`
+2. Convierte el icono (ver [ICON_GUIDE.md](./ICON_GUIDE.md))
+3. Ejecuta: `generar-ejecutable.bat`
+4. Busca el `.exe` en la carpeta `release/`
+
 ## 🌐 Compatibilidad de Navegadores
 
 Esta aplicación es compatible con **TODOS** los navegadores modernos:
@@ -18,21 +28,31 @@ Esta aplicación es compatible con **TODOS** los navegadores modernos:
 
 Esta aplicación puede convertirse en un **programa ejecutable de escritorio** para Windows, macOS y Linux.
 
-### Instalación Rápida para Ejecutable Desktop
+### 🚀 Instalación Rápida para Windows
 
+**Opción 1 - Script Automático (Recomendado):**
+```batch
+# Ejecuta este comando en CMD o PowerShell
+setup-desktop.bat
+```
+
+**Opción 2 - Manual:**
 ```bash
 # 1. Instalar dependencias de desarrollo
 npm install --save-dev electron electron-builder concurrently wait-on
 
-# 2. Ejecutar en modo desarrollo desktop
-npm run electron:dev
-
-# 3. Generar ejecutable para tu sistema operativo
-npm run electron:build
+# 2. Generar ejecutable para Windows
+npm run electron:build:win
 ```
 
-### Generar Ejecutables por Plataforma
+### 📦 Generar el Ejecutable
 
+**Forma más fácil:**
+```batch
+generar-ejecutable.bat
+```
+
+**Forma manual:**
 ```bash
 # Windows (genera instalador .exe y versión portable)
 npm run electron:build:win
@@ -45,6 +65,28 @@ npm run electron:build:linux
 ```
 
 Los ejecutables se generarán en la carpeta `release/`.
+
+### 📂 Archivos Generados
+
+Después de ejecutar el build, encontrarás en `release/`:
+
+1. **Instalador NSIS** - `Josimar Cell - Sistema de Inventario Setup X.X.X.exe`
+   - Instalador completo con asistente
+   - Crea accesos directos automáticamente
+   - Se puede desinstalar desde Panel de Control
+
+2. **Versión Portable** - `JosimarCell-Portable-X.X.X.exe`
+   - No requiere instalación
+   - Ejecuta directamente desde cualquier carpeta
+   - Perfecto para USB o dispositivos portátiles
+
+### 📖 Documentación Completa
+
+Lee **[COMO_GENERAR_EJECUTABLE.md](./COMO_GENERAR_EJECUTABLE.md)** para:
+- Guía paso a paso detallada
+- Solución de problemas
+- Personalización de iconos y nombres
+- Distribución del ejecutable
 
 ### Características de la Versión Desktop
 
