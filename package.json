@@ -3,7 +3,7 @@
     "private": true,
     "version": "1.0.0",
     "type": "module",
-    "main": "electron.js",
+    "main": "electron.cjs",
     "scripts": {
         "dev": "vite",
         "kill": "fuser -k 5000/tcp",
@@ -109,8 +109,8 @@
         },
         "files": [
             "dist/**/*",
-            "electron.js",
-            "preload.js",
+            "electron.cjs",
+            "preload.cjs",
             "icon.png",
             "icon.svg"
         ],
