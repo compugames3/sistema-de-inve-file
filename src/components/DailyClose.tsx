@@ -20,7 +20,6 @@ import {
   Trophy,
   Download,
   Printer,
-  FileText,
   Lock,
   FilePdf
 } from '@phosphor-icons/react';
@@ -146,30 +145,6 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                       <Lock className="w-5 h-5 mr-2" weight="duotone" />
                       {isClosing ? 'Generando...' : 'Generar Cierre del Día'}
                     </Button>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <FileText className="w-5 h-5 text-accent" weight="duotone" />
-                      Información del Cierre
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-sm space-y-3 text-muted-foreground">
-                    <p>
-                      El cierre del día genera un reporte completo que incluye:
-                    </p>
-                    <ul className="space-y-2 list-disc list-inside">
-                      <li>Resumen financiero (ingresos, costos, ganancias)</li>
-                      <li>Estadísticas de ventas y compras</li>
-                      <li>Estado actual del inventario</li>
-                      <li>Top 10 productos más vendidos</li>
-                      <li>Alertas de stock bajo y productos agotados</li>
-                    </ul>
-                    <p className="mt-4 p-3 bg-muted rounded-lg text-foreground">
-                      <strong>Importante:</strong> El reporte se guardará automáticamente en el historial y podrás exportarlo o imprimirlo.
-                    </p>
                   </CardContent>
                 </Card>
               </div>
