@@ -1,14 +1,33 @@
 # Planning Guide
 
-Sistema de inventario profesional para Josimar Cell - un sistema de gestión integral con base de datos automática, autenticación de usuarios y seguimiento completo de productos para gestionar eficientemente el inventario del negocio.
+Sistema de inventario profesional para Josimar Cell - un sistema de gestión integral con base de datos automática, autenticación de usuarios y seguimiento completo de productos para gestionar eficientemente el inventario del negocio. **Compatible con todos los navegadores modernos y preparado para convertirse en aplicación de escritorio ejecutable.**
 
 **Experience Qualities**:
 1. **Professional** - Clean, organized interface that conveys reliability and trustworthiness for business operations
 2. **Efficient** - Quick data entry and instant search capabilities to minimize time spent on inventory tasks
 3. **Secure** - Password-protected access with clear admin controls to protect sensitive business data
+4. **Universal** - Works across all modern browsers and can be installed as a desktop application
 
 **Complexity Level**: Complex Application (advanced functionality, likely with multiple views)
-- The application manages inventory records with CRUD operations, user authentication with role-based access control, granular permissions system, persistent storage, order management, daily close reporting, and comprehensive audit logging, making it a feature-rich enterprise-grade system.
+- The application manages inventory records with CRUD operations, user authentication with role-based access control, granular permissions system, persistent storage, order management, daily close reporting, and comprehensive audit logging, making it a feature-rich enterprise-grade system. Additionally, it's optimized for cross-browser compatibility and can be packaged as a standalone desktop executable for Windows, macOS, and Linux.
+
+## Platform Support
+
+**Cross-Browser Compatibility**
+- Functionality: Full support for all modern browsers with automatic compatibility detection
+- Purpose: Ensure the application works reliably across different browsers and operating systems
+- Supported Browsers: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+, Opera 76+, Brave, Samsung Internet 13+
+- Trigger: Automatic browser detection on application load
+- Progression: User opens app → Browser capabilities detected → Compatibility verified → App loads or shows upgrade message
+- Success criteria: Application functions identically across all supported browsers; unsupported browsers show clear upgrade instructions
+
+**Desktop Application (Electron)**
+- Functionality: Package the web application as a native desktop executable for Windows, macOS, and Linux
+- Purpose: Provide offline functionality and native OS integration for users who prefer desktop applications
+- Features: Persistent local database, offline operation, native file system access, OS notifications
+- Trigger: User downloads and installs the desktop version
+- Progression: Download installer → Install application → Launch from desktop/start menu → Runs independently without browser
+- Success criteria: Desktop app works offline with full functionality; data persists on local file system; auto-updates work; native OS integration (file dialogs, notifications)
 
 ## Essential Features
 

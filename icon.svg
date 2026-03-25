@@ -1,0 +1,35 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <rect width="512" height="512" rx="96" fill="url(#gradient)"/>
+  
+  <!-- Icon elements -->
+  <g transform="translate(128, 128)">
+    <!-- Phone/Cell icon -->
+    <rect x="64" y="0" width="128" height="224" rx="16" fill="white" opacity="0.95"/>
+    <rect x="72" y="16" width="112" height="176" rx="8" fill="url(#screen-gradient)"/>
+    <circle cx="128" cy="208" r="8" fill="white"/>
+    
+    <!-- Inventory/Package boxes -->
+    <rect x="0" y="128" width="48" height="48" rx="4" fill="white" opacity="0.9"/>
+    <rect x="8" y="136" width="32" height="32" rx="2" fill="#4A5568"/>
+    <line x1="16" y1="136" x2="16" y2="168" stroke="#667eea" stroke-width="2"/>
+    <line x1="8" y1="152" x2="40" y2="152" stroke="#667eea" stroke-width="2"/>
+    
+    <rect x="208" y="128" width="48" height="48" rx="4" fill="white" opacity="0.9"/>
+    <rect x="216" y="136" width="32" height="32" rx="2" fill="#4A5568"/>
+    <line x1="224" y1="136" x2="224" y2="168" stroke="#764ba2" stroke-width="2"/>
+    <line x1="216" y1="152" x2="248" y2="152" stroke="#764ba2" stroke-width="2"/>
+  </g>
+  
+  <!-- Definitions -->
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#667eea"/>
+      <stop offset="100%" stop-color="#764ba2"/>
+    </linearGradient>
+    <linearGradient id="screen-gradient" x1="0" y1="0" x2="0" y2="176" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#667eea" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#764ba2" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+</svg>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navegador No Compatible - Josimar Cell</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 600px;
+      text-align: center;
+    }
+    .icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #1a1a1a;
+      font-size: 28px;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+    p {
+      color: #666;
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .browsers {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .browser {
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .browser:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    .browser-name {
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+    .browser-icon {
+      font-size: 48px;
+    }
+    .version {
+      font-size: 12px;
+      color: #999;
+      margin-top: 4px;
+    }
+    .button {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 32px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 24px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">⚠️</div>
+    <h1>Navegador No Compatible</h1>
+    <p>
+      Lo sentimos, tu navegador actual no es compatible con <strong>Josimar Cell - Sistema de Inventario</strong>.
+      Para una mejor experiencia, por favor actualiza tu navegador o usa uno de los siguientes navegadores modernos:
+    </p>
+    
+    <div class="browsers">
+      <div class="browser">
+        <div class="browser-icon">🌐</div>
+        <div class="browser-name">Chrome</div>
+        <div class="version">Versión 90+</div>
+      </div>
+      <div class="browser">
+        <div class="browser-icon">🦊</div>
+        <div class="browser-name">Firefox</div>
+        <div class="version">Versión 88+</div>
+      </div>
+      <div class="browser">
+        <div class="browser-icon">🧭</div>
+        <div class="browser-name">Safari</div>
+        <div class="version">Versión 14+</div>
+      </div>
+      <div class="browser">
+        <div class="browser-icon">📘</div>
+        <div class="browser-name">Edge</div>
+        <div class="version">Versión 90+</div>
+      </div>
+      <div class="browser">
+        <div class="browser-icon">🎭</div>
+        <div class="browser-name">Opera</div>
+        <div class="version">Versión 76+</div>
+      </div>
+      <div class="browser">
+        <div class="browser-icon">🦁</div>
+        <div class="browser-name">Brave</div>
+        <div class="version">Reciente</div>
+      </div>
+    </div>
+
+    <p style="margin-top: 32px; font-size: 14px; color: #999;">
+      <strong>Versión Desktop:</strong> También puedes descargar nuestra aplicación de escritorio para Windows, macOS o Linux.
+    </p>
+  </div>
+</body>
+</html>
