@@ -13,7 +13,8 @@ import { StatisticsPanel } from '@/components/StatisticsPanel';
 import { CriticalStockAlert } from '@/components/CriticalStockAlert';
 import { OrdersPage } from '@/components/OrdersPage';
 import { DailyClose } from '@/components/DailyClose';
-import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon, Database, Upload, ClockCounterClockwise, CheckCircle, Bell, Receipt, CalendarBlank } from '@phosphor-icons/react';
+import { UserManagement } from '@/components/UserManagement';
+import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon, Database, Upload, ClockCounterClockwise, CheckCircle, Bell, Receipt, CalendarBlank, Users } from '@phosphor-icons/react';
 import { generateId, exportToCSV, formatCurrency, getStockStatus } from '@/lib/inventory-utils';
 import { exportDatabase, importDatabase, createBackup } from '@/lib/database';
 import { useAudit } from '@/hooks/use-audit';
@@ -24,7 +25,7 @@ interface DashboardProps {
   onLogout: () => void;
 }
 
-type ViewType = 'inventory' | 'orders' | 'dailyclose';
+type ViewType = 'inventory' | 'orders' | 'dailyclose' | 'users';
 
 export function Dashboard({ onLogout }: DashboardProps) {
   const [currentView, setCurrentView] = useState<ViewType>('inventory');
@@ -267,7 +268,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
 
       <main className="container mx-auto px-6 py-6">
         <Tabs value={currentView} onValueChange={(value) => setCurrentView(value as ViewType)} className="w-full">
-          <TabsList className="grid w-full max-w-2xl mb-6 grid-cols-3">
+          <TabsList className={`grid w-full max-w-3xl mb-6 ${isAdmin ? 'grid-cols-4' : 'grid-cols-3'}`}>
             <TabsTrigger value="inventory">
               <Package className="w-4 h-4 mr-2" />
               Inventario
@@ -280,6 +281,12 @@ export function Dashboard({ onLogout }: DashboardProps) {
               <CalendarBlank className="w-4 h-4 mr-2" />
               Cierre del Día
             </TabsTrigger>
+            {isAdmin && (
+              <TabsTrigger value="users">
+                <Users className="w-4 h-4 mr-2" />
+                Usuarios
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="inventory" className="space-y-6">
@@ -388,6 +395,12 @@ export function Dashboard({ onLogout }: DashboardProps) {
                 products={safeProducts}
                 currentUser={currentUser}
               />
+            )}
+          </TabsContent>
+
+          <TabsContent value="users">
+            {currentUser && isAdmin && (
+              <UserManagement currentUser={currentUser} />
             )}
           </TabsContent>
         </Tabs>
