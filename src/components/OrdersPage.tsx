@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { OrderForm } from '@/components/OrderForm';
-import { Plus, ShoppingCart, ShoppingBag, Eye, CheckCircle, XCircle, Receipt, FilePdf, CalendarBlank, User as UserIconPh, Package, CaretUp, CaretDown, CaretUpDown } from '@phosphor-icons/react';
+import { Plus, ShoppingCart, ShoppingBag, Eye, CheckCircle, XCircle, Receipt, FilePdf, CalendarBlank, User as UserIconPh, Package, CaretUp, CaretDown, CaretUpDown, Trash } from '@phosphor-icons/react';
 import { generateOrderNumber, getOrderStatusBadgeVariant, getOrderStatusLabel, getOrderTypeLabel } from '@/lib/order-utils';
 import { generateId, formatCurrency } from '@/lib/inventory-utils';
 import { generateSalesPDF, generateRestockPDF } from '@/lib/pdf-utils';
@@ -32,6 +32,7 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
   const [viewingOrder, setViewingOrder] = useState<Order | null>(null);
   const [completingOrderId, setCompletingOrderId] = useState<string | null>(null);
   const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
+  const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null);
   const [sortField, setSortField] = useState<SortField>('date');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
@@ -187,6 +188,19 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
     toast.success('Orden cancelada');
   };
 
+  const handleDeleteOrder = () => {
+    if (!deletingOrderId) return;
+
+    const order = safeOrders.find((o) => o.id === deletingOrderId);
+    
+    setOrders((current) =>
+      (current || []).filter((o) => o.id !== deletingOrderId)
+    );
+
+    setDeletingOrderId(null);
+    toast.success(`Orden ${order?.orderNumber} eliminada permanentemente`);
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-ES', {
       year: 'numeric',
@@ -333,6 +347,16 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
                         </Button>
                       </>
                     )}
+                    {isAdmin && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setDeletingOrderId(order.id)}
+                        className="flex-1 text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    )}
                   </div>
                 </div>
               </Card>
@@ -454,6 +478,15 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
                             </Button>
                           </>
                         )}
+                        {isAdmin && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setDeletingOrderId(order.id)}
+                          >
+                            <Trash className="w-4 h-4 text-destructive" />
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -471,6 +504,7 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
 
   const completingOrder = safeOrders.find((o) => o.id === completingOrderId);
   const cancellingOrder = safeOrders.find((o) => o.id === cancellingOrderId);
+  const deletingOrder = safeOrders.find((o) => o.id === deletingOrderId);
 
   const handleGenerateSalesPDF = () => {
     generateSalesPDF(safeOrders);
@@ -667,6 +701,27 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
                   Cancelar Orden
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <AlertDialog open={!!deletingOrderId} onOpenChange={(open) => !open && setDeletingOrderId(null)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>¿Eliminar orden permanentemente?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta acción eliminará permanentemente la orden <span className="font-semibold">{deletingOrder?.orderNumber}</span>.
+                  Esta acción no se puede deshacer.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Volver</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteOrder}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Eliminar Orden
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

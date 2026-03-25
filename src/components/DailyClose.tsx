@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { 
@@ -25,7 +26,8 @@ import {
   Lock,
   FilePdf,
   Funnel,
-  X
+  X,
+  Trash
 } from '@phosphor-icons/react';
 import { generateDailyCloseReport, exportDailyCloseReport, printDailyCloseReport } from '@/lib/daily-close-utils';
 import { formatCurrency } from '@/lib/inventory-utils';
@@ -46,6 +48,7 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
   const [isClosing, setIsClosing] = useState(false);
   const [currentReport, setCurrentReport] = useState<DailyCloseReport | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [deletingReportId, setDeletingReportId] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
     from: undefined,
     to: undefined,
@@ -102,6 +105,20 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
   const handleGeneratePDF = (report: DailyCloseReport) => {
     generateDailyClosePDF(report);
     toast.success('Reporte PDF generado exitosamente');
+  };
+
+  const handleDeleteReport = () => {
+    if (!deletingReportId) return;
+
+    const report = closeHistory?.find((r) => r.id === deletingReportId);
+    
+    setCloseHistory((current) =>
+      (current || []).filter((r) => r.id !== deletingReportId)
+    );
+
+    setDeletingReportId(null);
+    const reportDate = report ? formatDate(report.date) : 'Reporte';
+    toast.success(`${reportDate} eliminado permanentemente`);
   };
 
   const formatDate = (dateStr: string) => {
@@ -518,6 +535,15 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                                     <Download className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
                                     Exportar
                                   </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="flex-1 text-xs md:text-sm text-destructive hover:bg-destructive/10"
+                                    onClick={() => setDeletingReportId(report.id)}
+                                  >
+                                    <Trash className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                                    Eliminar
+                                  </Button>
                                 </div>
                               </CardContent>
                             </Card>
@@ -615,6 +641,27 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
           </DialogContent>
         </Dialog>
       )}
+
+      <AlertDialog open={!!deletingReportId} onOpenChange={(open) => !open && setDeletingReportId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar reporte permanentemente?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción eliminará permanentemente este cierre del día.
+              Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteReport}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Eliminar Reporte
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
