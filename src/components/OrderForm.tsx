@@ -37,8 +37,17 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
   const [supplier, setSupplier] = useState('');
   const [selectedProduct, setSelectedProduct] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [unitPrice, setUnitPrice] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('efectivo');
   const [amountPaid, setAmountPaid] = useState<string>('');
+
+  const handleProductChange = (productId: string) => {
+    setSelectedProduct(productId);
+    const product = products.find(p => p.id === productId);
+    if (product) {
+      setUnitPrice(product.price.toString());
+    }
+  };
 
   const addItem = () => {
     if (!selectedProduct) {
@@ -48,6 +57,12 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
     
     if (quantity <= 0) {
       toast.error('La cantidad debe ser mayor a 0');
+      return;
+    }
+
+    const priceValue = parseFloat(unitPrice) || 0;
+    if (priceValue <= 0) {
+      toast.error('El precio debe ser mayor a 0');
       return;
     }
     
@@ -62,19 +77,21 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
     if (existingIndex >= 0) {
       const newItems = [...items];
       newItems[existingIndex].quantity += quantity;
+      newItems[existingIndex].unitPrice = priceValue;
       setItems(newItems);
       toast.success(`Cantidad actualizada para ${product.name}`);
     } else {
       setItems([...items, { 
         productId: selectedProduct, 
         quantity: quantity, 
-        unitPrice: product.price 
+        unitPrice: priceValue
       }]);
       toast.success(`${product.name} agregado`);
     }
 
     setSelectedProduct('');
     setQuantity(1);
+    setUnitPrice('');
   };
 
   const removeItem = (index: number) => {
@@ -84,6 +101,12 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
   const updateItemQuantity = (index: number, newQuantity: number) => {
     const newItems = [...items];
     newItems[index].quantity = newQuantity;
+    setItems(newItems);
+  };
+
+  const updateItemPrice = (index: number, newPrice: number) => {
+    const newItems = [...items];
+    newItems[index].unitPrice = newPrice;
     setItems(newItems);
   };
 
@@ -164,10 +187,10 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr,auto,auto] gap-3 sm:gap-4 items-end">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr,auto,auto,auto] gap-3 sm:gap-4 items-end">
               <div className="space-y-2 sm:col-span-2 lg:col-span-1">
                 <Label htmlFor="product" className="text-sm sm:text-base">Producto</Label>
-                <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+                <Select value={selectedProduct} onValueChange={handleProductChange}>
                   <SelectTrigger id="product" className="text-sm sm:text-base">
                     <SelectValue placeholder="Seleccionar producto" />
                   </SelectTrigger>
@@ -179,6 +202,20 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="unit-price" className="text-sm sm:text-base">Precio</Label>
+                <Input
+                  id="unit-price"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={unitPrice}
+                  onChange={(e) => setUnitPrice(e.target.value)}
+                  placeholder="0.00"
+                  className="w-full sm:w-28 text-sm sm:text-base"
+                />
               </div>
 
               <div className="space-y-2">
@@ -254,8 +291,17 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                               />
                             </div>
                           </td>
-                          <td className="py-3 px-4 text-right text-sm">
-                            {formatCurrency(item.unitPrice)}
+                          <td className="py-3 px-4">
+                            <div className="flex justify-end">
+                              <Input
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value={item.unitPrice}
+                                onChange={(e) => updateItemPrice(index, parseFloat(e.target.value) || 0)}
+                                className="w-24 text-right text-sm"
+                              />
+                            </div>
                           </td>
                           <td className="py-3 px-4 text-right">
                             <p className="font-semibold text-sm">{formatCurrency(subtotal)}</p>
@@ -309,7 +355,14 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                       <div className="grid grid-cols-2 gap-3 sm:gap-4">
                         <div className="space-y-1">
                           <Label className="text-xs text-muted-foreground">Precio</Label>
-                          <p className="text-sm sm:text-base font-medium">{formatCurrency(item.unitPrice)}</p>
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={item.unitPrice}
+                            onChange={(e) => updateItemPrice(index, parseFloat(e.target.value) || 0)}
+                            className="w-full text-sm sm:text-base h-8 sm:h-9"
+                          />
                         </div>
                         <div className="space-y-1">
                           <Label className="text-xs text-muted-foreground">Cantidad</Label>
