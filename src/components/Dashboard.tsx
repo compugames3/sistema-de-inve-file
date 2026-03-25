@@ -248,40 +248,41 @@ export function Dashboard({ onLogout }: DashboardProps) {
     <div className="h-screen flex flex-col bg-background overflow-hidden">
       <header className="border-b bg-white shrink-0 shadow-sm relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5" />
-        <div className="relative px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 sm:gap-5">
-              <div className="relative group">
-                <JosimarLogo size="clamp(48px, 8vw, 64px)" />
+        <div className="relative px-3 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-3 lg:gap-5 min-w-0 flex-1">
+              <div className="relative group shrink-0">
+                <JosimarLogo size="clamp(40px, 8vw, 64px)" />
               </div>
-              <div className="flex flex-col">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              <div className="flex flex-col min-w-0">
+                <h1 className="text-base sm:text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent truncate">
                   Josimar Cell
                 </h1>
-                <div className="flex items-center gap-3 mt-1.5">
-                  <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                    <Database className="w-3.5 h-3.5 text-primary" weight="duotone" />
-                    <span>Sistema de Inventario</span>
+                <div className="hidden sm:flex items-center gap-2 lg:gap-3 mt-1 lg:mt-1.5">
+                  <div className="flex items-center gap-1 lg:gap-1.5 text-xs font-medium text-muted-foreground">
+                    <Database className="w-3 lg:w-3.5 h-3 lg:h-3.5 text-primary" weight="duotone" />
+                    <span className="hidden md:inline">Sistema de Inventario</span>
+                    <span className="md:hidden">Inventario</span>
                   </div>
-                  <div className="w-1 h-1 rounded-full bg-border" />
-                  <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                    <CheckCircle className="w-3.5 h-3.5 text-success" weight="duotone" />
+                  <div className="hidden md:block w-1 h-1 rounded-full bg-border" />
+                  <div className="hidden md:flex items-center gap-1 lg:gap-1.5 text-xs font-medium text-muted-foreground">
+                    <CheckCircle className="w-3 lg:w-3.5 h-3 lg:h-3.5 text-success" weight="duotone" />
                     <span>Gestión Profesional</span>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-4 shrink-0">
               {activeCriticalAlerts > 0 && currentView === 'inventory' && (
                 <div className="relative">
                   <Button
                     variant="outline"
                     size="icon"
-                    className="relative h-12 w-12 border-2 border-warning/30 hover:bg-warning/10 hover:border-warning transition-all duration-200 shadow-lg shadow-warning/10"
+                    className="relative h-9 w-9 sm:h-10 sm:w-10 lg:h-12 lg:w-12 border-2 border-warning/30 hover:bg-warning/10 hover:border-warning transition-all duration-200 shadow-lg shadow-warning/10"
                   >
-                    <Bell className="w-5 h-5 text-warning" weight="fill" />
+                    <Bell className="w-4 sm:w-4.5 lg:w-5 h-4 sm:h-4.5 lg:h-5 text-warning" weight="fill" />
                     {activeCriticalAlerts > 0 && (
-                      <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-destructive to-destructive/80 text-white text-xs font-bold shadow-lg animate-pulse">
+                      <span className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-gradient-to-br from-destructive to-destructive/80 text-white text-xs font-bold shadow-lg animate-pulse">
                         {activeCriticalAlerts > 9 ? '9+' : activeCriticalAlerts}
                       </span>
                     )}
@@ -289,18 +290,18 @@ export function Dashboard({ onLogout }: DashboardProps) {
                 </div>
               )}
               {currentUser && (
-                <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-gradient-to-br from-card to-secondary/30 border-2 border-border/50 shadow-md">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isAdmin ? 'bg-gradient-to-br from-primary/20 to-accent/20' : 'bg-muted'} shadow-inner`}>
+                <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3 px-2 sm:px-3 lg:px-5 py-1.5 sm:py-2 lg:py-3 rounded-xl lg:rounded-2xl bg-gradient-to-br from-card to-secondary/30 border-2 border-border/50 shadow-md">
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg lg:rounded-xl flex items-center justify-center ${isAdmin ? 'bg-gradient-to-br from-primary/20 to-accent/20' : 'bg-muted'} shadow-inner`}>
                     {isAdmin ? (
-                      <ShieldCheck className="w-7 h-7 text-primary" weight="duotone" />
+                      <ShieldCheck className="w-5 sm:w-6 lg:w-7 h-5 sm:h-6 lg:h-7 text-primary" weight="duotone" />
                     ) : (
-                      <UserIcon className="w-7 h-7 text-muted-foreground" weight="duotone" />
+                      <UserIcon className="w-5 sm:w-6 lg:w-7 h-5 sm:h-6 lg:h-7 text-muted-foreground" weight="duotone" />
                     )}
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-base font-bold text-foreground">{currentUser.username}</span>
-                    <Badge variant={isAdmin ? "default" : "secondary"} className="w-fit text-xs mt-1 px-2 py-0.5 shadow-sm">
-                      {isAdmin ? "Administrador" : "Visitante"}
+                  <div className="hidden sm:flex flex-col">
+                    <span className="text-sm lg:text-base font-bold text-foreground truncate max-w-[100px] lg:max-w-none">{currentUser.username}</span>
+                    <Badge variant={isAdmin ? "default" : "secondary"} className="w-fit text-xs mt-0.5 lg:mt-1 px-1.5 lg:px-2 py-0.5 shadow-sm">
+                      {isAdmin ? "Admin" : "Visitante"}
                     </Badge>
                   </div>
                 </div>
@@ -308,53 +309,53 @@ export function Dashboard({ onLogout }: DashboardProps) {
               <Button 
                 variant="outline" 
                 onClick={onLogout} 
-                className="h-12 px-5 border-2 hover:bg-destructive/5 hover:border-destructive/30 hover:text-destructive transition-all duration-200 shadow-sm font-medium"
+                className="h-9 sm:h-10 lg:h-12 px-2 sm:px-3 lg:px-5 border-2 hover:bg-destructive/5 hover:border-destructive/30 hover:text-destructive transition-all duration-200 shadow-sm font-medium"
               >
-                <SignOut className="w-5 h-5 mr-2" weight="bold" />
-                Cerrar Sesión
+                <SignOut className="w-4 sm:w-4.5 lg:w-5 h-4 sm:h-4.5 lg:h-5 sm:mr-2" weight="bold" />
+                <span className="hidden sm:inline">Cerrar Sesión</span>
               </Button>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-8 py-8">
+      <main className="flex-1 overflow-y-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         <Tabs value={currentView} onValueChange={(value) => setCurrentView(value as ViewType)} className="w-full">
-          <TabsList className={`grid w-full max-w-5xl mx-auto mb-10 h-16 bg-white/60 backdrop-blur-sm p-2 shadow-lg border-2 border-border/30 rounded-2xl`} style={{ gridTemplateColumns: `repeat(${accessibleTabs.length}, 1fr)` }}>
+          <TabsList className={`grid w-full max-w-5xl mx-auto mb-6 sm:mb-8 lg:mb-10 h-auto sm:h-14 lg:h-16 bg-white/60 backdrop-blur-sm p-1 sm:p-1.5 lg:p-2 shadow-lg border-2 border-border/30 rounded-xl sm:rounded-2xl`} style={{ gridTemplateColumns: `repeat(${accessibleTabs.length}, 1fr)` }}>
             {canAccessTab(currentUser ?? null, 'inventory') && (
               <TabsTrigger 
                 value="inventory"
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/90 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-primary/30 transition-all duration-300 font-bold text-base rounded-xl"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/90 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-primary/30 transition-all duration-300 font-bold text-xs sm:text-sm lg:text-base rounded-lg sm:rounded-xl py-2 sm:py-2.5 lg:py-3 px-2 sm:px-3 lg:px-4"
               >
-                <Package className="w-6 h-6 mr-2.5" weight="duotone" />
-                Inventario
+                <Package className="w-4 sm:w-5 lg:w-6 h-4 sm:h-5 lg:h-6 sm:mr-1.5 lg:mr-2.5" weight="duotone" />
+                <span className="hidden sm:inline">Inventario</span>
               </TabsTrigger>
             )}
             {canAccessTab(currentUser ?? null, 'orders') && (
               <TabsTrigger 
                 value="orders"
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-accent data-[state=active]:to-accent/90 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-accent/30 transition-all duration-300 font-bold text-base rounded-xl"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-accent data-[state=active]:to-accent/90 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-accent/30 transition-all duration-300 font-bold text-xs sm:text-sm lg:text-base rounded-lg sm:rounded-xl py-2 sm:py-2.5 lg:py-3 px-2 sm:px-3 lg:px-4"
               >
-                <Receipt className="w-6 h-6 mr-2.5" weight="duotone" />
-                Órdenes
+                <Receipt className="w-4 sm:w-5 lg:w-6 h-4 sm:h-5 lg:h-6 sm:mr-1.5 lg:mr-2.5" weight="duotone" />
+                <span className="hidden sm:inline">Órdenes</span>
               </TabsTrigger>
             )}
             {canAccessTab(currentUser ?? null, 'dailyclose') && (
               <TabsTrigger 
                 value="dailyclose"
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-success data-[state=active]:to-success/90 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-success/30 transition-all duration-300 font-bold text-base rounded-xl"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-success data-[state=active]:to-success/90 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-success/30 transition-all duration-300 font-bold text-xs sm:text-sm lg:text-base rounded-lg sm:rounded-xl py-2 sm:py-2.5 lg:py-3 px-2 sm:px-3 lg:px-4"
               >
-                <CalendarBlank className="w-6 h-6 mr-2.5" weight="duotone" />
-                Cierre del Día
+                <CalendarBlank className="w-4 sm:w-5 lg:w-6 h-4 sm:h-5 lg:h-6 sm:mr-1.5 lg:mr-2.5" weight="duotone" />
+                <span className="hidden sm:inline">Cierre del Día</span>
               </TabsTrigger>
             )}
             {canAccessTab(currentUser ?? null, 'users') && (
               <TabsTrigger 
                 value="users"
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-warning data-[state=active]:to-warning/90 data-[state=active]:text-warning-foreground data-[state=active]:shadow-xl data-[state=active]:shadow-warning/30 transition-all duration-300 font-bold text-base rounded-xl"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-warning data-[state=active]:to-warning/90 data-[state=active]:text-warning-foreground data-[state=active]:shadow-xl data-[state=active]:shadow-warning/30 transition-all duration-300 font-bold text-xs sm:text-sm lg:text-base rounded-lg sm:rounded-xl py-2 sm:py-2.5 lg:py-3 px-2 sm:px-3 lg:px-4"
               >
-                <Users className="w-6 h-6 mr-2.5" weight="duotone" />
-                Usuarios
+                <Users className="w-4 sm:w-5 lg:w-6 h-4 sm:h-5 lg:h-6 sm:mr-1.5 lg:mr-2.5" weight="duotone" />
+                <span className="hidden sm:inline">Usuarios</span>
               </TabsTrigger>
             )}
           </TabsList>
