@@ -5,12 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StatsCard } from '@/components/StatsCard';
 import { ProductForm } from '@/components/ProductForm';
 import { InventoryTable } from '@/components/InventoryTable';
 import { StatisticsPanel } from '@/components/StatisticsPanel';
 import { CriticalStockAlert } from '@/components/CriticalStockAlert';
-import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon, Database, Upload, ClockCounterClockwise, CheckCircle, Bell } from '@phosphor-icons/react';
+import { OrdersPage } from '@/components/OrdersPage';
+import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon, Database, Upload, ClockCounterClockwise, CheckCircle, Bell, Receipt } from '@phosphor-icons/react';
 import { generateId, exportToCSV, formatCurrency, getStockStatus } from '@/lib/inventory-utils';
 import { exportDatabase, importDatabase, createBackup } from '@/lib/database';
 import { useAudit } from '@/hooks/use-audit';
@@ -21,7 +23,10 @@ interface DashboardProps {
   onLogout: () => void;
 }
 
+type ViewType = 'inventory' | 'orders';
+
 export function Dashboard({ onLogout }: DashboardProps) {
+  const [currentView, setCurrentView] = useState<ViewType>('inventory');
   const [products, setProducts] = useKV<Product[]>('inventory-products', []);
   const [currentUser] = useKV<User | null>('current-user', null);
   const [users] = useKV<User[]>('system-users', []);
@@ -217,7 +222,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
               </p>
             </div>
             <div className="flex items-center gap-4">
-              {activeCriticalAlerts > 0 && (
+              {activeCriticalAlerts > 0 && currentView === 'inventory' && (
                 <div className="relative">
                   <Button
                     variant="outline"
@@ -260,6 +265,19 @@ export function Dashboard({ onLogout }: DashboardProps) {
       </header>
 
       <main className="container mx-auto px-6 py-6">
+        <Tabs value={currentView} onValueChange={(value) => setCurrentView(value as ViewType)} className="w-full">
+          <TabsList className="grid w-full max-w-md mb-6 grid-cols-2">
+            <TabsTrigger value="inventory">
+              <Package className="w-4 h-4 mr-2" />
+              Inventario
+            </TabsTrigger>
+            <TabsTrigger value="orders">
+              <Receipt className="w-4 h-4 mr-2" />
+              Órdenes
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="inventory" className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <StatsCard
             title="Total de Productos"
@@ -351,6 +369,14 @@ export function Dashboard({ onLogout }: DashboardProps) {
           onEdit={isAdmin ? setEditingProduct : undefined}
           onDelete={isAdmin ? setDeletingProductId : undefined}
         />
+          </TabsContent>
+
+          <TabsContent value="orders">
+            {currentUser && (
+              <OrdersPage products={safeProducts} currentUser={currentUser} />
+            )}
+          </TabsContent>
+        </Tabs>
       </main>
 
       {isAdmin && (

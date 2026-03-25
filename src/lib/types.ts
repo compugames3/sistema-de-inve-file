@@ -58,3 +58,31 @@ export interface BackupMetadata {
   productsCount: number;
   checksum: string;
 }
+
+export type OrderType = 'sale' | 'purchase';
+export type OrderStatus = 'pending' | 'completed' | 'cancelled';
+
+export interface OrderItem {
+  productId: string;
+  productName: string;
+  productSku: string;
+  quantity: number;
+  unitPrice: number;
+  subtotal: number;
+}
+
+export interface Order {
+  id: string;
+  type: OrderType;
+  status: OrderStatus;
+  orderNumber: string;
+  items: OrderItem[];
+  total: number;
+  client?: string;
+  supplier?: string;
+  notes?: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  completedAt?: string;
+}
