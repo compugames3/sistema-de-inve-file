@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useKV } from '@github/spark/hooks';
 import { Order, Product, User, DailyCloseReport } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -64,6 +64,17 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
     setIsClosing(false);
     setShowConfirmation(true);
   };
+
+  useEffect(() => {
+    if (showConfirmation) {
+      const updatedReport = generateDailyCloseReport(
+        orders || [],
+        products || [],
+        currentUser.username
+      );
+      setCurrentReport(updatedReport);
+    }
+  }, [products.length, orders?.length, showConfirmation, currentUser.username]);
 
   const handleConfirmClose = () => {
     if (!currentReport) return;
