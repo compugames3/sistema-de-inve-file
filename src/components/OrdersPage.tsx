@@ -269,14 +269,6 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
 
   const salesOrders = safeOrders.filter((o) => o.type === 'sale');
   const purchaseOrders = safeOrders.filter((o) => o.type === 'purchase');
-  const totalSales = salesOrders
-    .filter((o) => o.status === 'completed')
-    .reduce((sum, o) => sum + o.total, 0);
-  const totalPurchases = purchaseOrders
-    .filter((o) => o.status === 'completed')
-    .reduce((sum, o) => sum + o.total, 0);
-  const pendingSales = salesOrders.filter((o) => o.status === 'pending').length;
-  const pendingPurchases = purchaseOrders.filter((o) => o.status === 'pending').length;
 
   const completingOrder = safeOrders.find((o) => o.id === completingOrderId);
   const cancellingOrder = safeOrders.find((o) => o.id === cancellingOrderId);
@@ -316,56 +308,6 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
             Reporte Restock PDF
           </Button>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-success/10">
-              <ShoppingCart className="w-6 h-6 text-success" weight="duotone" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Total Ventas</p>
-              <p className="text-2xl font-bold">{formatCurrency(totalSales)}</p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-accent/10">
-              <ShoppingBag className="w-6 h-6 text-accent" weight="duotone" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Total Compras</p>
-              <p className="text-2xl font-bold">{formatCurrency(totalPurchases)}</p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-warning/10">
-              <Receipt className="w-6 h-6 text-warning" weight="duotone" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Ventas Pendientes</p>
-              <p className="text-2xl font-bold">{pendingSales}</p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Receipt className="w-6 h-6 text-primary" weight="duotone" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Compras Pendientes</p>
-              <p className="text-2xl font-bold">{pendingPurchases}</p>
-            </div>
-          </div>
-        </Card>
       </div>
 
       <Tabs defaultValue="sales" className="w-full">
