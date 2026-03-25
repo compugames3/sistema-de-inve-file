@@ -394,6 +394,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
 
         <InventoryTable
           products={visibleProducts}
+          currentUser={currentUser}
           onEdit={
             isAdmin
               ? setEditingProduct

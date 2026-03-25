@@ -1,21 +1,26 @@
 import { useState } from 'react';
-import { Product } from '@/lib/types';
+import { Product, User } from '@/lib/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { PencilSimple, Trash, MagnifyingGlass, Package } from '@phosphor-icons/react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { PencilSimple, Trash, MagnifyingGlass, Package, Lock } from '@phosphor-icons/react';
 import { getStockStatus, getStockBadgeStyles, getStockLabel, formatCurrency } from '@/lib/inventory-utils';
+import { canEditProduct, canDeleteProduct } from '@/lib/permissions-utils';
 import { Card } from '@/components/ui/card';
 
 interface InventoryTableProps {
   products: Product[];
+  currentUser?: User | null;
   onEdit?: (product: Product) => void;
   onDelete?: (productId: string) => void;
 }
 
-export function InventoryTable({ products, onEdit, onDelete }: InventoryTableProps) {
+export function InventoryTable({ products, currentUser, onEdit, onDelete }: InventoryTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  
+  const isAdmin = currentUser?.isAdmin ?? false;
 
   const filteredProducts = products.filter((product) => {
     const query = searchQuery.toLowerCase();
@@ -86,6 +91,9 @@ export function InventoryTable({ products, onEdit, onDelete }: InventoryTablePro
               <TableBody>
                 {filteredProducts.map((product) => {
                   const status = getStockStatus(product.quantity);
+                  const canEdit = isAdmin || (currentUser && canEditProduct(currentUser, product));
+                  const canDelete = isAdmin || (currentUser && canDeleteProduct(currentUser, product));
+                  
                   return (
                     <TableRow key={product.id} className="hover:bg-muted/50">
                       <TableCell className="font-mono text-xs">{product.sku}</TableCell>
@@ -105,24 +113,56 @@ export function InventoryTable({ products, onEdit, onDelete }: InventoryTablePro
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-1">
                             {onEdit && (
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                onClick={() => onEdit(product)}
-                                className="h-8 w-8"
-                              >
-                                <PencilSimple className="w-4 h-4" />
-                              </Button>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      onClick={() => onEdit(product)}
+                                      className={`h-8 w-8 ${!canEdit ? 'opacity-40' : ''}`}
+                                      disabled={!canEdit && !isAdmin}
+                                    >
+                                      {!canEdit && !isAdmin ? (
+                                        <Lock className="w-4 h-4 text-muted-foreground" />
+                                      ) : (
+                                        <PencilSimple className="w-4 h-4" />
+                                      )}
+                                    </Button>
+                                  </TooltipTrigger>
+                                  {!canEdit && !isAdmin && (
+                                    <TooltipContent>
+                                      <p>Sin permiso de edición</p>
+                                    </TooltipContent>
+                                  )}
+                                </Tooltip>
+                              </TooltipProvider>
                             )}
                             {onDelete && (
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                onClick={() => onDelete(product.id)}
-                                className="h-8 w-8 text-destructive hover:text-destructive"
-                              >
-                                <Trash className="w-4 h-4" />
-                              </Button>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      onClick={() => onDelete(product.id)}
+                                      className={`h-8 w-8 ${!canDelete ? 'opacity-40' : 'text-destructive hover:text-destructive'}`}
+                                      disabled={!canDelete && !isAdmin}
+                                    >
+                                      {!canDelete && !isAdmin ? (
+                                        <Lock className="w-4 h-4 text-muted-foreground" />
+                                      ) : (
+                                        <Trash className="w-4 h-4" />
+                                      )}
+                                    </Button>
+                                  </TooltipTrigger>
+                                  {!canDelete && !isAdmin && (
+                                    <TooltipContent>
+                                      <p>Sin permiso de eliminación</p>
+                                    </TooltipContent>
+                                  )}
+                                </Tooltip>
+                              </TooltipProvider>
                             )}
                           </div>
                         </TableCell>

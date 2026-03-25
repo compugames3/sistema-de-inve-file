@@ -7,45 +7,52 @@ A professional inventory management system with automatic database persistence, 
 2. **Efficient** - Quick data entry and instant search capabilities to minimize time spent on inventory tasks
 3. **Secure** - Password-protected access with clear admin controls to protect sensitive business data
 
-**Complexity Level**: Light Application (multiple features with basic state)
-- The application manages inventory records with CRUD operations, user authentication, and persistent storage, making it more than a micro tool but less complex than a multi-view enterprise system.
+**Complexity Level**: Complex Application (advanced functionality, likely with multiple views)
+- The application manages inventory records with CRUD operations, user authentication with role-based access control, granular permissions system, persistent storage, order management, daily close reporting, and comprehensive audit logging, making it a feature-rich enterprise-grade system.
 
 ## Essential Features
 
-**User Authentication**
-- Functionality: Password-protected login system with admin credentials
-- Purpose: Secure access to inventory data and prevent unauthorized modifications
-- Trigger: Application launch or logout action
-- Progression: Login screen → Enter credentials → Validate password → Access dashboard (or show error)
-- Success criteria: Only users with correct password can access the system; invalid attempts show clear error messages
+**User Authentication & Management**
+- Functionality: Multi-user system with admin/visitor roles, user creation, editing, and role assignment
+- Purpose: Secure access control and user management for team collaboration
+- Trigger: Application launch, logout action, or admin accessing user management tab
+- Progression: Login screen → Enter credentials → Validate → Access dashboard based on role permissions
+- Success criteria: Users authenticate successfully, admins can manage all users, default admin account cannot be deleted
+
+**Granular Product Permissions**
+- Functionality: Per-product permission system allowing admins to grant/revoke view, edit, and delete permissions for individual products to specific users
+- Purpose: Fine-grained access control to restrict which products non-admin users can interact with
+- Trigger: Admin clicks lock icon next to a user in User Management tab
+- Progression: Click lock icon → Open permissions dialog → Search/filter products → Toggle view/edit/delete checkboxes per product → Save permissions → Permissions apply immediately
+- Success criteria: Non-admin users only see products they have view permission for; edit/delete buttons show lock icons for products without appropriate permissions; admins always have full access; permission changes persist across sessions
 
 **Product Registration**
 - Functionality: Add new products to inventory with details (name, SKU, quantity, price, category, supplier)
 - Purpose: Build and maintain a comprehensive product catalog
-- Trigger: Click "Add Product" button
-- Progression: Click add button → Fill product form → Submit → Auto-save to database → Show confirmation → Product appears in list
-- Success criteria: Products are immediately visible in inventory list and persist after page refresh
+- Trigger: Click "Add Product" button (admin only)
+- Progression: Click add button → Fill product form → Submit → Auto-save to database → Log audit entry → Show confirmation → Product appears in list
+- Success criteria: Products are immediately visible in inventory list and persist after page refresh; audit log records creation
 
 **Inventory List View**
-- Functionality: Display all products in a searchable, sortable table with key information
-- Purpose: Provide quick overview of current stock levels and product details
+- Functionality: Display all products in a searchable, sortable table with key information, respecting user permissions
+- Purpose: Provide quick overview of current stock levels and product details based on access rights
 - Trigger: Automatic on dashboard load
-- Progression: Load dashboard → Fetch from database → Display products in table → Enable search/filter
-- Success criteria: All products display correctly with accurate data; search filters results in real-time
+- Progression: Load dashboard → Fetch from database → Filter by user permissions → Display visible products in table → Enable search/filter
+- Success criteria: All accessible products display correctly; users only see products they have view permission for; permission indicators show on action buttons
 
 **Product Editing**
-- Functionality: Modify existing product information including stock quantities
+- Functionality: Modify existing product information including stock quantities (subject to permissions)
 - Purpose: Keep inventory data current as products are received or sold
-- Trigger: Click edit icon on any product row
-- Progression: Click edit → Pre-fill form with current data → Modify fields → Save → Auto-update database → Refresh list
-- Success criteria: Changes persist immediately and reflect in the inventory list
+- Trigger: Click edit icon on product row (if user has edit permission)
+- Progression: Click edit → Verify permission → Pre-fill form with current data → Modify fields → Save → Auto-update database → Log audit changes → Refresh list
+- Success criteria: Changes persist immediately and reflect in inventory list; audit log captures field-level changes; users without edit permission see disabled/locked button
 
 **Product Deletion**
-- Functionality: Remove discontinued or incorrect products from inventory
+- Functionality: Remove discontinued or incorrect products from inventory (subject to permissions)
 - Purpose: Maintain clean, accurate inventory records
-- Trigger: Click delete icon on product row
-- Progression: Click delete → Confirm deletion dialog → Confirm → Remove from database → Update list
-- Success criteria: Deleted products are permanently removed and don't reappear on refresh
+- Trigger: Click delete icon on product row (if user has delete permission)
+- Progression: Click delete → Verify permission → Confirm deletion dialog → Confirm → Remove from database → Log audit entry → Update list
+- Success criteria: Deleted products are permanently removed; audit log records deletion; users without delete permission see disabled/locked button
 
 **Stock Level Alerts**
 - Functionality: Visual indicators for low stock items with notification badges and detailed alert panel
@@ -53,6 +60,20 @@ A professional inventory management system with automatic database persistence, 
 - Trigger: Automatic based on quantity thresholds (≤10 for low stock, 0 for out of stock)
 - Progression: System checks stock levels → Displays notification badge in header → Shows critical stock alert panel above inventory → User can view details or dismiss individual alerts
 - Success criteria: Products with quantity below threshold display with warning indicators; notification badge shows count of active alerts; dismissed alerts persist across sessions
+
+**Order Management (Sales & Purchases)**
+- Functionality: Create and manage sales orders (reducing stock) and purchase orders (increasing stock) with automatic inventory updates
+- Purpose: Track business transactions and maintain accurate stock levels through documented order flow
+- Trigger: Navigate to Orders tab, click Create Sale or Create Purchase
+- Progression: Select order type → Add products with quantities → Calculate totals → Confirm order → Update inventory automatically → Record transaction
+- Success criteria: Orders correctly adjust inventory quantities; completed orders show in history; orders can be filtered by type and status
+
+**Daily Close Reports**
+- Functionality: Generate end-of-day summary reports with sales, purchases, inventory metrics, and financial analysis
+- Purpose: Provide comprehensive daily business insights for accounting and management review
+- Trigger: Navigate to Daily Close tab, click Generate Report
+- Progression: Click generate → System analyzes all orders and inventory for the day → Calculate financial metrics → Display comprehensive report → Save report history
+- Success criteria: Reports accurately reflect daily activity; top products identified; profit margins calculated; reports persist and can be reviewed later
 
 **Export Functionality**
 - Functionality: Download inventory data as CSV file
@@ -68,15 +89,36 @@ A professional inventory management system with automatic database persistence, 
 - Progression: Load dashboard → Calculate statistics → Render charts in tabbed interface → User switches between chart views
 - Success criteria: Charts accurately reflect product data with category distribution, supplier analysis, stock levels, price ranges, and top products by value
 
+**Audit Logging**
+- Functionality: Comprehensive logging of all product create, update, and delete operations with field-level change tracking
+- Purpose: Maintain accountability and traceability for all inventory modifications
+- Trigger: Automatic on any product modification; viewable by admins via Audit button
+- Progression: User modifies data → System captures changes → Logs username, timestamp, action, and details → Admin views audit dialog
+- Success criteria: All changes logged with complete details; admins can review full history; logs persist across sessions
+
+**Database Backup & Restore**
+- Functionality: Export and import full database snapshots with integrity verification
+- Purpose: Enable data backup, migration, and recovery capabilities
+- Trigger: Click Backup or Restore buttons (admin only)
+- Progression: Backup: Click → Generate JSON file → Download; Restore: Select file → Validate → Confirm → Import data → Verify integrity
+- Success criteria: Backups contain all data; restores successfully recreate system state; automatic daily backups; checksum validation
+
 ## Edge Case Handling
 
 - **Empty Inventory**: Display helpful empty state with clear call-to-action to add first product
+- **No Visible Products (Permissions)**: Non-admin users without any product permissions see informative message about permission requirements
 - **Duplicate SKUs**: Show validation error preventing duplicate SKU entries
 - **Invalid Data**: Form validation prevents submission of incomplete or invalid product information
 - **Low Stock Zero Items**: Products with 0 quantity display with critical alert styling
 - **Long Product Names**: Text truncates gracefully with ellipsis and full name on hover
 - **Search No Results**: Clear message when search yields no matching products
-- **Password Reset**: Include password hint or recovery mechanism for forgotten credentials
+- **Permission Denied Actions**: Users attempting to edit/delete products without permission see clear error toast and visual lock indicators
+- **Admin Self-Modification**: Prevent admins from removing their own admin privileges or deleting themselves
+- **Default Admin Protection**: Prevent deletion or permission changes to the default "admin" account
+- **Empty Permission Sets**: Users with no product permissions cannot see any products but receive helpful guidance in UI
+- **Concurrent Permission Updates**: Changes to user permissions apply immediately to that user's active session
+- **Bulk Permission Changes**: Select-all functionality in permissions dialog handles large product catalogs efficiently
+- **User Deletion with Permissions**: Deleting a user automatically removes all their product permissions
 
 ## Design Direction
 
