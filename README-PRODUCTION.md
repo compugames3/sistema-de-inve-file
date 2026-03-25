@@ -83,6 +83,13 @@ El ejecutable estará en la carpeta `release/`
 - 📘 **[PRD.md](PRD.md)** - Documento de requerimientos del producto
 - 📄 **[README_ES.md](README_ES.md)** - README original en español
 
+### Troubleshooting & Support:
+- 🔧 **[BUILD-TROUBLESHOOTING.md](BUILD-TROUBLESHOOTING.md)** - Build errors and compilation issues
+- 🚨 **[PRODUCTION-TROUBLESHOOTING.md](PRODUCTION-TROUBLESHOOTING.md)** - Production deployment issues
+- ❓ **[DEPLOYMENT-FAQ.md](DEPLOYMENT-FAQ.md)** - Frequently asked questions
+- 🗺️ **[TROUBLESHOOTING-INDEX.md](TROUBLESHOOTING-INDEX.md)** - Central troubleshooting hub
+- ⚡ **[QUICK-REFERENCE.md](QUICK-REFERENCE.md)** - Quick commands and fixes
+
 ### Archivos de Configuración:
 - ⚙️ **[.env.example](.env.example)** - Variables de entorno
 - 🔧 **[vite.config.ts](vite.config.ts)** - Configuración de Vite optimizada
@@ -233,7 +240,9 @@ npm run electron:build:win
 → Ejecuta como administrador o desactiva antivirus temporalmente
 
 ### Documentación Adicional:
-- Consulta [DEPLOYMENT.md](DEPLOYMENT.md) para problemas de despliegue
+- Consulta [BUILD-TROUBLESHOOTING.md](BUILD-TROUBLESHOOTING.md) para errores de compilación
+- Consulta [PRODUCTION-TROUBLESHOOTING.md](PRODUCTION-TROUBLESHOOTING.md) para problemas de despliegue
+- Consulta [DEPLOYMENT-FAQ.md](DEPLOYMENT-FAQ.md) para preguntas frecuentes
 - Consulta [WINDOWS-GUIDE.md](WINDOWS-GUIDE.md) para problemas en Windows
 - Revisa [PRODUCTION-CHECKLIST.md](PRODUCTION-CHECKLIST.md) antes de desplegar
 

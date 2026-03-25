@@ -318,20 +318,22 @@ Esto abrirá la aplicación en una ventana de Electron.
 
 ## 🔧 Solución de Problemas
 
-### Problema: "Página en blanco después del despliegue"
+### Problemas Comunes Rápidos
+
+#### Problema: "Página en blanco después del despliegue"
 
 **Solución:** Verifica que la base path esté configurada correctamente:
 - En `vite.config.ts`, asegúrate de que `base: '/'` para dominio root
 - Si despliegas en subcarpeta: `base: '/nombre-carpeta/'`
 
-### Problema: "Los assets no se cargan (404)"
+#### Problema: "Los assets no se cargan (404)"
 
 **Solución:**
 - Verifica que el servidor esté configurado para servir archivos estáticos
 - Asegúrate de que las rutas relativas en el HTML sean correctas
 - Revisa la configuración del servidor web (Apache .htaccess o Nginx config)
 
-### Problema: "El ejecutable no abre en Windows"
+#### Problema: "El ejecutable no abre en Windows"
 
 **Solución:**
 - Ejecuta como administrador
@@ -339,7 +341,7 @@ Esto abrirá la aplicación en una ventana de Electron.
 - Verifica que .NET Framework esté instalado
 - Reinstala Microsoft Visual C++ Redistributable
 
-### Problema: "Error de permisos en Windows"
+#### Problema: "Error de permisos en Windows"
 
 **Solución:**
 - Ejecuta PowerShell como administrador
@@ -347,14 +349,57 @@ Esto abrirá la aplicación en una ventana de Electron.
 
 ---
 
+### 📚 Documentación Completa de Troubleshooting
+
+Para problemas más complejos o detallados, consulta la documentación especializada:
+
+#### 🔧 Errores de Compilación/Build
+**→ [BUILD-TROUBLESHOOTING.md](BUILD-TROUBLESHOOTING.md)**
+- Errores de TypeScript
+- Problemas con imports/módulos
+- Errores de CSS/Tailwind
+- Problemas de dependencias
+- Errores de Vite
+- Errores "Out of memory"
+
+#### 🚨 Problemas de Producción/Deployment
+**→ [PRODUCTION-TROUBLESHOOTING.md](PRODUCTION-TROUBLESHOOTING.md)**
+- Página en blanco en producción
+- Errores 404 para assets
+- Problemas de SSL/HTTPS
+- Issues de caché y CDN
+- Problemas de persistencia de datos
+- Performance lento en producción
+- Errores de dominio y DNS
+
+#### ❓ Preguntas Frecuentes
+**→ [DEPLOYMENT-FAQ.md](DEPLOYMENT-FAQ.md)**
+- Preguntas sobre hosting
+- Costos y opciones gratuitas
+- Configuración de dominios
+- Aplicaciones de escritorio
+- Seguridad y datos
+- Performance
+
+#### 🗺️ Hub Central de Troubleshooting
+**→ [TROUBLESHOOTING-INDEX.md](TROUBLESHOOTING-INDEX.md)**
+- Diagnósticos rápidos por síntoma
+- Mapa completo de documentación
+- Guías organizadas por tarea
+- Búsqueda por tipo de error
+
+---
+
 ## 📞 Soporte
 
-Si encuentras problemas durante el despliegue:
+### Si Encuentras Problemas:
 
-1. Revisa los logs de error en la consola del navegador
-2. Verifica los logs del servidor (si aplica)
-3. Consulta la documentación específica de tu plataforma de hosting
-4. Revisa el archivo `PRD.md` para detalles técnicos adicionales
+1. **Primero:** Consulta [TROUBLESHOOTING-INDEX.md](TROUBLESHOOTING-INDEX.md) para encontrar la guía correcta
+2. **Build fails:** Ver [BUILD-TROUBLESHOOTING.md](BUILD-TROUBLESHOOTING.md)
+3. **Production issues:** Ver [PRODUCTION-TROUBLESHOOTING.md](PRODUCTION-TROUBLESHOOTING.md)
+4. **Preguntas generales:** Ver [DEPLOYMENT-FAQ.md](DEPLOYMENT-FAQ.md)
+5. **Logs:** Revisa la consola del navegador (F12) y logs del servidor
+6. **Status:** Verifica el estado de tu plataforma de hosting
 
 ---
 
