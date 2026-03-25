@@ -86,3 +86,53 @@ export interface Order {
   updatedAt: string;
   completedAt?: string;
 }
+
+export interface DailyCloseReport {
+  id: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  closedBy: string;
+  
+  sales: {
+    totalOrders: number;
+    completedOrders: number;
+    pendingOrders: number;
+    cancelledOrders: number;
+    totalRevenue: number;
+    totalItems: number;
+    averageOrderValue: number;
+  };
+  
+  purchases: {
+    totalOrders: number;
+    completedOrders: number;
+    pendingOrders: number;
+    cancelledOrders: number;
+    totalCost: number;
+    totalItems: number;
+    averageOrderValue: number;
+  };
+  
+  inventory: {
+    totalProducts: number;
+    totalValue: number;
+    lowStockProducts: number;
+    outOfStockProducts: number;
+    categoriesCount: number;
+  };
+  
+  financial: {
+    grossRevenue: number;
+    totalCosts: number;
+    netProfit: number;
+    profitMargin: number;
+  };
+  
+  topProducts: {
+    productId: string;
+    productName: string;
+    quantitySold: number;
+    revenue: number;
+  }[];
+}

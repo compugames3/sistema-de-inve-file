@@ -12,7 +12,8 @@ import { InventoryTable } from '@/components/InventoryTable';
 import { StatisticsPanel } from '@/components/StatisticsPanel';
 import { CriticalStockAlert } from '@/components/CriticalStockAlert';
 import { OrdersPage } from '@/components/OrdersPage';
-import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon, Database, Upload, ClockCounterClockwise, CheckCircle, Bell, Receipt } from '@phosphor-icons/react';
+import { DailyClose } from '@/components/DailyClose';
+import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon, Database, Upload, ClockCounterClockwise, CheckCircle, Bell, Receipt, CalendarBlank } from '@phosphor-icons/react';
 import { generateId, exportToCSV, formatCurrency, getStockStatus } from '@/lib/inventory-utils';
 import { exportDatabase, importDatabase, createBackup } from '@/lib/database';
 import { useAudit } from '@/hooks/use-audit';
@@ -35,6 +36,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
   const [showAuditDialog, setShowAuditDialog] = useState(false);
+  const [showDailyClose, setShowDailyClose] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const {
@@ -327,10 +329,20 @@ export function Dashboard({ onLogout }: DashboardProps) {
           </div>
           <div className="flex gap-3 flex-wrap">
             {isAdmin && (
-              <Button variant="outline" onClick={() => setShowAuditDialog(true)}>
-                <ClockCounterClockwise className="w-4 h-4 mr-2" />
-                Auditoría ({auditLogs.length})
-              </Button>
+              <>
+                <Button 
+                  variant="default" 
+                  onClick={() => setShowDailyClose(true)}
+                  className="bg-accent hover:bg-accent/90"
+                >
+                  <CalendarBlank className="w-4 h-4 mr-2" weight="duotone" />
+                  Cierre del Día
+                </Button>
+                <Button variant="outline" onClick={() => setShowAuditDialog(true)}>
+                  <ClockCounterClockwise className="w-4 h-4 mr-2" />
+                  Auditoría ({auditLogs.length})
+                </Button>
+              </>
             )}
             <Button variant="outline" onClick={handleBackupDatabase}>
               <Database className="w-4 h-4 mr-2" />
@@ -498,6 +510,15 @@ export function Dashboard({ onLogout }: DashboardProps) {
             </DialogContent>
           </Dialog>
         </>
+      )}
+
+      {currentUser && (
+        <DailyClose
+          products={safeProducts}
+          currentUser={currentUser}
+          isOpen={showDailyClose}
+          onClose={() => setShowDailyClose(false)}
+        />
       )}
     </div>
   );
