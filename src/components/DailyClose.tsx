@@ -318,51 +318,62 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="end">
-                            <div className="p-3 border-b">
-                              <div className="flex items-center justify-between mb-2">
-                                <h4 className="text-sm font-semibold">Filtrar por Rango de Fechas</h4>
+                            <div className="p-4 border-b bg-muted/30">
+                              <div className="flex items-center justify-between mb-3">
+                                <div>
+                                  <h4 className="text-sm font-semibold mb-1">Filtrar por Rango de Fechas</h4>
+                                  <p className="text-xs text-muted-foreground">Selecciona un rango de fechas para filtrar el historial</p>
+                                </div>
                                 {hasActiveFilters && (
                                   <Button
                                     variant="ghost"
                                     size="sm"
                                     onClick={clearFilters}
-                                    className="h-auto p-1 text-xs"
+                                    className="h-auto p-1.5 text-xs hover:bg-destructive/10 hover:text-destructive"
                                   >
                                     <X className="w-3 h-3 mr-1" />
                                     Limpiar
                                   </Button>
                                 )}
                               </div>
-                              <div className="text-xs text-muted-foreground space-y-1">
-                                {dateRange.from && (
-                                  <div>
-                                    <span className="font-medium">Desde:</span>{' '}
-                                    {format(dateRange.from, "d 'de' MMMM, yyyy", { locale: es })}
-                                  </div>
-                                )}
-                                {dateRange.to && (
-                                  <div>
-                                    <span className="font-medium">Hasta:</span>{' '}
-                                    {format(dateRange.to, "d 'de' MMMM, yyyy", { locale: es })}
-                                  </div>
-                                )}
-                              </div>
+                              {(dateRange.from || dateRange.to) && (
+                                <div className="text-xs space-y-1.5 bg-primary/5 p-2 rounded-md border border-primary/10">
+                                  {dateRange.from && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-medium text-muted-foreground w-12">Desde:</span>
+                                      <span className="font-semibold text-foreground">
+                                        {format(dateRange.from, "d 'de' MMMM, yyyy", { locale: es })}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {dateRange.to && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-medium text-muted-foreground w-12">Hasta:</span>
+                                      <span className="font-semibold text-foreground">
+                                        {format(dateRange.to, "d 'de' MMMM, yyyy", { locale: es })}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
-                            <Calendar
-                              mode="range"
-                              selected={{
-                                from: dateRange.from,
-                                to: dateRange.to,
-                              }}
-                              onSelect={(range) => {
-                                setDateRange({
-                                  from: range?.from,
-                                  to: range?.to,
-                                });
-                              }}
-                              numberOfMonths={1}
-                              locale={es}
-                            />
+                            <div className="p-3">
+                              <Calendar
+                                mode="range"
+                                selected={{
+                                  from: dateRange.from,
+                                  to: dateRange.to,
+                                }}
+                                onSelect={(range) => {
+                                  setDateRange({
+                                    from: range?.from,
+                                    to: range?.to,
+                                  });
+                                }}
+                                numberOfMonths={1}
+                                locale={es}
+                              />
+                            </div>
                           </PopoverContent>
                         </Popover>
                       </div>
