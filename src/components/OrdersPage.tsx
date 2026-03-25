@@ -9,11 +9,12 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { OrderForm } from '@/components/OrderForm';
-import { Plus, ShoppingCart, ShoppingBag, Eye, CheckCircle, XCircle, Receipt, FilePdf } from '@phosphor-icons/react';
+import { Plus, ShoppingCart, ShoppingBag, Eye, CheckCircle, XCircle, Receipt, FilePdf, CalendarBlank, User as UserIconPh, Package } from '@phosphor-icons/react';
 import { generateOrderNumber, getOrderStatusBadgeVariant, getOrderStatusLabel, getOrderTypeLabel } from '@/lib/order-utils';
 import { generateId, formatCurrency } from '@/lib/inventory-utils';
 import { generateSalesPDF, generateRestockPDF } from '@/lib/pdf-utils';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface OrdersPageProps {
   products: Product[];
@@ -173,15 +174,17 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
     });
   };
 
+  const isMobile = useIsMobile();
+
   const renderOrdersTable = (type: OrderType) => {
     const filteredOrders = safeOrders.filter((o) => o.type === type);
 
     if (filteredOrders.length === 0) {
       return (
-        <Card className="p-12 text-center">
-          <Receipt className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-          <h3 className="text-lg font-semibold mb-2">No hay {type === 'sale' ? 'ventas' : 'compras'} registradas</h3>
-          <p className="text-muted-foreground mb-6">
+        <Card className="p-8 sm:p-12 text-center">
+          <Receipt className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 text-muted-foreground opacity-50" />
+          <h3 className="text-base sm:text-lg font-semibold mb-2">No hay {type === 'sale' ? 'ventas' : 'compras'} registradas</h3>
+          <p className="text-sm text-muted-foreground mb-4 sm:mb-6">
             Comienza creando tu primera {type === 'sale' ? 'venta' : 'compra'}
           </p>
           <Button onClick={() => openCreateDialog(type)}>
@@ -193,76 +196,156 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
     }
 
     return (
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         <div className="flex justify-end">
-          <Button onClick={() => openCreateDialog(type)}>
+          <Button onClick={() => openCreateDialog(type)} size={isMobile ? "sm" : "default"}>
             <Plus className="w-4 h-4 mr-2" />
             Nueva {type === 'sale' ? 'Venta' : 'Compra'}
           </Button>
         </div>
 
-        <Card>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>N° Orden</TableHead>
-                <TableHead>{type === 'sale' ? 'Cliente' : 'Proveedor'}</TableHead>
-                <TableHead>Items</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead>Fecha</TableHead>
-                <TableHead>Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredOrders.map((order) => (
-                <TableRow key={order.id}>
-                  <TableCell className="font-mono font-semibold">{order.orderNumber}</TableCell>
-                  <TableCell>{order.client || order.supplier || '-'}</TableCell>
-                  <TableCell>{order.items.length} producto(s)</TableCell>
-                  <TableCell className="font-semibold">{formatCurrency(order.total)}</TableCell>
-                  <TableCell>
-                    <Badge variant={getOrderStatusBadgeVariant(order.status)}>
-                      {getOrderStatusLabel(order.status)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {formatDate(order.createdAt)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setViewingOrder(order)}
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      {isAdmin && order.status === 'pending' && (
-                        <>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setCompletingOrderId(order.id)}
-                          >
-                            <CheckCircle className="w-4 h-4 text-success" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setCancellingOrderId(order.id)}
-                          >
-                            <XCircle className="w-4 h-4 text-destructive" />
-                          </Button>
-                        </>
-                      )}
+        {isMobile ? (
+          <div className="space-y-3">
+            {filteredOrders.map((order) => (
+              <Card key={order.id} className="p-4 hover:shadow-md transition-shadow">
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-mono font-bold text-sm text-primary mb-1">
+                        {order.orderNumber}
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Badge variant={getOrderStatusBadgeVariant(order.status)}>
+                          {getOrderStatusLabel(order.status)}
+                        </Badge>
+                      </div>
                     </div>
-                  </TableCell>
+                    <div className="text-right shrink-0">
+                      <div className="text-lg font-bold text-foreground">
+                        {formatCurrency(order.total)}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 pt-2 border-t">
+                    <div className="flex items-start gap-2">
+                      <UserIconPh className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" weight="duotone" />
+                      <div className="min-w-0">
+                        <div className="text-xs text-muted-foreground">{type === 'sale' ? 'Cliente' : 'Proveedor'}</div>
+                        <div className="text-sm font-medium truncate">{order.client || order.supplier || '-'}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <CalendarBlank className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" weight="duotone" />
+                      <div className="min-w-0">
+                        <div className="text-xs text-muted-foreground">Fecha</div>
+                        <div className="text-sm font-medium truncate">{formatDate(order.createdAt)}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 pt-2 border-t">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setViewingOrder(order)}
+                      className="flex-1"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Ver
+                    </Button>
+                    {isAdmin && order.status === 'pending' && (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCompletingOrderId(order.id)}
+                          className="flex-1 text-success hover:bg-success/10"
+                        >
+                          <CheckCircle className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCancellingOrderId(order.id)}
+                          className="flex-1 text-destructive hover:bg-destructive/10"
+                        >
+                          <XCircle className="w-4 h-4" />
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>N° Orden</TableHead>
+                  <TableHead>{type === 'sale' ? 'Cliente' : 'Proveedor'}</TableHead>
+                  <TableHead>Items</TableHead>
+                  <TableHead>Total</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead>Fecha</TableHead>
+                  <TableHead>Acciones</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Card>
+              </TableHeader>
+              <TableBody>
+                {filteredOrders.map((order) => (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-mono font-semibold">{order.orderNumber}</TableCell>
+                    <TableCell>{order.client || order.supplier || '-'}</TableCell>
+                    <TableCell>{order.items.length} producto(s)</TableCell>
+                    <TableCell className="font-semibold">{formatCurrency(order.total)}</TableCell>
+                    <TableCell>
+                      <Badge variant={getOrderStatusBadgeVariant(order.status)}>
+                        {getOrderStatusLabel(order.status)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {formatDate(order.createdAt)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setViewingOrder(order)}
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        {isAdmin && order.status === 'pending' && (
+                          <>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setCompletingOrderId(order.id)}
+                            >
+                              <CheckCircle className="w-4 h-4 text-success" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setCancellingOrderId(order.id)}
+                            >
+                              <XCircle className="w-4 h-4 text-destructive" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
+        )}
       </div>
     );
   };
@@ -284,41 +367,45 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 sm:mb-6">
         <div>
-          <h2 className="text-3xl font-bold text-foreground">Órdenes y Reportes</h2>
-          <p className="text-muted-foreground mt-1">Gestión de ventas, compras y generación de reportes PDF</p>
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">Órdenes y Reportes</h2>
+          <p className="text-sm text-muted-foreground mt-1">Gestión de ventas, compras y generación de reportes PDF</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
           <Button
             variant="outline"
             onClick={handleGenerateSalesPDF}
-            className="border-2 hover:bg-success/5 hover:border-success/50 transition-all shadow-sm font-semibold"
+            size={isMobile ? "sm" : "default"}
+            className="border-2 hover:bg-success/5 hover:border-success/50 transition-all shadow-sm font-semibold flex-1 sm:flex-none"
           >
-            <FilePdf className="w-4 h-4 mr-2" weight="duotone" />
-            Reporte Ventas PDF
+            <FilePdf className="w-4 h-4 sm:mr-2" weight="duotone" />
+            <span className="hidden sm:inline">Reporte Ventas PDF</span>
           </Button>
           <Button
             variant="outline"
             onClick={handleGenerateRestockPDF}
-            className="border-2 hover:bg-primary/5 hover:border-primary/50 transition-all shadow-sm font-semibold"
+            size={isMobile ? "sm" : "default"}
+            className="border-2 hover:bg-primary/5 hover:border-primary/50 transition-all shadow-sm font-semibold flex-1 sm:flex-none"
           >
-            <FilePdf className="w-4 h-4 mr-2" weight="duotone" />
-            Reporte Restock PDF
+            <FilePdf className="w-4 h-4 sm:mr-2" weight="duotone" />
+            <span className="hidden sm:inline">Reporte Restock PDF</span>
           </Button>
         </div>
       </div>
 
       <Tabs defaultValue="sales" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-2">
-          <TabsTrigger value="sales">
-            <ShoppingCart className="w-4 h-4 mr-2" />
-            Ventas ({salesOrders.length})
+        <TabsList className="grid w-full max-w-md grid-cols-2 h-auto">
+          <TabsTrigger value="sales" className="text-xs sm:text-sm">
+            <ShoppingCart className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Ventas ({salesOrders.length})</span>
+            <span className="sm:hidden">({salesOrders.length})</span>
           </TabsTrigger>
-          <TabsTrigger value="purchases">
-            <ShoppingBag className="w-4 h-4 mr-2" />
-            Compras ({purchaseOrders.length})
+          <TabsTrigger value="purchases" className="text-xs sm:text-sm">
+            <ShoppingBag className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Compras ({purchaseOrders.length})</span>
+            <span className="sm:hidden">({purchaseOrders.length})</span>
           </TabsTrigger>
         </TabsList>
 

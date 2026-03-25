@@ -360,8 +360,8 @@ export function Dashboard({ onLogout }: DashboardProps) {
             )}
           </TabsList>
 
-          <TabsContent value="inventory" className="space-y-8 animate-slide-up">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <TabsContent value="inventory" className="space-y-6 sm:space-y-8 animate-slide-up">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <div className="group hover:scale-105 transition-transform duration-300">
             <StatsCard
               title="Total de Productos"
@@ -378,7 +378,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
               iconColor="text-warning"
             />
           </div>
-          <div className="group hover:scale-105 transition-transform duration-300">
+          <div className="group hover:scale-105 transition-transform duration-300 sm:col-span-2 lg:col-span-1">
             <StatsCard
               title="Valor Total del Inventario"
               value={formatCurrency(totalValue)}
@@ -389,16 +389,16 @@ export function Dashboard({ onLogout }: DashboardProps) {
         </div>
 
         {!isAdmin && safeProducts.length > 0 && (
-          <div className="p-5 bg-gradient-to-br from-accent/10 to-accent/5 border-2 border-accent/30 rounded-2xl shadow-md">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center shrink-0">
-                <LockKey className="w-6 h-6 text-accent" weight="duotone" />
+          <div className="p-4 sm:p-5 bg-gradient-to-br from-accent/10 to-accent/5 border-2 border-accent/30 rounded-xl sm:rounded-2xl shadow-md">
+            <div className="flex items-start gap-3 sm:gap-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-accent/20 flex items-center justify-center shrink-0">
+                <LockKey className="w-5 h-5 sm:w-6 sm:h-6 text-accent" weight="duotone" />
               </div>
-              <div className="space-y-2">
-                <p className="text-base font-bold text-accent-foreground">
+              <div className="space-y-1 sm:space-y-2">
+                <p className="text-sm sm:text-base font-bold text-accent-foreground">
                   Permisos Granulares Activos
                 </p>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                   Puede ver {visibleProducts.length} de {safeProducts.length} productos. 
                   Sus permisos de edición y eliminación son específicos por producto.
                 </p>
@@ -413,44 +413,50 @@ export function Dashboard({ onLogout }: DashboardProps) {
           dismissedAlerts={dismissedAlerts || []}
         />
 
-        <div className="bg-white rounded-2xl shadow-lg border-2 border-border/30 overflow-hidden">
-          <div className="px-8 py-6 bg-gradient-to-r from-card to-secondary/20 border-b-2 border-border/30">
-            <div className="flex flex-col sm:flex-row gap-5 justify-between items-start sm:items-center">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border-2 border-border/30 overflow-hidden">
+          <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-5 lg:py-6 bg-gradient-to-r from-card to-secondary/20 border-b-2 border-border/30">
+            <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-5 justify-between items-start">
               <div>
-                <h2 className="text-2xl font-bold text-foreground mb-1.5">Productos en Base de Datos</h2>
-                <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                  <Database className="w-4 h-4" weight="duotone" />
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground mb-1 sm:mb-1.5">Productos en Base de Datos</h2>
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <Database className="w-3 h-3 sm:w-4 sm:h-4" weight="duotone" />
                   Persistencia local automática · Backups verificados
                 </p>
               </div>
-              <div className="flex gap-3 flex-wrap">
+              <div className="flex gap-2 sm:gap-3 flex-wrap w-full lg:w-auto">
                 {isAdmin && (
                   <Button 
                     variant="outline" 
                     onClick={() => setShowAuditDialog(true)}
-                    className="border-2 hover:bg-accent/5 hover:border-accent/50 transition-all shadow-sm font-semibold"
+                    size="sm"
+                    className="border-2 hover:bg-accent/5 hover:border-accent/50 transition-all shadow-sm font-semibold text-xs sm:text-sm"
                   >
-                    <ClockCounterClockwise className="w-4 h-4 mr-2" weight="duotone" />
-                    Auditoría ({auditLogs.length})
+                    <ClockCounterClockwise className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" weight="duotone" />
+                    <span className="hidden sm:inline">Auditoría ({auditLogs.length})</span>
+                    <span className="sm:hidden">({auditLogs.length})</span>
                   </Button>
                 )}
                 <Button 
                   variant="outline" 
                   onClick={handleBackupDatabase}
-                  className="border-2 hover:bg-primary/5 hover:border-primary/50 transition-all shadow-sm font-semibold"
+                  size="sm"
+                  className="border-2 hover:bg-primary/5 hover:border-primary/50 transition-all shadow-sm font-semibold text-xs sm:text-sm"
                 >
-                  <Database className="w-4 h-4 mr-2" weight="duotone" />
-                  Guardar BD
+                  <Database className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" weight="duotone" />
+                  <span className="hidden sm:inline">Guardar BD</span>
+                  <span className="sm:hidden">BD</span>
                 </Button>
                 {isAdmin && (
                   <>
                     <Button 
                       variant="outline" 
                       onClick={() => fileInputRef.current?.click()}
-                      className="border-2 hover:bg-success/5 hover:border-success/50 transition-all shadow-sm font-semibold"
+                      size="sm"
+                      className="border-2 hover:bg-success/5 hover:border-success/50 transition-all shadow-sm font-semibold text-xs sm:text-sm"
                     >
-                      <Upload className="w-4 h-4 mr-2" weight="duotone" />
-                      Cargar BD
+                      <Upload className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" weight="duotone" />
+                      <span className="hidden sm:inline">Cargar BD</span>
+                      <span className="sm:hidden">↑</span>
                     </Button>
                     <input
                       ref={fileInputRef}
@@ -465,25 +471,29 @@ export function Dashboard({ onLogout }: DashboardProps) {
                   variant="outline" 
                   onClick={handleExport} 
                   disabled={visibleProducts.length === 0}
-                  className="border-2 hover:bg-accent/5 hover:border-accent/50 transition-all shadow-sm font-semibold"
+                  size="sm"
+                  className="border-2 hover:bg-accent/5 hover:border-accent/50 transition-all shadow-sm font-semibold text-xs sm:text-sm"
                 >
-                  <Download className="w-4 h-4 mr-2" weight="duotone" />
-                  Exportar CSV
+                  <Download className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" weight="duotone" />
+                  <span className="hidden sm:inline">Exportar CSV</span>
+                  <span className="sm:hidden">CSV</span>
                 </Button>
                 {isAdmin && (
                   <Button 
                     onClick={() => setIsAddDialogOpen(true)}
-                    className="bg-gradient-to-br from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all font-bold"
+                    size="sm"
+                    className="bg-gradient-to-br from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all font-bold text-xs sm:text-sm"
                   >
-                    <Plus className="w-5 h-5 mr-2" weight="bold" />
-                    Agregar Producto
+                    <Plus className="w-4 h-4 sm:w-5 sm:h-5 sm:mr-2" weight="bold" />
+                    <span className="hidden sm:inline">Agregar Producto</span>
+                    <span className="sm:hidden">+</span>
                   </Button>
                 )}
               </div>
             </div>
           </div>
 
-          <div className="p-6">
+          <div className="p-3 sm:p-4 lg:p-6">
             <InventoryTable
               products={visibleProducts}
               currentUser={currentUser}
