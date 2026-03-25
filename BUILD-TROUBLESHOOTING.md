@@ -1,19 +1,19 @@
 # 🔧 Build & Deployment Troubleshooting Guide
 
-Comprehensive troubleshooting for production builds, deployment issues, and runtime errors in the Josimar Cell Inventory System.
-
 ## 📑 Table of Contents
 
-- [Quick Diagnostics](#quick-diagnostics)
-- [Build Errors](#build-errors)
-- [Deployment Issues](#deployment-issues)
-- [Runtime Errors](#runtime-errors)
-- [Performance Problems](#performance-problems)
-- [Browser Compatibility](#browser-compatibility)
-- [Desktop App Issues](#desktop-app-issues)
-- [Advanced Debugging](#advanced-debugging)
+- [Deployment Issues](#
 
----
+- [Desktop App Issues](#desktop-app-issue
+
+
+
+
+# 1. Clear all caches and reinstall
+npm install
+# 2. Clear Vite cache specifically
+
+npm
 
 ## 🚀 Quick Diagnostics
 
@@ -60,7 +60,7 @@ error during build:
 [vite]: Rollup failed to resolve import
 ```
 
-**Solutions:**
+     }
 
 1. **Check import paths**
    ```typescript
@@ -137,88 +137,88 @@ The 'bg-primary' class does not exist
 
 **Solutions:**
 
-1. **Verify Tailwind is installed**
-   ```bash
-   npm list @tailwindcss/vite
-   ```
+   }
 
-2. **Check index.css has correct imports**
    ```css
-   @import 'tailwindcss';
-   @import "tw-animate-css";
-   
-   :root {
-     --background: oklch(0.98 0 0);
-     --primary: oklch(0.35 0.08 250);
-     /* ... more variables */
-   }
-   
-   @theme {
-     --color-background: var(--background);
-     --color-primary: var(--primary);
-     /* ... more mappings */
-   }
-   ```
+   @th
 
-3. **Ensure @theme block exists**
-   ```css
-   /* REQUIRED if using @apply border-border */
-   @theme {
-     --color-border: var(--border);
-     /* other color mappings */
-   }
    ```
-
 ---
-
-### Error: Out of memory during build
-
+### Error: Out of memory 
 #### Symptom:
-```
-FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
-```
+FAT
 
-**Solutions:**
 
-1. **Increase Node memory**
    ```bash
-   # Windows
-   set NODE_OPTIONS=--max-old-space-size=4096 && npm run build
+   set NODE_OPTIONS=--max-old
+   #
    
-   # Linux/Mac
-   NODE_OPTIONS=--max-old-space-size=4096 npm run build
-   ```
-
-2. **Add to package.json**
-   ```json
+2. **Add to
    {
-     "scripts": {
-       "build": "NODE_OPTIONS=--max-old-space-size=4096 vite build"
-     }
+       "build": "NODE_OPTIONS=--max-o
    }
-   ```
 
-3. **Optimize large dependencies**
-   - Remove unused dependencies
-   - Use dynamic imports for heavy components
-   - Optimize images before importing
+   - R
 
 ---
-
-## 🌐 Deployment Issues
-
+## 🌐 Dep
 ### Issue: Blank page after deployment
+#### Sympto
 
+
+   `
+   exp
+
+   
+
+   ```
+
+   - Check if
+
+   - Open browser DevTools → Console tab
+
+
+
+
+GET https://example.com/ass
+
+
+   ```
+   
+   │   ├── ind
+   │   └── logo-xyz.png
+   ```
+
+   **For Apache (.htaccess
+   <IfModu
+    
+     RewriteCond 
+     RewriteRule . /index.html [L]
+   ```
+   *
+   loc
+
+
+   - Don't upload individual fi
+   - Include hidden files if any
+---
+
+###
+
+
+
+   ```apache
+
+   RewriteRul
+   
+
+     try_files
+
+2. **For static hosts (Netlify/Vercel)**
+   - No configur
+---
+### Issue: Environment variables
 #### Symptom:
-Page loads but shows only white screen, no errors in build.
-
-**Solutions:**
-
-1. **Check base path in vite.config.ts**
-   ```typescript
-   // For root domain (https://example.com)
-   export default defineConfig({
-     base: '/'
    })
    
    // For subdirectory (https://example.com/app/)
@@ -440,309 +440,309 @@ Uncaught Error: Maximum update depth exceeded
    // ✅ Correct
    useEffect(() => {
      setCount(someValue)
-   }, [someValue])
-   ```
 
----
+   - S
 
-## 🐌 Performance Problems
 
-### Issue: Slow initial load
 
-**Solutions:**
 
-1. **Enable compression on server**
-   
-   **Nginx:**
-   ```nginx
-   gzip on;
-   gzip_vary on;
-   gzip_types text/plain text/css application/javascript;
-   ```
-   
-   **Apache:**
-   ```apache
-   <IfModule mod_deflate.c>
-     AddOutputFilterByType DEFLATE text/html text/css application/javascript
-   </IfModule>
-   ```
 
-2. **Use dynamic imports for heavy components**
-   ```typescript
-   // Split large components
-   const Dashboard = lazy(() => import('@/components/Dashboard'))
-   
-   <Suspense fallback={<div>Loading...</div>}>
-     <Dashboard />
-   </Suspense>
-   ```
-
-3. **Optimize images**
-   - Compress before importing
-   - Use WebP format when possible
-   - Use appropriate sizes
-
----
-
-### Issue: Large bundle size
-
-**Solutions:**
-
-1. **Analyze bundle**
-   ```bash
-   npm run build -- --mode analyze
-   ```
-
-2. **Remove unused dependencies**
-   ```bash
-   npm uninstall package-name
-   ```
-
-3. **Check for duplicate dependencies**
-   ```bash
-   npm dedupe
-   ```
-
----
-
-## 🌍 Browser Compatibility
-
-### Issue: App doesn't work in older browsers
-
-**Solutions:**
-
-1. **Check .browserslistrc**
-   ```
-   > 0.5%
-   last 2 versions
-   Firefox ESR
-   not dead
-   not IE 11
-   ```
-
-2. **Add compatibility check page**
-   - Already included in `public/compatibility-check.html`
-   - Redirects unsupported browsers to info page
-
-3. **Test in target browsers**
-   - Chrome 90+
-   - Firefox 88+
-   - Safari 14+
-   - Edge 90+
-
----
-
-### Issue: CSS not working in Safari
-
-**Solutions:**
-
-1. **Check for unsupported CSS features**
-   ```css
-   /* Some CSS features may need prefixes */
-   -webkit-backdrop-filter: blur(10px);
-   backdrop-filter: blur(10px);
-   ```
-
-2. **Test oklch color support**
-   - Safari 15+ supports oklch
-   - Fallback colors may be needed for Safari 14
-
----
-
-## 💻 Desktop App Issues
-
-### Error: Executable won't build
-
-#### Symptom:
-```
-npm run electron:build:win fails
 ```
 
-**Solutions:**
+1. **Install r
 
-1. **Install required dependencies**
-   ```bash
-   npm install electron electron-builder --save-dev
-   ```
 
-2. **Check package.json has electron config**
-   ```json
-   {
-     "main": "electron.js",
-     "build": {
-       "appId": "com.josimarcell.inventory",
-       "productName": "Josimar Cell - Sistema de Inventario"
+   
+     "main": 
+       "app
      }
-   }
    ```
-
 3. **Build web app first**
-   ```bash
-   npm run build
-   npm run electron:build:win
-   ```
-
+   npm
+   
 ---
-
-### Error: Executable won't run on Windows
-
+### Error: E
 #### Symptom:
-Double-clicking .exe does nothing or shows error.
 
-**Solutions:**
 
-1. **Run as administrator**
-   - Right-click → Run as administrator
+   - R
 
-2. **Check antivirus**
-   - Temporarily disable antivirus
    - Add exception for the .exe file
-
-3. **Install dependencies**
-   ```bash
+3. **Install dep
    # Install .NET Framework
-   # Install Visual C++ Redistributable
    ```
-
-4. **Check Windows version**
-   - Minimum: Windows 7
+4. 
    - Recommended: Windows 10/11
-
 ---
+### Error: App
+**Solu
 
-### Error: App crashes on startup (Desktop)
-
-**Solutions:**
-
-1. **Check electron logs**
-   ```bash
    # Logs location:
-   # Windows: %APPDATA%\Josimar Cell\logs\
-   # Mac: ~/Library/Logs/Josimar Cell/
-   # Linux: ~/.config/Josimar Cell/logs/
+   # Mac: ~/Library/Logs/Josim
    ```
+2. **Run in dev mode to se
 
-2. **Run in dev mode to see errors**
-   ```bash
-   npm run electron:dev
-   ```
 
-3. **Clear app data**
-   ```bash
-   # Windows: Delete folder
+
    %APPDATA%\Josimar Cell\
-   ```
 
----
 
-## 🔍 Advanced Debugging
 
-### Enable verbose logging
 
-```bash
-# Vite verbose mode
-npm run dev -- --debug
+# Vite ver
 
-# Build with source maps
-npm run build -- --sourcemap
+npm ru
 
-# Electron with DevTools open
-npm run electron:dev
 ```
-
 ---
+### Browser DevTools Checklis
+1. **C
 
-### Browser DevTools Checklist
 
-1. **Console Tab**
-   - Look for red errors
-   - Check for warnings about deprecated APIs
-   - Note any failed requests
+   - Check
+   - Check fi
+3. **A
 
-2. **Network Tab**
-   - Check for 404 errors
-   - Verify assets load (200 status)
-   - Check file sizes (should be minified in production)
 
-3. **Application Tab**
-   - Check IndexedDB for stored data
-   - Verify service worker (if using PWA)
-   - Check localStorage/sessionStorage
 
-4. **Performance Tab**
-   - Record page load
-   - Look for long tasks
    - Check memory usage
-
----
 
 ### Common File Issues
 
-#### Missing files after build
-
 **Check:**
-```bash
-# Verify dist/ contents
-ls -R dist/
 
-# Should see:
-# dist/index.html
-# dist/assets/
-# dist/icon.svg
+
+# dist
+# dist/ic
+
+
+# Fix permi
 ```
-
-#### Incorrect permissions (Linux/Mac)
-
-```bash
-# Fix permissions
-chmod -R 755 dist/
-```
-
 ---
 
-## 🆘 Emergency Checklist
-
-If nothing works, try this in order:
-
+If nothing works, try this in order
 - [ ] `rm -rf node_modules package-lock.json`
-- [ ] `npm install`
 - [ ] `rm -rf dist .vite`
-- [ ] `npm run build`
-- [ ] `npm run preview` (test locally)
-- [ ] Check console for errors
-- [ ] Verify all files uploaded to server
-- [ ] Clear browser cache
-- [ ] Try in incognito/private window
-- [ ] Test in different browser
-- [ ] Check server logs (if VPS)
 
+- [ ] Verify all files uploade
+- [ ] Try in in
+- [ ] Check serv
 ---
+## 📞 Getting
 
-## 📞 Getting Help
+1. 
 
-When asking for help, provide:
-
-1. **Complete error message** (copy full text)
-2. **Steps to reproduce** (what you did before the error)
-3. **Environment info:**
-   ```bash
    node --version
-   npm --version
-   # OS and browser version
-   ```
-4. **Build output** (copy terminal output)
-5. **Console errors** (from browser DevTools)
 
+4. **Build out
+
+
+
+- [PRODUCTION-CHECKLIST.md](PRODUCTION-CHECK
+- [WINDOWS-GUIDE.md](WINDOWS-GUIDE.md) 
 ---
+**Last
 
-## 🔗 Related Documentation
 
-- [DEPLOYMENT.md](DEPLOYMENT.md) - Deployment guide
-- [PRODUCTION-CHECKLIST.md](PRODUCTION-CHECKLIST.md) - Pre-deployment checklist
-- [QUICKSTART.md](QUICKSTART.md) - Quick start guide
-- [WINDOWS-GUIDE.md](WINDOWS-GUIDE.md) - Windows-specific guide
 
----
 
-**Last Updated:** 2024  
-**Version:** 1.0.0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
