@@ -17,9 +17,10 @@ import { toast } from 'sonner';
 interface OrdersPageProps {
   products: Product[];
   currentUser: User;
+  onUpdateProducts: (updater: (products: Product[]) => Product[]) => void;
 }
 
-export function OrdersPage({ products, currentUser }: OrdersPageProps) {
+export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPageProps) {
   const [orders, setOrders] = useKV<Order[]>('system-orders', []);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [orderType, setOrderType] = useState<OrderType>('sale');
@@ -91,6 +92,36 @@ export function OrdersPage({ products, currentUser }: OrdersPageProps) {
         setCompletingOrderId(null);
         return;
       }
+
+      onUpdateProducts((currentProducts) => 
+        currentProducts.map((p) => {
+          const orderItem = order.items.find((item) => item.productId === p.id);
+          if (orderItem) {
+            return {
+              ...p,
+              quantity: p.quantity - orderItem.quantity,
+              updatedAt: new Date().toISOString(),
+            };
+          }
+          return p;
+        })
+      );
+    }
+
+    if (order.type === 'purchase') {
+      onUpdateProducts((currentProducts) => 
+        currentProducts.map((p) => {
+          const orderItem = order.items.find((item) => item.productId === p.id);
+          if (orderItem) {
+            return {
+              ...p,
+              quantity: p.quantity + orderItem.quantity,
+              updatedAt: new Date().toISOString(),
+            };
+          }
+          return p;
+        })
+      );
     }
 
     setOrders((current) =>
@@ -107,7 +138,9 @@ export function OrdersPage({ products, currentUser }: OrdersPageProps) {
     );
 
     setCompletingOrderId(null);
-    toast.success('Orden completada exitosamente');
+    const orderTypeLabel = order.type === 'sale' ? 'Venta' : 'Compra';
+    const inventoryAction = order.type === 'sale' ? 'descontada del' : 'agregada al';
+    toast.success(`${orderTypeLabel} completada exitosamente y ${inventoryAction} inventario`);
   };
 
   const handleCancelOrder = () => {

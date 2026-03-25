@@ -457,7 +457,11 @@ export function Dashboard({ onLogout }: DashboardProps) {
 
           <TabsContent value="orders">
             {currentUser && (
-              <OrdersPage products={safeProducts} currentUser={currentUser} />
+              <OrdersPage 
+                products={safeProducts} 
+                currentUser={currentUser}
+                onUpdateProducts={(updater) => setProducts((current) => updater(current || []))}
+              />
             )}
           </TabsContent>
 
