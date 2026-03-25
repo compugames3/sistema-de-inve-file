@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useKV } from '@github/spark/hooks';
 import { Order, Product, User, DailyCloseReport } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 import { 
   CalendarBlank, 
   TrendUp, 
@@ -21,12 +23,17 @@ import {
   Download,
   Printer,
   Lock,
-  FilePdf
+  FilePdf,
+  Funnel,
+  X
 } from '@phosphor-icons/react';
 import { generateDailyCloseReport, exportDailyCloseReport, printDailyCloseReport } from '@/lib/daily-close-utils';
 import { formatCurrency } from '@/lib/inventory-utils';
 import { generateDailyClosePDF } from '@/lib/pdf-utils';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 
 interface DailyCloseProps {
   products: Product[];
@@ -39,6 +46,10 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
   const [isClosing, setIsClosing] = useState(false);
   const [currentReport, setCurrentReport] = useState<DailyCloseReport | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: undefined,
+    to: undefined,
+  });
 
   const handleGenerateClose = () => {
     setIsClosing(true);
@@ -97,6 +108,40 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
     });
   };
 
+  const filteredHistory = useMemo(() => {
+    if (!closeHistory) return [];
+    
+    if (!dateRange.from && !dateRange.to) {
+      return closeHistory;
+    }
+
+    return closeHistory.filter((report) => {
+      const reportDate = new Date(report.date);
+      const fromDate = dateRange.from ? new Date(dateRange.from) : null;
+      const toDate = dateRange.to ? new Date(dateRange.to) : null;
+
+      if (fromDate && toDate) {
+        fromDate.setHours(0, 0, 0, 0);
+        toDate.setHours(23, 59, 59, 999);
+        return reportDate >= fromDate && reportDate <= toDate;
+      } else if (fromDate) {
+        fromDate.setHours(0, 0, 0, 0);
+        return reportDate >= fromDate;
+      } else if (toDate) {
+        toDate.setHours(23, 59, 59, 999);
+        return reportDate <= toDate;
+      }
+
+      return true;
+    });
+  }, [closeHistory, dateRange]);
+
+  const clearFilters = () => {
+    setDateRange({ from: undefined, to: undefined });
+  };
+
+  const hasActiveFilters = dateRange.from !== undefined || dateRange.to !== undefined;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -152,10 +197,83 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
               <div className="flex flex-col">
                 <Card className="flex-1 flex flex-col">
                   <CardHeader>
-                    <CardTitle className="text-lg">Historial de Cierres</CardTitle>
-                    <CardDescription>
-                      {closeHistory?.length || 0} cierre{(closeHistory?.length || 0) !== 1 ? 's' : ''} registrado{(closeHistory?.length || 0) !== 1 ? 's' : ''}
-                    </CardDescription>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-lg">Historial de Cierres</CardTitle>
+                        <CardDescription>
+                          {filteredHistory.length} de {closeHistory?.length || 0} cierre{(closeHistory?.length || 0) !== 1 ? 's' : ''}
+                        </CardDescription>
+                      </div>
+                      <div className="flex gap-2">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant={hasActiveFilters ? "default" : "outline"}
+                              size="sm"
+                              className={cn(
+                                "gap-2",
+                                hasActiveFilters && "bg-primary text-primary-foreground"
+                              )}
+                            >
+                              <Funnel className="w-4 h-4" weight={hasActiveFilters ? "fill" : "regular"} />
+                              Filtrar por Fecha
+                              {hasActiveFilters && (
+                                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                                  {dateRange.from && dateRange.to ? '2' : '1'}
+                                </Badge>
+                              )}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="end">
+                            <div className="p-3 border-b">
+                              <div className="flex items-center justify-between mb-2">
+                                <h4 className="text-sm font-semibold">Filtrar por Rango de Fechas</h4>
+                                {hasActiveFilters && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={clearFilters}
+                                    className="h-auto p-1 text-xs"
+                                  >
+                                    <X className="w-3 h-3 mr-1" />
+                                    Limpiar
+                                  </Button>
+                                )}
+                              </div>
+                              <div className="text-xs text-muted-foreground space-y-1">
+                                {dateRange.from && (
+                                  <div>
+                                    <span className="font-medium">Desde:</span>{' '}
+                                    {format(dateRange.from, "d 'de' MMMM, yyyy", { locale: es })}
+                                  </div>
+                                )}
+                                {dateRange.to && (
+                                  <div>
+                                    <span className="font-medium">Hasta:</span>{' '}
+                                    {format(dateRange.to, "d 'de' MMMM, yyyy", { locale: es })}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <Calendar
+                              mode="range"
+                              selected={{
+                                from: dateRange.from,
+                                to: dateRange.to,
+                              }}
+                              onSelect={(range) => {
+                                setDateRange({
+                                  from: range?.from,
+                                  to: range?.to,
+                                });
+                              }}
+                              numberOfMonths={2}
+                              locale={es}
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent className="flex-1 overflow-hidden">
                     <ScrollArea className="h-[500px] pr-4">
@@ -167,9 +285,26 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                             Genera tu primer cierre del día para comenzar
                           </p>
                         </div>
+                      ) : filteredHistory.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                          <Funnel className="w-16 h-16 text-muted-foreground/50 mb-4" weight="thin" />
+                          <p className="text-muted-foreground">No se encontraron cierres en este rango de fechas</p>
+                          <p className="text-sm text-muted-foreground/70 mt-2">
+                            Intenta ajustar los filtros de búsqueda
+                          </p>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={clearFilters}
+                            className="mt-4"
+                          >
+                            <X className="w-4 h-4 mr-2" />
+                            Limpiar Filtros
+                          </Button>
+                        </div>
                       ) : (
                         <div className="space-y-3">
-                          {closeHistory.slice().reverse().map((report) => (
+                          {filteredHistory.slice().reverse().map((report) => (
                             <Card key={report.id} className="border-2 hover:border-primary/50 transition-colors">
                               <CardHeader className="pb-3">
                                 <div className="flex items-start justify-between">
