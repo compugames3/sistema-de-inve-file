@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Checkbox } from '@/components/ui/checkbox';
 import { OrderForm } from '@/components/OrderForm';
 import { Plus, ShoppingCart, ShoppingBag, Eye, CheckCircle, XCircle, Receipt, FilePdf, CalendarBlank, User as UserIconPh, Package, CaretUp, CaretDown, CaretUpDown, Trash } from '@phosphor-icons/react';
 import { generateOrderNumber, getOrderStatusBadgeVariant, getOrderStatusLabel, getOrderTypeLabel } from '@/lib/order-utils';
@@ -35,6 +36,9 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
   const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null);
   const [sortField, setSortField] = useState<SortField>('date');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [selectedOrderIds, setSelectedOrderIds] = useState<Set<string>>(new Set());
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [showFinalDeleteConfirmation, setShowFinalDeleteConfirmation] = useState(false);
 
   const safeOrders = orders || [];
   const isAdmin = currentUser?.isAdmin ?? false;
@@ -201,6 +205,59 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
     toast.success(`Orden ${order?.orderNumber} eliminada permanentemente`);
   };
 
+  const handleToggleSelectOrder = (orderId: string) => {
+    setSelectedOrderIds((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(orderId)) {
+        newSet.delete(orderId);
+      } else {
+        newSet.add(orderId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleToggleSelectAll = (type: OrderType) => {
+    const filteredOrders = safeOrders.filter((o) => o.type === type);
+    const allIds = filteredOrders.map((o) => o.id);
+    const allSelected = allIds.every((id) => selectedOrderIds.has(id));
+
+    if (allSelected) {
+      setSelectedOrderIds(new Set());
+    } else {
+      setSelectedOrderIds(new Set(allIds));
+    }
+  };
+
+  const handleDeleteMultiple = () => {
+    if (selectedOrderIds.size === 0) return;
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleConfirmFirstStep = () => {
+    setShowDeleteConfirmation(false);
+    setShowFinalDeleteConfirmation(true);
+  };
+
+  const handleFinalDeleteConfirm = () => {
+    const ordersToDelete = Array.from(selectedOrderIds);
+    const deletedOrders = safeOrders.filter((o) => ordersToDelete.includes(o.id));
+    
+    setOrders((current) =>
+      (current || []).filter((o) => !ordersToDelete.includes(o.id))
+    );
+
+    setSelectedOrderIds(new Set());
+    setShowFinalDeleteConfirmation(false);
+    
+    toast.success(`${deletedOrders.length} orden${deletedOrders.length !== 1 ? 'es' : ''} eliminada${deletedOrders.length !== 1 ? 's' : ''} permanentemente`);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirmation(false);
+    setShowFinalDeleteConfirmation(false);
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-ES', {
       year: 'numeric',
@@ -249,6 +306,11 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
       });
     }, [safeOrders, type, sortField, sortDirection]);
 
+    const selectedCount = Array.from(selectedOrderIds).filter(id => 
+      filteredOrders.some(o => o.id === id)
+    ).length;
+    const allSelected = filteredOrders.length > 0 && selectedCount === filteredOrders.length;
+
     if (filteredOrders.length === 0) {
       return (
         <Card className="p-8 sm:p-12 text-center">
@@ -267,7 +329,19 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
 
     return (
       <div className="space-y-3 sm:space-y-4">
-        <div className="flex justify-end">
+        <div className="flex justify-between items-center gap-3">
+          <div className="flex items-center gap-2">
+            {isAdmin && selectedCount > 0 && (
+              <Button
+                variant="destructive"
+                size={isMobile ? "sm" : "default"}
+                onClick={handleDeleteMultiple}
+              >
+                <Trash className="w-4 h-4 mr-2" />
+                Eliminar ({selectedCount})
+              </Button>
+            )}
+          </div>
           <Button onClick={() => openCreateDialog(type)} size={isMobile ? "sm" : "default"}>
             <Plus className="w-4 h-4 mr-2" />
             Nueva {type === 'sale' ? 'Venta' : 'Compra'}
@@ -367,6 +441,15 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
             <Table>
               <TableHeader>
                 <TableRow>
+                  {isAdmin && (
+                    <TableHead className="w-12">
+                      <Checkbox
+                        checked={allSelected}
+                        onCheckedChange={() => handleToggleSelectAll(type)}
+                        aria-label="Seleccionar todas las órdenes"
+                      />
+                    </TableHead>
+                  )}
                   <TableHead>
                     <Button
                       variant="ghost"
@@ -439,6 +522,15 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
               <TableBody>
                 {filteredOrders.map((order) => (
                   <TableRow key={order.id}>
+                    {isAdmin && (
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedOrderIds.has(order.id)}
+                          onCheckedChange={() => handleToggleSelectOrder(order.id)}
+                          aria-label={`Seleccionar orden ${order.orderNumber}`}
+                        />
+                      </TableCell>
+                    )}
                     <TableCell className="font-mono font-semibold">{order.orderNumber}</TableCell>
                     <TableCell>{order.client || order.supplier || '-'}</TableCell>
                     <TableCell>{order.items.length} producto(s)</TableCell>
@@ -722,6 +814,52 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
                   Eliminar Orden
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <AlertDialog open={showDeleteConfirmation} onOpenChange={(open) => !open && handleCancelDelete()}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>⚠️ Primera Confirmación</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Está a punto de eliminar <span className="font-semibold text-destructive">{selectedOrderIds.size} orden{selectedOrderIds.size !== 1 ? 'es' : ''}</span> permanentemente.
+                  <br /><br />
+                  Esta es una acción <span className="font-semibold">irreversible</span>. ¿Está seguro de que desea continuar?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={handleCancelDelete}>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleConfirmFirstStep}
+                  className="bg-warning text-warning-foreground hover:bg-warning/90"
+                >
+                  Continuar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <AlertDialog open={showFinalDeleteConfirmation} onOpenChange={(open) => !open && handleCancelDelete()}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>🚨 Confirmación Final</AlertDialogTitle>
+                <AlertDialogDescription>
+                  <span className="font-bold text-destructive">ÚLTIMA ADVERTENCIA:</span> Va a eliminar permanentemente <span className="font-semibold">{selectedOrderIds.size} orden{selectedOrderIds.size !== 1 ? 'es' : ''}</span>.
+                  <br /><br />
+                  Los datos eliminados <span className="font-semibold underline">NO se podrán recuperar</span>.
+                  <br /><br />
+                  ¿Confirma que desea eliminar estas órdenes de forma permanente?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={handleCancelDelete}>No, volver atrás</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleFinalDeleteConfirm}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Sí, eliminar permanentemente
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
