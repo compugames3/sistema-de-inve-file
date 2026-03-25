@@ -555,13 +555,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
       {isAdmin && (
         <>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Agregar Nuevo Producto</DialogTitle>
-                <DialogDescription>
-                  Complete el formulario para agregar un nuevo producto al inventario
-                </DialogDescription>
-              </DialogHeader>
+            <DialogContent className="max-w-3xl h-[85vh] p-0 gap-0 overflow-hidden">
               <ProductForm
                 onSubmit={handleAddProduct}
                 onCancel={() => setIsAddDialogOpen(false)}
@@ -571,13 +565,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
           </Dialog>
 
           <Dialog open={!!editingProduct} onOpenChange={(open) => !open && setEditingProduct(null)}>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Editar Producto</DialogTitle>
-                <DialogDescription>
-                  Modifique la información del producto
-                </DialogDescription>
-              </DialogHeader>
+            <DialogContent className="max-w-3xl h-[85vh] p-0 gap-0 overflow-hidden">
               {editingProduct && (
                 <ProductForm
                   product={editingProduct}
