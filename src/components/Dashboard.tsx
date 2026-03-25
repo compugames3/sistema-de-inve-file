@@ -24,7 +24,7 @@ interface DashboardProps {
   onLogout: () => void;
 }
 
-type ViewType = 'inventory' | 'orders';
+type ViewType = 'inventory' | 'orders' | 'dailyclose';
 
 export function Dashboard({ onLogout }: DashboardProps) {
   const [currentView, setCurrentView] = useState<ViewType>('inventory');
@@ -36,7 +36,6 @@ export function Dashboard({ onLogout }: DashboardProps) {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
   const [showAuditDialog, setShowAuditDialog] = useState(false);
-  const [showDailyClose, setShowDailyClose] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const {
@@ -268,7 +267,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
 
       <main className="container mx-auto px-6 py-6">
         <Tabs value={currentView} onValueChange={(value) => setCurrentView(value as ViewType)} className="w-full">
-          <TabsList className="grid w-full max-w-md mb-6 grid-cols-2">
+          <TabsList className="grid w-full max-w-2xl mb-6 grid-cols-3">
             <TabsTrigger value="inventory">
               <Package className="w-4 h-4 mr-2" />
               Inventario
@@ -276,6 +275,10 @@ export function Dashboard({ onLogout }: DashboardProps) {
             <TabsTrigger value="orders">
               <Receipt className="w-4 h-4 mr-2" />
               Órdenes
+            </TabsTrigger>
+            <TabsTrigger value="dailyclose">
+              <CalendarBlank className="w-4 h-4 mr-2" />
+              Cierre del Día
             </TabsTrigger>
           </TabsList>
 
@@ -329,20 +332,10 @@ export function Dashboard({ onLogout }: DashboardProps) {
           </div>
           <div className="flex gap-3 flex-wrap">
             {isAdmin && (
-              <>
-                <Button 
-                  variant="default" 
-                  onClick={() => setShowDailyClose(true)}
-                  className="bg-accent hover:bg-accent/90"
-                >
-                  <CalendarBlank className="w-4 h-4 mr-2" weight="duotone" />
-                  Cierre del Día
-                </Button>
-                <Button variant="outline" onClick={() => setShowAuditDialog(true)}>
-                  <ClockCounterClockwise className="w-4 h-4 mr-2" />
-                  Auditoría ({auditLogs.length})
-                </Button>
-              </>
+              <Button variant="outline" onClick={() => setShowAuditDialog(true)}>
+                <ClockCounterClockwise className="w-4 h-4 mr-2" />
+                Auditoría ({auditLogs.length})
+              </Button>
             )}
             <Button variant="outline" onClick={handleBackupDatabase}>
               <Database className="w-4 h-4 mr-2" />
@@ -386,6 +379,15 @@ export function Dashboard({ onLogout }: DashboardProps) {
           <TabsContent value="orders">
             {currentUser && (
               <OrdersPage products={safeProducts} currentUser={currentUser} />
+            )}
+          </TabsContent>
+
+          <TabsContent value="dailyclose">
+            {currentUser && (
+              <DailyClose
+                products={safeProducts}
+                currentUser={currentUser}
+              />
             )}
           </TabsContent>
         </Tabs>
@@ -512,14 +514,6 @@ export function Dashboard({ onLogout }: DashboardProps) {
         </>
       )}
 
-      {currentUser && (
-        <DailyClose
-          products={safeProducts}
-          currentUser={currentUser}
-          isOpen={showDailyClose}
-          onClose={() => setShowDailyClose(false)}
-        />
-      )}
     </div>
   );
 }

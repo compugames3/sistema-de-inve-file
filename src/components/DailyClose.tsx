@@ -30,11 +30,9 @@ import { toast } from 'sonner';
 interface DailyCloseProps {
   products: Product[];
   currentUser: User;
-  isOpen: boolean;
-  onClose: () => void;
 }
 
-export function DailyClose({ products, currentUser, isOpen, onClose }: DailyCloseProps) {
+export function DailyClose({ products, currentUser }: DailyCloseProps) {
   const [orders] = useKV<Order[]>('system-orders', []);
   const [closeHistory, setCloseHistory] = useKV<DailyCloseReport[]>('daily-close-history', []);
   const [isClosing, setIsClosing] = useState(false);
@@ -66,7 +64,6 @@ export function DailyClose({ products, currentUser, isOpen, onClose }: DailyClos
     
     setShowConfirmation(false);
     setCurrentReport(null);
-    onClose();
   };
 
   const handleExportReport = (report: DailyCloseReport) => {
@@ -94,35 +91,32 @@ export function DailyClose({ products, currentUser, isOpen, onClose }: DailyClos
     });
   };
 
-  if (!isOpen) return null;
-
   return (
-    <>
-      <Dialog open={isOpen && !showConfirmation} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-2xl">
-              <CalendarBlank className="w-7 h-7 text-primary" weight="duotone" />
-              Cierre del Día
-            </DialogTitle>
-            <DialogDescription>
-              Genera y revisa los reportes de cierre diario del sistema de inventario
-            </DialogDescription>
-          </DialogHeader>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-semibold flex items-center gap-3">
+            <CalendarBlank className="w-8 h-8 text-primary" weight="duotone" />
+            Cierre del Día
+          </h2>
+          <p className="text-muted-foreground mt-2">
+            Genera y revisa los reportes de cierre diario del sistema de inventario
+          </p>
+        </div>
+      </div>
 
-          <div className="flex-1 overflow-hidden">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-              <div className="space-y-4">
-                <Card className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground">
-                  <CardHeader>
-                    <CardTitle className="text-xl">Generar Nuevo Cierre</CardTitle>
-                    <CardDescription className="text-primary-foreground/80">
-                      Crea un reporte completo del día actual
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <Card className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground">
+            <CardHeader>
+              <CardTitle className="text-xl">Generar Nuevo Cierre</CardTitle>
+              <CardDescription className="text-primary-foreground/80">
+                Crea un reporte completo del día actual
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
                         <span className="opacity-90">Fecha:</span>
                         <span className="font-semibold">{formatDate(new Date().toISOString())}</span>
                       </div>
@@ -293,12 +287,9 @@ export function DailyClose({ products, currentUser, isOpen, onClose }: DailyClos
                 </Card>
               </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
-      {currentReport && (
-        <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
+        {currentReport && (
+          <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
           <DialogContent className="max-w-4xl max-h-[90vh]">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-xl">
@@ -503,6 +494,6 @@ export function DailyClose({ products, currentUser, isOpen, onClose }: DailyClos
           </DialogContent>
         </Dialog>
       )}
-    </>
+    </div>
   );
 }
