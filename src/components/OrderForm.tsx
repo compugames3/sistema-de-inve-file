@@ -181,59 +181,133 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
               No hay items agregados. Selecciona un producto y haz clic en "Añadir".
             </div>
           ) : (
-            <div className="space-y-3">
-              {items.map((item, index) => {
-                const product = products.find(p => p.id === item.productId);
-                const subtotal = item.quantity * item.unitPrice;
+            <>
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-3 px-4 font-semibold text-sm">Producto</th>
+                      <th className="text-left py-3 px-4 font-semibold text-sm">SKU</th>
+                      <th className="text-center py-3 px-4 font-semibold text-sm">Cantidad</th>
+                      <th className="text-right py-3 px-4 font-semibold text-sm">Precio</th>
+                      <th className="text-right py-3 px-4 font-semibold text-sm">Subtotal</th>
+                      <th className="text-center py-3 px-4 font-semibold text-sm">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {items.map((item, index) => {
+                      const product = products.find(p => p.id === item.productId);
+                      const subtotal = item.quantity * item.unitPrice;
 
-                return (
-                  <div 
-                    key={index} 
-                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm sm:text-base truncate">{product?.name}</p>
-                      <p className="text-xs sm:text-sm text-muted-foreground">{product?.sku}</p>
-                    </div>
+                      return (
+                        <tr 
+                          key={index} 
+                          className="border-b hover:bg-muted/50 transition-colors"
+                        >
+                          <td className="py-3 px-4">
+                            <p className="font-medium text-sm">{product?.name}</p>
+                          </td>
+                          <td className="py-3 px-4">
+                            <p className="text-sm text-muted-foreground">{product?.sku}</p>
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex justify-center">
+                              <Input
+                                type="number"
+                                min="1"
+                                value={item.quantity}
+                                onChange={(e) => updateItemQuantity(index, parseInt(e.target.value) || 1)}
+                                className="w-20 text-center text-sm"
+                              />
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-right text-sm">
+                            {formatCurrency(item.unitPrice)}
+                          </td>
+                          <td className="py-3 px-4 text-right">
+                            <p className="font-semibold text-sm">{formatCurrency(subtotal)}</p>
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex justify-center">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => removeItem(index)}
+                                className="h-9 w-9"
+                              >
+                                <Trash className="w-4 h-4 text-destructive" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
 
-                    <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                      <div className="flex items-center gap-2 flex-1 sm:flex-initial">
-                        <Label className="text-xs sm:text-sm whitespace-nowrap">Cantidad:</Label>
-                        <Input
-                          type="number"
-                          min="1"
-                          value={item.quantity}
-                          onChange={(e) => updateItemQuantity(index, parseInt(e.target.value) || 1)}
-                          className="w-16 sm:w-20 text-center text-sm sm:text-base"
-                        />
+              <div className="md:hidden space-y-3">
+                {items.map((item, index) => {
+                  const product = products.find(p => p.id === item.productId);
+                  const subtotal = item.quantity * item.unitPrice;
+
+                  return (
+                    <div 
+                      key={index} 
+                      className="border rounded-lg p-3 space-y-3 hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-sm">{product?.name}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">{product?.sku}</p>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeItem(index)}
+                          className="h-8 w-8 shrink-0"
+                        >
+                          <Trash className="w-4 h-4 text-destructive" />
+                        </Button>
                       </div>
 
-                      <div className="text-right min-w-[80px] sm:min-w-[100px]">
-                        <p className="text-xs sm:text-sm text-muted-foreground">Subtotal</p>
-                        <p className="font-semibold text-sm sm:text-base">{formatCurrency(subtotal)}</p>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground">Precio</Label>
+                          <p className="text-sm font-medium">{formatCurrency(item.unitPrice)}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground">Cantidad</Label>
+                          <Input
+                            type="number"
+                            min="1"
+                            value={item.quantity}
+                            onChange={(e) => updateItemQuantity(index, parseInt(e.target.value) || 1)}
+                            className="w-full text-center text-sm h-8"
+                          />
+                        </div>
                       </div>
 
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeItem(index)}
-                        className="h-8 w-8 sm:h-10 sm:w-10"
-                      >
-                        <Trash className="w-4 h-4 text-destructive" />
-                      </Button>
+                      <div className="pt-2 border-t">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-muted-foreground">Subtotal</span>
+                          <span className="font-bold text-base">{formatCurrency(subtotal)}</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
 
-              <div className="flex justify-end pt-4 border-t">
+              <div className="flex justify-end pt-4 border-t mt-4">
                 <div className="text-right">
                   <p className="text-xs sm:text-sm text-muted-foreground">Total</p>
                   <p className="text-xl sm:text-2xl font-bold">{formatCurrency(calculateTotal())}</p>
                 </div>
               </div>
-            </div>
+            </>
           )}
         </Card>
 
