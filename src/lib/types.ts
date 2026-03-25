@@ -18,3 +18,10 @@ export interface User {
 }
 
 export type StockStatus = 'in-stock' | 'low-stock' | 'out-of-stock';
+
+export interface DatabaseBackup {
+  version: string;
+  timestamp: string;
+  products: Product[];
+  users: Omit<User, 'password'>[];
+}

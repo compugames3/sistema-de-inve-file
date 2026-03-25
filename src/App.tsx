@@ -5,9 +5,10 @@ import { Login } from '@/components/Login';
 import { Register } from '@/components/Register';
 import { Dashboard } from '@/components/Dashboard';
 import { User } from '@/lib/types';
+import { generateId } from '@/lib/inventory-utils';
 import { toast } from 'sonner';
 
-const DEFAULT_ADMIN = {
+const DEFAULT_ADMIN: User = {
   username: 'admin',
   password: 'admin123',
   isAdmin: true,

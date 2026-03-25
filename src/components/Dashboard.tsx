@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useKV } from '@github/spark/hooks';
-import { Product, User } from '@/lib/types';
+import { Product, User, DatabaseBackup } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -8,8 +8,9 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { StatsCard } from '@/components/StatsCard';
 import { ProductForm } from '@/components/ProductForm';
 import { InventoryTable } from '@/components/InventoryTable';
-import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon } from '@phosphor-icons/react';
+import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon, Database, Upload } from '@phosphor-icons/react';
 import { generateId, exportToCSV, formatCurrency, getStockStatus } from '@/lib/inventory-utils';
+import { exportDatabase, importDatabase } from '@/lib/database';
 import { toast } from 'sonner';
 
 interface DashboardProps {
@@ -19,9 +20,11 @@ interface DashboardProps {
 export function Dashboard({ onLogout }: DashboardProps) {
   const [products, setProducts] = useKV<Product[]>('inventory-products', []);
   const [currentUser] = useKV<User | null>('current-user', null);
+  const [users] = useKV<User[]>('system-users', []);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isAdmin = currentUser?.isAdmin ?? false;
 
@@ -83,6 +86,38 @@ export function Dashboard({ onLogout }: DashboardProps) {
     }
     exportToCSV(safeProducts);
     toast.success('Inventario exportado exitosamente');
+  };
+
+  const handleBackupDatabase = () => {
+    const safeUsers = (users || []).map(({ password, ...user }) => user);
+    const backup: DatabaseBackup = {
+      version: '1.0.0',
+      timestamp: new Date().toISOString(),
+      products: safeProducts,
+      users: safeUsers,
+    };
+    
+    exportDatabase(backup);
+    toast.success('Base de datos exportada y guardada en el computador');
+  };
+
+  const handleRestoreDatabase = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const backup = await importDatabase(file);
+      
+      setProducts(backup.products || []);
+      
+      toast.success('Base de datos restaurada exitosamente desde el archivo');
+    } catch (error) {
+      toast.error('Error al restaurar la base de datos');
+    }
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const safeProducts = products || [];
@@ -168,7 +203,26 @@ export function Dashboard({ onLogout }: DashboardProps) {
 
         <div className="mb-6 flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
           <h2 className="text-2xl font-semibold">Productos</h2>
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap">
+            <Button variant="outline" onClick={handleBackupDatabase}>
+              <Database className="w-4 h-4 mr-2" />
+              Guardar BD
+            </Button>
+            {isAdmin && (
+              <>
+                <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Cargar BD
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="application/json"
+                  onChange={handleRestoreDatabase}
+                  className="hidden"
+                />
+              </>
+            )}
             <Button variant="outline" onClick={handleExport} disabled={safeProducts.length === 0}>
               <Download className="w-4 h-4 mr-2" />
               Exportar CSV
