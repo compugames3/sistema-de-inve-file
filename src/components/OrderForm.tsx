@@ -3,11 +3,9 @@ import { Product, OrderItem, OrderType } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Trash, Plus, X } from '@phosphor-icons/react';
+import { Trash, CurrencyDollar, Check } from '@phosphor-icons/react';
 import { formatCurrency } from '@/lib/inventory-utils';
 
 interface OrderFormProps {
@@ -33,38 +31,46 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
   const [items, setItems] = useState<FormOrderItem[]>([]);
   const [client, setClient] = useState('');
   const [supplier, setSupplier] = useState('');
-  const [notes, setNotes] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState('');
+  const [quantity, setQuantity] = useState(1);
 
   const addItem = () => {
-    setItems([...items, { productId: '', quantity: 1, unitPrice: 0 }]);
+    if (!selectedProduct) return;
+    
+    const product = products.find(p => p.id === selectedProduct);
+    if (!product) return;
+
+    const existingIndex = items.findIndex(item => item.productId === selectedProduct);
+    
+    if (existingIndex >= 0) {
+      const newItems = [...items];
+      newItems[existingIndex].quantity += quantity;
+      setItems(newItems);
+    } else {
+      setItems([...items, { 
+        productId: selectedProduct, 
+        quantity: quantity, 
+        unitPrice: product.price 
+      }]);
+    }
+
+    setSelectedProduct('');
+    setQuantity(1);
   };
 
   const removeItem = (index: number) => {
     setItems(items.filter((_, i) => i !== index));
   };
 
-  const updateItem = (index: number, field: keyof FormOrderItem, value: string | number) => {
+  const updateItemQuantity = (index: number, newQuantity: number) => {
     const newItems = [...items];
-    if (field === 'productId' && typeof value === 'string') {
-      const product = products.find(p => p.id === value);
-      if (product) {
-        newItems[index] = {
-          ...newItems[index],
-          productId: value,
-          unitPrice: product.price,
-        };
-      }
-    } else {
-      newItems[index] = { ...newItems[index], [field]: value };
-    }
+    newItems[index].quantity = newQuantity;
     setItems(newItems);
   };
 
   const calculateTotal = () => {
     return items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
   };
-
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,230 +96,173 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
       total: calculateTotal(),
       client: type === 'sale' ? client : undefined,
       supplier: type === 'purchase' ? supplier : undefined,
-      notes: notes || undefined,
+      notes: undefined,
     });
   };
 
-  const isValidForm = items.length > 0 && items.every(item => item.productId && item.quantity > 0);
+  const isValidForm = items.length > 0 && (type === 'sale' ? client : supplier);
 
   return (
-    <div className="h-full flex flex-col bg-background">
-      <div className="shrink-0 px-6 py-5 border-b flex items-center justify-between bg-card">
-        <div>
-          <h2 className="text-2xl font-semibold text-foreground">
-            Nueva {type === 'sale' ? 'Venta' : 'Compra'}
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Complete el formulario para crear una nueva {type === 'sale' ? 'venta' : 'compra'}
-          </p>
-        </div>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          onClick={onCancel}
-          className="h-10 w-10"
-        >
-          <X className="w-5 h-5" />
-        </Button>
-      </div>
-
-      <form onSubmit={handleSubmit} className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto px-6 py-6">
-          <div className="max-w-5xl mx-auto space-y-6">
-            <div className="grid grid-cols-2 gap-5">
-              <div className="space-y-2">
-                <Label htmlFor={type === 'sale' ? 'client' : 'supplier'} className="text-sm font-semibold text-foreground">
-                  {type === 'sale' ? 'Cliente *' : 'Proveedor *'}
-                </Label>
-                <Input
-                  id={type === 'sale' ? 'client' : 'supplier'}
-                  value={type === 'sale' ? client : supplier}
-                  onChange={(e) => type === 'sale' ? setClient(e.target.value) : setSupplier(e.target.value)}
-                  placeholder={type === 'sale' ? 'Nombre del cliente' : 'Nombre del proveedor'}
-                  className="h-11 bg-background border-input text-base focus:border-primary focus:ring-1 focus:ring-primary"
-                />
+    <div className="min-h-screen bg-[#0a0e1a] text-white flex items-center justify-center p-8">
+      <form onSubmit={handleSubmit} className="w-full max-w-6xl">
+        <Card className="bg-[#151b2e] border-[#1f2937] shadow-2xl rounded-3xl overflow-hidden">
+          <div className="p-12 space-y-8">
+            <div className="flex items-center gap-6">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 flex items-center justify-center border border-emerald-500/30">
+                <CurrencyDollar className="w-10 h-10 text-emerald-400" weight="duotone" />
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="notes" className="text-sm font-semibold text-foreground">
-                  Notas (Opcional)
-                </Label>
-                <Input
-                  id="notes"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Observaciones o comentarios..."
-                  className="h-11 bg-background border-input text-base focus:border-primary focus:ring-1 focus:ring-primary"
-                />
+              <div>
+                <h2 className="text-4xl font-bold text-white">
+                  Registrar Nueva {type === 'sale' ? 'Venta' : 'Compra'}
+                </h2>
+                <p className="text-gray-400 text-lg mt-2">
+                  Completa los datos para generar una nueva orden de {type === 'sale' ? 'venta' : 'compra'}.
+                </p>
               </div>
             </div>
 
-            <Separator className="my-6" />
+            <div className="space-y-3">
+              <Label className="text-sm font-medium text-gray-300 uppercase tracking-wide">
+                {type === 'sale' ? 'Nombre del Cliente' : 'Nombre del Proveedor'}
+              </Label>
+              <Input
+                value={type === 'sale' ? client : supplier}
+                onChange={(e) => type === 'sale' ? setClient(e.target.value) : setSupplier(e.target.value)}
+                placeholder={type === 'sale' ? 'Ej: Juan Pérez' : 'Ej: Proveedor ABC'}
+                className="h-14 bg-[#0a0e1a] border-[#2d3748] text-white placeholder:text-gray-500 text-base focus:border-emerald-500 focus:ring-emerald-500/20 rounded-xl"
+              />
+            </div>
 
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-foreground">Productos</h3>
-                <Button
-                  type="button"
-                  onClick={addItem}
-                  size="sm"
-                  className="h-10 px-4 font-semibold"
-                >
-                  <Plus className="w-4 h-4 mr-2" weight="bold" />
-                  Agregar Producto
-                </Button>
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr,auto,auto] gap-4 items-end">
+              <div className="space-y-3">
+                <Label className="text-sm font-medium text-gray-300 uppercase tracking-wide">
+                  Seleccionar Producto
+                </Label>
+                <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+                  <SelectTrigger className="h-14 bg-[#0a0e1a] border-[#d97706] border-2 text-white text-base focus:ring-amber-500/20 rounded-xl">
+                    <SelectValue placeholder="Selecciona un producto disponible..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#151b2e] border-[#2d3748]">
+                    {products.map((p) => (
+                      <SelectItem 
+                        key={p.id} 
+                        value={p.id} 
+                        className="text-white hover:bg-[#0a0e1a] focus:bg-[#0a0e1a] py-3"
+                      >
+                        <div className="flex flex-col gap-1">
+                          <span className="font-semibold">{p.name}</span>
+                          <span className="text-xs text-gray-400">
+                            {p.sku} · Stock: {p.quantity} · {formatCurrency(p.price)}
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
+              <div className="space-y-3">
+                <Label className="text-sm font-medium text-gray-300 uppercase tracking-wide">
+                  Cantidad (UDS.)
+                </Label>
+                <Input
+                  type="number"
+                  min="1"
+                  value={quantity}
+                  onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+                  className="h-14 w-32 bg-[#0a0e1a] border-[#2d3748] text-white text-center text-lg font-semibold focus:border-emerald-500 focus:ring-emerald-500/20 rounded-xl"
+                />
+              </div>
+
+              <Button
+                type="button"
+                onClick={addItem}
+                disabled={!selectedProduct}
+                className="h-14 px-8 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold text-base rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                + Añadir
+              </Button>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-300">Resumen de la Venta</h3>
+              
               {items.length === 0 ? (
-                <Card className="p-16 text-center border-dashed border-2 bg-muted/30">
-                  <p className="text-lg font-semibold text-muted-foreground mb-2">
-                    No hay productos agregados
+                <div className="py-20 text-center">
+                  <p className="text-gray-400 text-lg">
+                    La lista está vacía. Selecciona un producto y presiona "+ Añadir".
                   </p>
-                  <p className="text-sm text-muted-foreground mb-6">
-                    Comienza agregando productos a tu {type === 'sale' ? 'venta' : 'compra'}
-                  </p>
-                  <Button
-                    type="button"
-                    onClick={addItem}
-                    size="lg"
-                    variant="outline"
-                  >
-                    <Plus className="w-5 h-5 mr-2" weight="bold" />
-                    Agregar Primer Producto
-                  </Button>
-                </Card>
+                </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {items.map((item, index) => {
                     const product = products.find(p => p.id === item.productId);
                     const subtotal = item.quantity * item.unitPrice;
-                    const stockWarning = type === 'sale' && product && item.quantity > product.quantity;
 
                     return (
-                      <Card key={index} className="p-5 bg-card border-input">
-                        <div className="grid grid-cols-12 gap-4 items-end">
-                          <div className="col-span-6">
-                            <Label htmlFor={`product-${index}`} className="text-sm font-semibold text-foreground mb-2 block">
-                              Producto *
-                            </Label>
-                            <Select
-                              value={item.productId}
-                              onValueChange={(value) => updateItem(index, 'productId', value)}
-                            >
-                              <SelectTrigger
-                                id={`product-${index}`}
-                                className="h-11 bg-background border-input text-base focus:border-primary focus:ring-1 focus:ring-primary"
-                              >
-                                <SelectValue placeholder="Seleccionar producto" />
-                              </SelectTrigger>
-                              <SelectContent className="max-h-80">
-                                {products.map((p) => (
-                                  <SelectItem key={p.id} value={p.id} className="py-3">
-                                    <div className="flex flex-col gap-1">
-                                      <span className="font-semibold">{p.name}</span>
-                                      <span className="text-xs text-muted-foreground">
-                                        {p.sku} · Stock: {p.quantity}
-                                      </span>
-                                    </div>
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            {stockWarning && (
-                              <p className="text-xs text-destructive mt-1 font-semibold">
-                                ⚠ Stock insuficiente (Solo {product.quantity} disponibles)
-                              </p>
-                            )}
-                          </div>
+                      <div 
+                        key={index} 
+                        className="bg-[#0a0e1a] border border-[#2d3748] rounded-xl p-5 flex items-center justify-between hover:border-emerald-500/30 transition-colors"
+                      >
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-white text-lg">{product?.name}</h4>
+                          <p className="text-sm text-gray-400 mt-1">{product?.sku}</p>
+                        </div>
 
-                          <div className="col-span-2">
-                            <Label htmlFor={`quantity-${index}`} className="text-sm font-semibold text-foreground mb-2 block">
-                              Cantidad *
-                            </Label>
+                        <div className="flex items-center gap-6">
+                          <div className="flex items-center gap-3">
+                            <Label className="text-gray-400 text-sm">Cantidad:</Label>
                             <Input
-                              id={`quantity-${index}`}
                               type="number"
                               min="1"
-                              max={type === 'sale' && product ? product.quantity : undefined}
                               value={item.quantity}
-                              onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value) || 0)}
-                              className="h-11 text-base font-semibold text-center bg-background border-input focus:border-primary focus:ring-1 focus:ring-primary"
+                              onChange={(e) => updateItemQuantity(index, parseInt(e.target.value) || 1)}
+                              className="h-10 w-20 bg-[#151b2e] border-[#2d3748] text-white text-center font-semibold rounded-lg"
                             />
                           </div>
 
-                          <div className="col-span-3">
-                            <Label className="text-sm font-semibold text-foreground mb-2 block">
-                              Subtotal
-                            </Label>
-                            <div className="h-11 flex items-center">
-                              <span className="font-bold text-xl text-primary">{formatCurrency(subtotal)}</span>
-                            </div>
+                          <div className="text-right min-w-[120px]">
+                            <p className="text-sm text-gray-400">Subtotal</p>
+                            <p className="text-xl font-bold text-emerald-400">{formatCurrency(subtotal)}</p>
                           </div>
 
-                          <div className="col-span-1 flex justify-end">
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => removeItem(index)}
-                              className="h-11 w-11 text-destructive hover:text-destructive hover:bg-destructive/10"
-                            >
-                              <Trash className="w-5 h-5" weight="bold" />
-                            </Button>
-                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeItem(index)}
+                            className="h-10 w-10 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg"
+                          >
+                            <Trash className="w-5 h-5" weight="bold" />
+                          </Button>
                         </div>
-                      </Card>
+                      </div>
                     );
                   })}
                 </div>
               )}
             </div>
-
-            <Separator className="my-6" />
-
-            <div className="space-y-4">
-              <div className="flex justify-between items-center text-base">
-                <span className="text-muted-foreground font-semibold">Total de artículos:</span>
-                <span className="font-bold text-lg">{totalItems}</span>
-              </div>
-
-              <div className="flex justify-between items-center text-base">
-                <span className="text-muted-foreground font-semibold">Productos únicos:</span>
-                <span className="font-bold text-lg">{items.length}</span>
-              </div>
-
-              <Separator />
-
-              <Card className="p-6 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
-                <div className="flex justify-between items-center">
-                  <span className="text-lg font-bold text-foreground">TOTAL A PAGAR</span>
-                  <span className="text-3xl font-black text-primary">{formatCurrency(calculateTotal())}</span>
-                </div>
-              </Card>
-            </div>
           </div>
-        </div>
 
-        <div className="shrink-0 flex justify-end gap-3 px-6 py-5 border-t bg-muted/30">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onCancel}
-            size="lg"
-            className="h-11 px-6 text-base font-medium border-input hover:bg-background"
-          >
-            Cancelar
-          </Button>
-          <Button
-            type="submit"
-            disabled={!isValidForm}
-            size="lg"
-            className="h-11 px-8 text-base font-semibold bg-primary hover:bg-primary/90"
-          >
-            Completar {type === 'sale' ? 'Venta' : 'Compra'}
-          </Button>
-        </div>
+          <div className="bg-[#0a0e1a] border-t border-[#2d3748] p-8 flex items-center justify-between">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onCancel}
+              className="h-14 px-10 text-white hover:bg-[#151b2e] text-base font-medium rounded-xl"
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              disabled={!isValidForm}
+              className="h-14 px-12 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold text-lg rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
+            >
+              Procesar {type === 'sale' ? 'Venta' : 'Compra'}
+              <Check className="w-5 h-5" weight="bold" />
+            </Button>
+          </div>
+        </Card>
       </form>
     </div>
   );
