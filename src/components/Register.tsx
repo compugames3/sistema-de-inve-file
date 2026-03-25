@@ -91,10 +91,10 @@ export function Register({ onRegister, onBackToLogin }: RegisterProps) {
               animate={{ scale: 1, rotate: 0 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
             >
-              <JosimarLogo size={96} className="animate-float" />
+              <JosimarLogo size="clamp(64px, 15vw, 96px)" className="animate-float" />
             </motion.div>
             <div>
-              <CardTitle className="text-3xl lg:text-4xl font-bold bg-gradient-to-br from-accent to-primary bg-clip-text text-transparent mb-2">
+              <CardTitle className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-br from-accent to-primary bg-clip-text text-transparent mb-2">
                 Josimar Cell
               </CardTitle>
               <CardDescription className="text-base">

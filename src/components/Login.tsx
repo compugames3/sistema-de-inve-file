@@ -33,10 +33,10 @@ export function Login({ onLogin, onShowRegister }: LoginProps) {
         <Card className="shadow-lg border border-border/60">
           <CardHeader className="text-center space-y-6 pb-8 pt-10">
             <div className="flex justify-center mb-2">
-              <JosimarLogo size={96} className="animate-float" />
+              <JosimarLogo size="clamp(64px, 15vw, 96px)" className="animate-float" />
             </div>
             <div>
-              <CardTitle className="text-3xl font-semibold text-foreground mb-3">
+              <CardTitle className="text-2xl sm:text-3xl font-semibold text-foreground mb-3">
                 Josimar Cell
               </CardTitle>
               <CardDescription className="text-base text-muted-foreground">

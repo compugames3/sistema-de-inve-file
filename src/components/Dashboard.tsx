@@ -250,12 +250,12 @@ export function Dashboard({ onLogout }: DashboardProps) {
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5" />
         <div className="relative px-8 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-3 sm:gap-5">
               <div className="relative group">
-                <JosimarLogo size={64} />
+                <JosimarLogo size="clamp(48px, 8vw, 64px)" />
               </div>
               <div className="flex flex-col">
-                <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                   Josimar Cell
                 </h1>
                 <div className="flex items-center gap-3 mt-1.5">

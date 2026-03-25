@@ -1,14 +1,16 @@
 interface JosimarLogoProps {
-  size?: number;
+  size?: number | string;
   className?: string;
 }
 
 export function JosimarLogo({ size = 80, className = "" }: JosimarLogoProps) {
+  const sizeValue = typeof size === 'number' ? `${size}px` : size;
+  
   return (
-    <div className={`relative ${className}`} style={{ width: size, height: size }}>
+    <div className={`relative ${className}`} style={{ width: sizeValue, height: sizeValue }}>
       <svg
-        width={size}
-        height={size}
+        width="100%"
+        height="100%"
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
