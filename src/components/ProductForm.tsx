@@ -166,7 +166,7 @@ export function ProductForm({ product, onSubmit, onCancel, existingSkus = [] }: 
 
               <div className="space-y-2">
                 <Label htmlFor="price" className="text-sm font-semibold text-foreground">
-                  Precio (USD) *
+                  Precio (SOL) *
                 </Label>
                 <Input
                   id="price"

@@ -69,11 +69,11 @@ export function StatisticsPanel({ products }: StatisticsPanelProps) {
     }));
 
     const priceRanges = [
-      { range: '$0-$50', min: 0, max: 50, count: 0 },
-      { range: '$51-$100', min: 51, max: 100, count: 0 },
-      { range: '$101-$250', min: 101, max: 250, count: 0 },
-      { range: '$251-$500', min: 251, max: 500, count: 0 },
-      { range: '$501+', min: 501, max: Infinity, count: 0 },
+      { range: 'S/. 0-S/. 50', min: 0, max: 50, count: 0 },
+      { range: 'S/. 51-S/. 100', min: 51, max: 100, count: 0 },
+      { range: 'S/. 101-S/. 250', min: 101, max: 250, count: 0 },
+      { range: 'S/. 251-S/. 500', min: 251, max: 500, count: 0 },
+      { range: 'S/. 501+', min: 501, max: Infinity, count: 0 },
     ];
 
     products.forEach((product) => {

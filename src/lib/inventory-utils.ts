@@ -29,10 +29,7 @@ export const getStockLabel = (status: StockStatus): string => {
 };
 
 export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount);
+  return `S/. ${amount.toFixed(2)}`;
 };
 
 export const exportToCSV = (products: Product[]): void => {
