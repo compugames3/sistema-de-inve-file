@@ -210,47 +210,47 @@ export function UserManagement({ currentUser }: UserManagementProps) {
   const deletingUser = safeUsers.find((u) => u.username === deletingUsername);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 md:space-y-6 px-2 md:px-0">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-semibold flex items-center gap-2">
-            <Users className="w-7 h-7 text-primary" weight="duotone" />
+          <h2 className="text-xl md:text-2xl font-semibold flex items-center gap-2">
+            <Users className="w-6 h-6 md:w-7 md:h-7 text-primary" weight="duotone" />
             Gestión de Usuarios
           </h2>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-xs md:text-sm text-muted-foreground mt-1">
             Administre los usuarios del sistema y sus permisos
           </p>
         </div>
-        <Button onClick={handleOpenAddDialog}>
+        <Button onClick={handleOpenAddDialog} className="text-sm md:text-base w-full md:w-auto">
           <UserPlus className="w-4 h-4 mr-2" />
           Crear Usuario
         </Button>
       </div>
 
-      <Card className="p-6">
+      <Card className="p-3 md:p-6">
         <div className="mb-4">
-          <h3 className="text-lg font-semibold mb-1">Usuarios Registrados</h3>
-          <p className="text-sm text-muted-foreground">
+          <h3 className="text-base md:text-lg font-semibold mb-1">Usuarios Registrados</h3>
+          <p className="text-xs md:text-sm text-muted-foreground">
             Total: {safeUsers.length} usuarios ({safeUsers.filter((u) => u.isAdmin).length} administradores)
           </p>
         </div>
 
         {safeUsers.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
-            <Users className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p>No hay usuarios registrados</p>
+            <Users className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 opacity-50" />
+            <p className="text-sm md:text-base">No hay usuarios registrados</p>
           </div>
         ) : (
-          <div className="rounded-lg border">
+          <div className="rounded-lg border overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[50px]"></TableHead>
-                  <TableHead>Nombre de Usuario</TableHead>
-                  <TableHead>Contraseña</TableHead>
-                  <TableHead>Tipo de Usuario</TableHead>
-                  <TableHead>Permisos</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
+                  <TableHead className="w-[40px] md:w-[50px]"></TableHead>
+                  <TableHead className="text-xs md:text-sm">Nombre de Usuario</TableHead>
+                  <TableHead className="hidden sm:table-cell text-xs md:text-sm">Contraseña</TableHead>
+                  <TableHead className="text-xs md:text-sm">Tipo</TableHead>
+                  <TableHead className="hidden lg:table-cell text-xs md:text-sm">Permisos</TableHead>
+                  <TableHead className="text-right text-xs md:text-sm">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -258,19 +258,19 @@ export function UserManagement({ currentUser }: UserManagementProps) {
                   <TableRow key={user.username}>
                     <TableCell>
                       {user.isAdmin ? (
-                        <ShieldCheck className="w-5 h-5 text-primary" weight="fill" />
+                        <ShieldCheck className="w-4 h-4 md:w-5 md:h-5 text-primary" weight="fill" />
                       ) : (
-                        <UserIcon className="w-5 h-5 text-muted-foreground" />
+                        <UserIcon className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground" />
                       )}
                     </TableCell>
-                    <TableCell className="font-medium">{user.username}</TableCell>
-                    <TableCell className="font-mono text-sm">{'•'.repeat(user.password.length)}</TableCell>
+                    <TableCell className="font-medium text-xs md:text-sm">{user.username}</TableCell>
+                    <TableCell className="hidden sm:table-cell font-mono text-xs md:text-sm">{'•'.repeat(user.password.length)}</TableCell>
                     <TableCell>
-                      <Badge variant={user.isAdmin ? 'default' : 'secondary'}>
-                        {user.isAdmin ? 'Administrador' : 'Visitante'}
+                      <Badge variant={user.isAdmin ? 'default' : 'secondary'} className="text-xs">
+                        {user.isAdmin ? 'Admin' : 'Visitante'}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden lg:table-cell">
                       {user.isAdmin ? (
                         <span className="text-xs text-muted-foreground">Acceso total</span>
                       ) : (
@@ -291,31 +291,34 @@ export function UserManagement({ currentUser }: UserManagementProps) {
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex justify-end gap-1 md:gap-2">
                         {!user.isAdmin && (
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => setPermissionsUser(user)}
                             title="Gestionar permisos de productos"
+                            className="h-8 w-8 md:h-10 md:w-10"
                           >
-                            <Lock className="w-4 h-4" />
+                            <Lock className="w-3 h-3 md:w-4 md:h-4" />
                           </Button>
                         )}
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => handleOpenEditDialog(user)}
+                          className="h-8 w-8 md:h-10 md:w-10"
                         >
-                          <Pencil className="w-4 h-4" />
+                          <Pencil className="w-3 h-3 md:w-4 md:h-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => setDeletingUsername(user.username)}
                           disabled={user.username === 'admin' || user.username === currentUser.username}
+                          className="h-8 w-8 md:h-10 md:w-10"
                         >
-                          <Trash className="w-4 h-4" />
+                          <Trash className="w-3 h-3 md:w-4 md:h-4" />
                         </Button>
                       </div>
                     </TableCell>
@@ -328,28 +331,29 @@ export function UserManagement({ currentUser }: UserManagementProps) {
       </Card>
 
       <Dialog open={isAddDialogOpen} onOpenChange={(open) => !open && handleCloseDialogs()}>
-        <DialogContent>
+        <DialogContent className="max-w-[95vw] md:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Crear Nuevo Usuario</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-lg md:text-xl">Crear Nuevo Usuario</DialogTitle>
+            <DialogDescription className="text-xs md:text-sm">
               Complete los datos para crear un nuevo usuario en el sistema
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 pt-4">
+          <div className="space-y-3 md:space-y-4 pt-4">
             <div className="space-y-2">
-              <Label htmlFor="add-username">Nombre de Usuario</Label>
+              <Label htmlFor="add-username" className="text-sm md:text-base">Nombre de Usuario</Label>
               <Input
                 id="add-username"
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                 placeholder="Ej: usuario123"
                 autoComplete="off"
+                className="text-sm md:text-base"
               />
               <p className="text-xs text-muted-foreground">Mínimo 3 caracteres</p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="add-password">Contraseña</Label>
+              <Label htmlFor="add-password" className="text-sm md:text-base">Contraseña</Label>
               <div className="relative">
                 <Input
                   id="add-password"
@@ -358,6 +362,7 @@ export function UserManagement({ currentUser }: UserManagementProps) {
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="Mínimo 6 caracteres"
                   autoComplete="new-password"
+                  className="text-sm md:text-base pr-10"
                 />
                 <Button
                   type="button"
@@ -376,12 +381,12 @@ export function UserManagement({ currentUser }: UserManagementProps) {
               <p className="text-xs text-muted-foreground">Mínimo 6 caracteres</p>
             </div>
 
-            <div className="flex items-center justify-between rounded-lg border p-4">
+            <div className="flex items-center justify-between rounded-lg border p-3 md:p-4">
               <div className="space-y-0.5">
-                <Label htmlFor="add-admin" className="text-base">
+                <Label htmlFor="add-admin" className="text-sm md:text-base">
                   Permisos de Administrador
                 </Label>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs md:text-sm text-muted-foreground">
                   El usuario podrá gestionar productos, usuarios y configuraciones
                 </p>
               </div>
@@ -393,9 +398,9 @@ export function UserManagement({ currentUser }: UserManagementProps) {
             </div>
 
             {!formData.isAdmin && (
-              <div className="space-y-3 rounded-lg border p-4">
-                <Label className="text-base">Permisos de Vistas (Tabs)</Label>
-                <p className="text-sm text-muted-foreground mb-3">
+              <div className="space-y-3 rounded-lg border p-3 md:p-4">
+                <Label className="text-sm md:text-base">Permisos de Vistas (Tabs)</Label>
+                <p className="text-xs md:text-sm text-muted-foreground mb-3">
                   Seleccione las vistas del sistema a las que el usuario tendrá acceso
                 </p>
                 <div className="space-y-2">
@@ -423,7 +428,7 @@ export function UserManagement({ currentUser }: UserManagementProps) {
                         <div className="flex items-center gap-2">
                           <Icon className="w-4 h-4 text-muted-foreground" />
                           <div>
-                            <Label htmlFor={`add-tab-${tab.id}`} className="text-sm font-medium cursor-pointer">
+                            <Label htmlFor={`add-tab-${tab.id}`} className="text-xs md:text-sm font-medium cursor-pointer">
                               {tab.label}
                             </Label>
                             <p className="text-xs text-muted-foreground">{tab.description}</p>
@@ -437,11 +442,11 @@ export function UserManagement({ currentUser }: UserManagementProps) {
             )}
           </div>
 
-          <div className="flex gap-3 justify-end mt-6">
-            <Button variant="outline" onClick={handleCloseDialogs}>
+          <div className="flex flex-col sm:flex-row gap-2 md:gap-3 justify-end mt-4 md:mt-6">
+            <Button variant="outline" onClick={handleCloseDialogs} className="text-sm md:text-base">
               Cancelar
             </Button>
-            <Button onClick={handleAddUser}>
+            <Button onClick={handleAddUser} className="text-sm md:text-base">
               <UserPlus className="w-4 h-4 mr-2" />
               Crear Usuario
             </Button>
@@ -450,28 +455,29 @@ export function UserManagement({ currentUser }: UserManagementProps) {
       </Dialog>
 
       <Dialog open={!!editingUser} onOpenChange={(open) => !open && handleCloseDialogs()}>
-        <DialogContent>
+        <DialogContent className="max-w-[95vw] md:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Editar Usuario</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-lg md:text-xl">Editar Usuario</DialogTitle>
+            <DialogDescription className="text-xs md:text-sm">
               Modifique los datos del usuario "{editingUser?.username}"
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 pt-4">
+          <div className="space-y-3 md:space-y-4 pt-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-username">Nombre de Usuario</Label>
+              <Label htmlFor="edit-username" className="text-sm md:text-base">Nombre de Usuario</Label>
               <Input
                 id="edit-username"
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                 placeholder="Ej: usuario123"
                 autoComplete="off"
+                className="text-sm md:text-base"
               />
               <p className="text-xs text-muted-foreground">Mínimo 3 caracteres</p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-password">Contraseña</Label>
+              <Label htmlFor="edit-password" className="text-sm md:text-base">Contraseña</Label>
               <div className="relative">
                 <Input
                   id="edit-password"
@@ -480,6 +486,7 @@ export function UserManagement({ currentUser }: UserManagementProps) {
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="Mínimo 6 caracteres"
                   autoComplete="new-password"
+                  className="text-sm md:text-base pr-10"
                 />
                 <Button
                   type="button"
@@ -498,12 +505,12 @@ export function UserManagement({ currentUser }: UserManagementProps) {
               <p className="text-xs text-muted-foreground">Mínimo 6 caracteres</p>
             </div>
 
-            <div className="flex items-center justify-between rounded-lg border p-4">
+            <div className="flex items-center justify-between rounded-lg border p-3 md:p-4">
               <div className="space-y-0.5">
-                <Label htmlFor="edit-admin" className="text-base">
+                <Label htmlFor="edit-admin" className="text-sm md:text-base">
                   Permisos de Administrador
                 </Label>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs md:text-sm text-muted-foreground">
                   El usuario podrá gestionar productos, usuarios y configuraciones
                 </p>
               </div>
@@ -518,9 +525,9 @@ export function UserManagement({ currentUser }: UserManagementProps) {
             </div>
 
             {!formData.isAdmin && (
-              <div className="space-y-3 rounded-lg border p-4">
-                <Label className="text-base">Permisos de Vistas (Tabs)</Label>
-                <p className="text-sm text-muted-foreground mb-3">
+              <div className="space-y-3 rounded-lg border p-3 md:p-4">
+                <Label className="text-sm md:text-base">Permisos de Vistas (Tabs)</Label>
+                <p className="text-xs md:text-sm text-muted-foreground mb-3">
                   Seleccione las vistas del sistema a las que el usuario tendrá acceso
                 </p>
                 <div className="space-y-2">
@@ -548,7 +555,7 @@ export function UserManagement({ currentUser }: UserManagementProps) {
                         <div className="flex items-center gap-2">
                           <Icon className="w-4 h-4 text-muted-foreground" />
                           <div>
-                            <Label htmlFor={`edit-tab-${tab.id}`} className="text-sm font-medium cursor-pointer">
+                            <Label htmlFor={`edit-tab-${tab.id}`} className="text-xs md:text-sm font-medium cursor-pointer">
                               {tab.label}
                             </Label>
                             <p className="text-xs text-muted-foreground">{tab.description}</p>
@@ -562,7 +569,7 @@ export function UserManagement({ currentUser }: UserManagementProps) {
             )}
 
             {(editingUser?.username === 'admin' || editingUser?.username === currentUser.username) && (
-              <div className="rounded-lg bg-muted/50 p-3 border border-border">
+              <div className="rounded-lg bg-muted/50 p-2 md:p-3 border border-border">
                 <p className="text-xs text-muted-foreground">
                   {editingUser?.username === 'admin'
                     ? 'El usuario "admin" siempre debe mantener permisos de administrador'
@@ -572,11 +579,11 @@ export function UserManagement({ currentUser }: UserManagementProps) {
             )}
           </div>
 
-          <div className="flex gap-3 justify-end mt-6">
-            <Button variant="outline" onClick={handleCloseDialogs}>
+          <div className="flex flex-col sm:flex-row gap-2 md:gap-3 justify-end mt-4 md:mt-6">
+            <Button variant="outline" onClick={handleCloseDialogs} className="text-sm md:text-base">
               Cancelar
             </Button>
-            <Button onClick={handleEditUser}>
+            <Button onClick={handleEditUser} className="text-sm md:text-base">
               <Pencil className="w-4 h-4 mr-2" />
               Guardar Cambios
             </Button>

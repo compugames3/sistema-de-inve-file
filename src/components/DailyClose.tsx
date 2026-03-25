@@ -172,39 +172,39 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
   }, [filteredHistory]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 md:space-y-6 px-2 md:px-0">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h2 className="text-3xl font-semibold flex items-center gap-3">
-            <CalendarBlank className="w-8 h-8 text-primary" weight="duotone" />
+          <h2 className="text-2xl md:text-3xl font-semibold flex items-center gap-2 md:gap-3">
+            <CalendarBlank className="w-6 h-6 md:w-8 md:h-8 text-primary" weight="duotone" />
             Cierre del Día
           </h2>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-sm md:text-base text-muted-foreground mt-1 md:mt-2">
             Genera y revisa los reportes de cierre diario del sistema de inventario
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         <div className="space-y-4">
           <Card className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground">
-            <CardHeader>
-              <CardTitle className="text-xl">Generar Nuevo Cierre</CardTitle>
-              <CardDescription className="text-primary-foreground/80">
+            <CardHeader className="p-4 md:p-6">
+              <CardTitle className="text-lg md:text-xl">Generar Nuevo Cierre</CardTitle>
+              <CardDescription className="text-primary-foreground/80 text-sm">
                 Crea un reporte completo del día actual
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-4 md:p-6 pt-0 md:pt-0">
               <div className="space-y-2">
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-xs md:text-sm">
                         <span className="opacity-90">Fecha:</span>
                         <span className="font-semibold">{formatDate(new Date().toISOString())}</span>
                       </div>
-                      <div className="flex justify-between text-sm">
+                      <div className="flex justify-between text-xs md:text-sm">
                         <span className="opacity-90">Usuario:</span>
                         <span className="font-semibold">{currentUser.username}</span>
                       </div>
-                      <div className="flex justify-between text-sm">
+                      <div className="flex justify-between text-xs md:text-sm">
                         <span className="opacity-90">Hora:</span>
                         <span className="font-semibold">{formatTime(new Date().toISOString())}</span>
                       </div>
@@ -216,8 +216,8 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                       className="w-full bg-primary-foreground text-primary hover:bg-primary-foreground/90"
                       size="lg"
                     >
-                      <Lock className="w-5 h-5 mr-2" weight="duotone" />
-                      {isClosing ? 'Generando...' : 'Generar Cierre del Día'}
+                      <Lock className="w-4 h-4 md:w-5 md:h-5 mr-2" weight="duotone" />
+                      <span className="text-sm md:text-base">{isClosing ? 'Generando...' : 'Generar Cierre del Día'}</span>
                     </Button>
                   </CardContent>
                 </Card>
@@ -226,60 +226,60 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
               <div className="flex flex-col space-y-4">
                 {filteredHistory.length > 0 && (
                   <Card className="bg-gradient-to-br from-accent/10 via-accent/5 to-transparent border-accent/20">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        <CurrencyDollar className="w-5 h-5 text-accent" weight="duotone" />
+                    <CardHeader className="pb-3 p-4 md:p-6">
+                      <CardTitle className="text-base md:text-lg flex items-center gap-2">
+                        <CurrencyDollar className="w-4 h-4 md:w-5 md:h-5 text-accent" weight="duotone" />
                         Resumen Total del Historial
                       </CardTitle>
-                      <CardDescription>
+                      <CardDescription className="text-xs md:text-sm">
                         Suma acumulada de {historyTotals.count} cierre{historyTotals.count !== 1 ? 's' : ''}
                         {hasActiveFilters && ' (filtrado)'}
                       </CardDescription>
                     </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                    <CardContent className="p-4 md:p-6 pt-0 md:pt-0">
+                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                         <div className="space-y-1">
-                          <div className="flex items-center gap-1 text-muted-foreground text-sm">
-                            <TrendUp className="w-4 h-4" />
+                          <div className="flex items-center gap-1 text-muted-foreground text-xs md:text-sm">
+                            <TrendUp className="w-3 h-3 md:w-4 md:h-4" />
                             <span>Total Ingresos</span>
                           </div>
-                          <p className="text-xl font-bold text-success">
+                          <p className="text-base md:text-xl font-bold text-success">
                             {formatCurrency(historyTotals.totalRevenue)}
                           </p>
                         </div>
                         <div className="space-y-1">
-                          <div className="flex items-center gap-1 text-muted-foreground text-sm">
-                            <TrendDown className="w-4 h-4" />
+                          <div className="flex items-center gap-1 text-muted-foreground text-xs md:text-sm">
+                            <TrendDown className="w-3 h-3 md:w-4 md:h-4" />
                             <span>Total Costos</span>
                           </div>
-                          <p className="text-xl font-bold text-destructive">
+                          <p className="text-base md:text-xl font-bold text-destructive">
                             {formatCurrency(historyTotals.totalCosts)}
                           </p>
                         </div>
                         <div className="space-y-1 col-span-2 lg:col-span-1">
-                          <div className="flex items-center gap-1 text-muted-foreground text-sm">
-                            <CurrencyDollar className="w-4 h-4" weight="duotone" />
+                          <div className="flex items-center gap-1 text-muted-foreground text-xs md:text-sm">
+                            <CurrencyDollar className="w-3 h-3 md:w-4 md:h-4" weight="duotone" />
                             <span>Ganancia Neta Total</span>
                           </div>
-                          <p className={`text-2xl font-bold ${historyTotals.totalNetProfit >= 0 ? 'text-success' : 'text-destructive'}`}>
+                          <p className={`text-lg md:text-2xl font-bold ${historyTotals.totalNetProfit >= 0 ? 'text-success' : 'text-destructive'}`}>
                             {formatCurrency(historyTotals.totalNetProfit)}
                           </p>
                         </div>
                         <div className="space-y-1">
-                          <div className="flex items-center gap-1 text-muted-foreground text-sm">
-                            <ShoppingCart className="w-4 h-4" />
+                          <div className="flex items-center gap-1 text-muted-foreground text-xs md:text-sm">
+                            <ShoppingCart className="w-3 h-3 md:w-4 md:h-4" />
                             <span>Total Ventas</span>
                           </div>
-                          <p className="text-lg font-semibold">
+                          <p className="text-sm md:text-lg font-semibold">
                             {historyTotals.totalSalesOrders} órdenes
                           </p>
                         </div>
                         <div className="space-y-1">
-                          <div className="flex items-center gap-1 text-muted-foreground text-sm">
-                            <Package className="w-4 h-4" />
+                          <div className="flex items-center gap-1 text-muted-foreground text-xs md:text-sm">
+                            <Package className="w-3 h-3 md:w-4 md:h-4" />
                             <span>Total Compras</span>
                           </div>
-                          <p className="text-lg font-semibold">
+                          <p className="text-sm md:text-lg font-semibold">
                             {historyTotals.totalPurchaseOrders} órdenes
                           </p>
                         </div>
@@ -289,11 +289,11 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                 )}
 
                 <Card className="flex-1 flex flex-col">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
+                  <CardHeader className="p-4 md:p-6">
+                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-3">
                       <div>
-                        <CardTitle className="text-lg">Historial de Cierres</CardTitle>
-                        <CardDescription>
+                        <CardTitle className="text-base md:text-lg">Historial de Cierres</CardTitle>
+                        <CardDescription className="text-xs md:text-sm">
                           {filteredHistory.length} de {closeHistory?.length || 0} cierre{(closeHistory?.length || 0) !== 1 ? 's' : ''}
                         </CardDescription>
                       </div>
@@ -304,32 +304,33 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                               variant={hasActiveFilters ? "default" : "outline"}
                               size="sm"
                               className={cn(
-                                "gap-2",
+                                "gap-2 text-xs md:text-sm",
                                 hasActiveFilters && "bg-primary text-primary-foreground"
                               )}
                             >
-                              <Funnel className="w-4 h-4" weight={hasActiveFilters ? "fill" : "regular"} />
-                              Filtrar por Fecha
+                              <Funnel className="w-3 h-3 md:w-4 md:h-4" weight={hasActiveFilters ? "fill" : "regular"} />
+                              <span className="hidden sm:inline">Filtrar por Fecha</span>
+                              <span className="sm:hidden">Filtrar</span>
                               {hasActiveFilters && (
-                                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                                <Badge variant="secondary" className="ml-1 h-4 md:h-5 px-1 md:px-1.5 text-xs">
                                   {dateRange.from && dateRange.to ? '2' : '1'}
                                 </Badge>
                               )}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="end">
-                            <div className="p-4 border-b bg-muted/30">
+                            <div className="p-3 md:p-4 border-b bg-muted/30">
                               <div className="flex items-center justify-between mb-3">
                                 <div>
-                                  <h4 className="text-sm font-semibold mb-1">Filtrar por Rango de Fechas</h4>
-                                  <p className="text-xs text-muted-foreground">Selecciona un rango de fechas para filtrar el historial</p>
+                                  <h4 className="text-xs md:text-sm font-semibold mb-1">Filtrar por Rango de Fechas</h4>
+                                  <p className="text-[10px] md:text-xs text-muted-foreground">Selecciona un rango de fechas para filtrar el historial</p>
                                 </div>
                                 {hasActiveFilters && (
                                   <Button
                                     variant="ghost"
                                     size="sm"
                                     onClick={clearFilters}
-                                    className="h-auto p-1.5 text-xs hover:bg-destructive/10 hover:text-destructive"
+                                    className="h-auto p-1 md:p-1.5 text-xs hover:bg-destructive/10 hover:text-destructive"
                                   >
                                     <X className="w-3 h-3 mr-1" />
                                     Limpiar
@@ -337,10 +338,10 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                                 )}
                               </div>
                               {(dateRange.from || dateRange.to) && (
-                                <div className="text-xs space-y-1.5 bg-primary/5 p-2 rounded-md border border-primary/10">
+                                <div className="text-[10px] md:text-xs space-y-1.5 bg-primary/5 p-2 rounded-md border border-primary/10">
                                   {dateRange.from && (
                                     <div className="flex items-center gap-2">
-                                      <span className="font-medium text-muted-foreground w-12">Desde:</span>
+                                      <span className="font-medium text-muted-foreground w-10 md:w-12">Desde:</span>
                                       <span className="font-semibold text-foreground">
                                         {format(dateRange.from, "d 'de' MMMM, yyyy", { locale: es })}
                                       </span>
@@ -348,7 +349,7 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                                   )}
                                   {dateRange.to && (
                                     <div className="flex items-center gap-2">
-                                      <span className="font-medium text-muted-foreground w-12">Hasta:</span>
+                                      <span className="font-medium text-muted-foreground w-10 md:w-12">Hasta:</span>
                                       <span className="font-semibold text-foreground">
                                         {format(dateRange.to, "d 'de' MMMM, yyyy", { locale: es })}
                                       </span>
@@ -357,7 +358,7 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                                 </div>
                               )}
                             </div>
-                            <div className="p-3">
+                            <div className="p-2 md:p-3">
                               <Calendar
                                 mode="range"
                                 selected={{
@@ -379,21 +380,21 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="flex-1 overflow-hidden">
-                    <ScrollArea className="h-[500px] pr-4">
+                  <CardContent className="flex-1 overflow-hidden p-4 md:p-6 pt-0 md:pt-0">
+                    <ScrollArea className="h-[400px] md:h-[500px] pr-2 md:pr-4">
                       {!closeHistory || closeHistory.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                          <CalendarBlank className="w-16 h-16 text-muted-foreground/50 mb-4" weight="thin" />
-                          <p className="text-muted-foreground">No hay cierres registrados aún</p>
-                          <p className="text-sm text-muted-foreground/70 mt-2">
+                          <CalendarBlank className="w-12 h-12 md:w-16 md:h-16 text-muted-foreground/50 mb-4" weight="thin" />
+                          <p className="text-sm md:text-base text-muted-foreground">No hay cierres registrados aún</p>
+                          <p className="text-xs md:text-sm text-muted-foreground/70 mt-2">
                             Genera tu primer cierre del día para comenzar
                           </p>
                         </div>
                       ) : filteredHistory.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                          <Funnel className="w-16 h-16 text-muted-foreground/50 mb-4" weight="thin" />
-                          <p className="text-muted-foreground">No se encontraron cierres en este rango de fechas</p>
-                          <p className="text-sm text-muted-foreground/70 mt-2">
+                          <Funnel className="w-12 h-12 md:w-16 md:h-16 text-muted-foreground/50 mb-4" weight="thin" />
+                          <p className="text-sm md:text-base text-muted-foreground">No se encontraron cierres en este rango de fechas</p>
+                          <p className="text-xs md:text-sm text-muted-foreground/70 mt-2">
                             Intenta ajustar los filtros de búsqueda
                           </p>
                           <Button
@@ -410,57 +411,57 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                         <div className="space-y-3">
                           {filteredHistory.slice().reverse().map((report) => (
                             <Card key={report.id} className="border-2 hover:border-primary/50 transition-colors">
-                              <CardHeader className="pb-3">
-                                <div className="flex items-start justify-between">
+                              <CardHeader className="pb-3 p-3 md:p-6 md:pb-3">
+                                <div className="flex items-start justify-between gap-2">
                                   <div>
-                                    <CardTitle className="text-base flex items-center gap-2">
-                                      <CalendarBlank className="w-4 h-4" weight="fill" />
-                                      {formatDate(report.date)}
+                                    <CardTitle className="text-sm md:text-base flex items-center gap-2">
+                                      <CalendarBlank className="w-3 h-3 md:w-4 md:h-4" weight="fill" />
+                                      <span className="text-xs md:text-base">{formatDate(report.date)}</span>
                                     </CardTitle>
-                                    <CardDescription className="mt-1">
+                                    <CardDescription className="mt-1 text-xs">
                                       Cerrado por: {report.closedBy}
                                     </CardDescription>
                                   </div>
-                                  <Badge variant="outline" className="font-mono text-xs">
-                                    {report.id.slice(0, 12)}...
+                                  <Badge variant="outline" className="font-mono text-[10px] md:text-xs px-1 md:px-2">
+                                    {report.id.slice(0, 8)}...
                                   </Badge>
                                 </div>
                               </CardHeader>
-                              <CardContent className="space-y-3">
-                                <div className="grid grid-cols-2 gap-3 text-sm">
+                              <CardContent className="space-y-3 p-3 md:p-6 pt-0 md:pt-0">
+                                <div className="grid grid-cols-2 gap-2 md:gap-3 text-xs md:text-sm">
                                   <div className="space-y-1">
                                     <div className="flex items-center gap-1 text-muted-foreground">
-                                      <TrendUp className="w-4 h-4" />
-                                      <span>Ingresos</span>
+                                      <TrendUp className="w-3 h-3 md:w-4 md:h-4" />
+                                      <span className="text-[10px] md:text-sm">Ingresos</span>
                                     </div>
-                                    <p className="font-semibold text-success">
+                                    <p className="font-semibold text-success text-xs md:text-base">
                                       {formatCurrency(report.financial.grossRevenue)}
                                     </p>
                                   </div>
                                   <div className="space-y-1">
                                     <div className="flex items-center gap-1 text-muted-foreground">
-                                      <TrendDown className="w-4 h-4" />
-                                      <span>Costos</span>
+                                      <TrendDown className="w-3 h-3 md:w-4 md:h-4" />
+                                      <span className="text-[10px] md:text-sm">Costos</span>
                                     </div>
-                                    <p className="font-semibold text-destructive">
+                                    <p className="font-semibold text-destructive text-xs md:text-base">
                                       {formatCurrency(report.financial.totalCosts)}
                                     </p>
                                   </div>
                                   <div className="space-y-1">
                                     <div className="flex items-center gap-1 text-muted-foreground">
-                                      <ShoppingCart className="w-4 h-4" />
-                                      <span>Ventas</span>
+                                      <ShoppingCart className="w-3 h-3 md:w-4 md:h-4" />
+                                      <span className="text-[10px] md:text-sm">Ventas</span>
                                     </div>
-                                    <p className="font-semibold">
+                                    <p className="font-semibold text-xs md:text-base">
                                       {report.sales.completedOrders} órdenes
                                     </p>
                                   </div>
                                   <div className="space-y-1">
                                     <div className="flex items-center gap-1 text-muted-foreground">
-                                      <Package className="w-4 h-4" />
-                                      <span>Compras</span>
+                                      <Package className="w-3 h-3 md:w-4 md:h-4" />
+                                      <span className="text-[10px] md:text-sm">Compras</span>
                                     </div>
-                                    <p className="font-semibold">
+                                    <p className="font-semibold text-xs md:text-base">
                                       {report.purchases.completedOrders} órdenes
                                     </p>
                                   </div>
@@ -468,42 +469,42 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
 
                                 <Separator />
 
-                                <div className="flex items-center justify-between p-3 bg-accent/10 rounded-lg">
-                                  <div className="flex items-center gap-2">
-                                    <CurrencyDollar className="w-5 h-5 text-accent" weight="duotone" />
-                                    <span className="text-sm font-medium">Ganancia Neta</span>
+                                <div className="flex items-center justify-between p-2 md:p-3 bg-accent/10 rounded-lg">
+                                  <div className="flex items-center gap-1 md:gap-2">
+                                    <CurrencyDollar className="w-4 h-4 md:w-5 md:h-5 text-accent" weight="duotone" />
+                                    <span className="text-xs md:text-sm font-medium">Ganancia Neta</span>
                                   </div>
-                                  <span className={`text-lg font-bold ${report.financial.netProfit >= 0 ? 'text-success' : 'text-destructive'}`}>
+                                  <span className={`text-sm md:text-lg font-bold ${report.financial.netProfit >= 0 ? 'text-success' : 'text-destructive'}`}>
                                     {formatCurrency(report.financial.netProfit)}
                                   </span>
                                 </div>
 
-                                <div className="flex gap-2">
+                                <div className="flex flex-col sm:flex-row gap-2">
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    className="flex-1"
+                                    className="flex-1 text-xs md:text-sm"
                                     onClick={() => handleGeneratePDF(report)}
                                   >
-                                    <FilePdf className="w-4 h-4 mr-2" />
+                                    <FilePdf className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
                                     PDF
                                   </Button>
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    className="flex-1"
+                                    className="flex-1 text-xs md:text-sm"
                                     onClick={() => handlePrintReport(report)}
                                   >
-                                    <Printer className="w-4 h-4 mr-2" />
+                                    <Printer className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
                                     Imprimir
                                   </Button>
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    className="flex-1"
+                                    className="flex-1 text-xs md:text-sm"
                                     onClick={() => handleExportReport(report)}
                                   >
-                                    <Download className="w-4 h-4 mr-2" />
+                                    <Download className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
                                     Exportar
                                   </Button>
                                 </div>
@@ -520,40 +521,40 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
 
         {currentReport && (
           <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
-          <DialogContent className="max-w-4xl max-h-[90vh]">
+          <DialogContent className="max-w-[95vw] md:max-w-4xl max-h-[90vh] p-4 md:p-6">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-xl">
-                <CheckCircle className="w-6 h-6 text-success" weight="duotone" />
+              <DialogTitle className="flex items-center gap-2 text-lg md:text-xl">
+                <CheckCircle className="w-5 h-5 md:w-6 md:h-6 text-success" weight="duotone" />
                 Confirmar Cierre del Día
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-xs md:text-sm">
                 Revisa el resumen antes de confirmar el cierre
               </DialogDescription>
             </DialogHeader>
 
-            <ScrollArea className="max-h-[600px] pr-4">
-              <div className="space-y-6">
+            <ScrollArea className="max-h-[60vh] md:max-h-[600px] pr-2 md:pr-4">
+              <div className="space-y-4 md:space-y-6">
                 <Card className="bg-gradient-to-r from-accent to-accent/80 text-accent-foreground">
-                  <CardHeader>
-                    <CardTitle>Resumen Financiero</CardTitle>
+                  <CardHeader className="p-3 md:p-6">
+                    <CardTitle className="text-base md:text-lg">Resumen Financiero</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex justify-between text-lg">
+                  <CardContent className="space-y-2 md:space-y-3 p-3 md:p-6 pt-0 md:pt-0">
+                    <div className="flex justify-between text-sm md:text-lg">
                       <span>Ingresos Brutos:</span>
                       <span className="font-bold">{formatCurrency(currentReport.financial.grossRevenue)}</span>
                     </div>
-                    <div className="flex justify-between text-lg">
+                    <div className="flex justify-between text-sm md:text-lg">
                       <span>Costos Totales:</span>
                       <span className="font-bold">{formatCurrency(currentReport.financial.totalCosts)}</span>
                     </div>
                     <Separator className="bg-accent-foreground/20" />
-                    <div className="flex justify-between text-2xl">
+                    <div className="flex justify-between text-lg md:text-2xl">
                       <span className="font-semibold">Ganancia Neta:</span>
                       <span className={`font-bold ${currentReport.financial.netProfit >= 0 ? 'text-white' : 'text-red-200'}`}>
                         {formatCurrency(currentReport.financial.netProfit)}
                       </span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between text-sm md:text-base">
                       <span>Margen de Ganancia:</span>
                       <span className="font-bold">{currentReport.financial.profitMargin.toFixed(2)}%</span>
                     </div>
@@ -562,25 +563,25 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
 
                 {currentReport.topProducts.length > 0 && (
                   <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-lg">
-                        <Trophy className="w-5 h-5 text-warning" weight="duotone" />
+                    <CardHeader className="p-3 md:p-6">
+                      <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+                        <Trophy className="w-4 h-4 md:w-5 md:h-5 text-warning" weight="duotone" />
                         Top 10 Productos Más Vendidos
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-3 md:p-6 pt-0 md:pt-0">
                       <div className="space-y-2">
                         {currentReport.topProducts.slice(0, 5).map((product, index) => (
-                          <div key={product.productId} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                            <div className="flex items-center gap-3">
-                              <Badge variant={index === 0 ? "default" : "outline"} className="w-8 h-8 flex items-center justify-center rounded-full">
+                          <div key={product.productId} className="flex items-center justify-between p-2 md:p-3 bg-muted/50 rounded-lg">
+                            <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+                              <Badge variant={index === 0 ? "default" : "outline"} className="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full text-xs">
                                 {index + 1}
                               </Badge>
-                              <span className="font-medium">{product.productName}</span>
+                              <span className="font-medium text-xs md:text-sm truncate">{product.productName}</span>
                             </div>
-                            <div className="text-right">
-                              <p className="font-semibold">{formatCurrency(product.revenue)}</p>
-                              <p className="text-xs text-muted-foreground">{product.quantitySold} unidades</p>
+                            <div className="text-right ml-2">
+                              <p className="font-semibold text-xs md:text-base">{formatCurrency(product.revenue)}</p>
+                              <p className="text-[10px] md:text-xs text-muted-foreground">{product.quantitySold} unidades</p>
                             </div>
                           </div>
                         ))}
@@ -589,13 +590,13 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                   </Card>
                 )}
 
-                <div className="flex gap-3 pt-4">
-                  <Button variant="outline" onClick={() => setShowConfirmation(false)} className="flex-1">
+                <div className="flex flex-col sm:flex-row gap-2 md:gap-3 pt-2 md:pt-4">
+                  <Button variant="outline" onClick={() => setShowConfirmation(false)} className="flex-1 text-sm md:text-base">
                     Cancelar
                   </Button>
                   <Button onClick={handleConfirmClose} className="flex-1" size="lg">
-                    <Lock className="w-5 h-5 mr-2" weight="duotone" />
-                    Confirmar Cierre del Día
+                    <Lock className="w-4 h-4 md:w-5 md:h-5 mr-2" weight="duotone" />
+                    <span className="text-sm md:text-base">Confirmar Cierre del Día</span>
                   </Button>
                 </div>
               </div>
