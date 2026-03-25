@@ -12,41 +12,41 @@
 }
 
 :root {
-  --background: oklch(0.98 0 0);
-  --foreground: oklch(0.20 0.01 250);
+  --background: oklch(0.96 0.01 260);
+  --foreground: oklch(0.15 0.02 260);
   
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.20 0.01 250);
+  --card-foreground: oklch(0.15 0.02 260);
   
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.20 0.01 250);
+  --popover-foreground: oklch(0.15 0.02 260);
   
-  --primary: oklch(0.35 0.08 250);
-  --primary-foreground: oklch(1 0 0);
+  --primary: oklch(0.50 0.20 260);
+  --primary-foreground: oklch(0.98 0 0);
   
-  --secondary: oklch(0.96 0 0);
-  --secondary-foreground: oklch(0.35 0.08 250);
+  --secondary: oklch(0.92 0.01 260);
+  --secondary-foreground: oklch(0.15 0.02 260);
   
-  --muted: oklch(0.96 0 0);
-  --muted-foreground: oklch(0.55 0.02 250);
+  --muted: oklch(0.94 0.01 260);
+  --muted-foreground: oklch(0.48 0.03 260);
   
-  --accent: oklch(0.65 0.15 220);
-  --accent-foreground: oklch(1 0 0);
+  --accent: oklch(0.62 0.22 195);
+  --accent-foreground: oklch(0.98 0 0);
   
-  --destructive: oklch(0.60 0.22 25);
-  --destructive-foreground: oklch(1 0 0);
+  --destructive: oklch(0.58 0.24 25);
+  --destructive-foreground: oklch(0.98 0 0);
   
-  --success: oklch(0.65 0.15 145);
-  --success-foreground: oklch(1 0 0);
+  --success: oklch(0.62 0.18 150);
+  --success-foreground: oklch(0.98 0 0);
   
-  --warning: oklch(0.75 0.15 85);
-  --warning-foreground: oklch(0.25 0.02 85);
+  --warning: oklch(0.75 0.18 75);
+  --warning-foreground: oklch(0.15 0.02 75);
   
-  --border: oklch(0.90 0 0);
-  --input: oklch(0.90 0 0);
-  --ring: oklch(0.65 0.15 220);
+  --border: oklch(0.88 0.01 260);
+  --input: oklch(0.88 0.01 260);
+  --ring: oklch(0.50 0.20 260);
   
-  --radius: 0.5rem;
+  --radius: 0.75rem;
 }
 
 @theme {
@@ -87,4 +87,50 @@
 .font-mono {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(var(--primary-rgb), 0.6);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.gradient-shine {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
 }

@@ -246,26 +246,37 @@ export function Dashboard({ onLogout }: DashboardProps) {
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
-      <header className="border-b bg-card shrink-0">
-        <div className="px-6 py-4">
+      <header className="border-b bg-gradient-to-r from-card via-card to-primary/5 shrink-0 shadow-sm">
+        <div className="px-6 py-5">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-semibold">Sistema de Inventario Profesional</h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Gestión con base de datos persistente y auditoría completa
-              </p>
-            </div>
             <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary to-accent blur-md opacity-40" />
+                <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
+                  <Package className="w-6 h-6 text-primary-foreground" weight="duotone" />
+                </div>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  Sistema de Inventario
+                </h1>
+                <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-2">
+                  <Database className="w-3.5 h-3.5" weight="duotone" />
+                  Base de datos persistente · Auditoría completa
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
               {activeCriticalAlerts > 0 && currentView === 'inventory' && (
-                <div className="relative">
+                <div className="relative animate-pulse">
                   <Button
                     variant="outline"
                     size="icon"
-                    className="relative border-warning hover:bg-warning/10"
+                    className="relative border-warning/50 hover:bg-warning/10 hover:border-warning shadow-lg shadow-warning/20"
                   >
                     <Bell className="w-5 h-5 text-warning" weight="fill" />
                     {activeCriticalAlerts > 0 && (
-                      <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-destructive-foreground text-xs font-bold">
+                      <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-destructive-foreground text-xs font-bold shadow-lg">
                         {activeCriticalAlerts > 9 ? '9+' : activeCriticalAlerts}
                       </span>
                     )}
@@ -274,22 +285,24 @@ export function Dashboard({ onLogout }: DashboardProps) {
               )}
               {currentUser && (
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary/50">
-                    {isAdmin ? (
-                      <ShieldCheck className="w-5 h-5 text-primary" weight="duotone" />
-                    ) : (
-                      <UserIcon className="w-5 h-5 text-muted-foreground" weight="duotone" />
-                    )}
+                  <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-gradient-to-br from-secondary/80 to-secondary/50 border border-border/50 shadow-sm">
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isAdmin ? 'bg-primary/10' : 'bg-muted'}`}>
+                      {isAdmin ? (
+                        <ShieldCheck className="w-6 h-6 text-primary" weight="duotone" />
+                      ) : (
+                        <UserIcon className="w-6 h-6 text-muted-foreground" weight="duotone" />
+                      )}
+                    </div>
                     <div className="flex flex-col">
                       <span className="text-sm font-semibold">{currentUser.username}</span>
-                      <Badge variant={isAdmin ? "default" : "secondary"} className="w-fit text-xs">
+                      <Badge variant={isAdmin ? "default" : "secondary"} className="w-fit text-xs mt-0.5 shadow-sm">
                         {isAdmin ? "Administrador" : "Visitante"}
                       </Badge>
                     </div>
                   </div>
                 </div>
               )}
-              <Button variant="outline" onClick={onLogout}>
+              <Button variant="outline" onClick={onLogout} className="shadow-sm hover:shadow-md transition-shadow">
                 <SignOut className="w-4 h-4 mr-2" />
                 Cerrar Sesión
               </Button>
@@ -300,28 +313,40 @@ export function Dashboard({ onLogout }: DashboardProps) {
 
       <main className="flex-1 overflow-y-auto px-6 py-6">
         <Tabs value={currentView} onValueChange={(value) => setCurrentView(value as ViewType)} className="w-full">
-          <TabsList className={`grid w-full max-w-3xl mb-6`} style={{ gridTemplateColumns: `repeat(${accessibleTabs.length}, 1fr)` }}>
+          <TabsList className={`grid w-full max-w-4xl mb-8 h-14 bg-muted/50 p-1.5 shadow-sm`} style={{ gridTemplateColumns: `repeat(${accessibleTabs.length}, 1fr)` }}>
             {canAccessTab(currentUser ?? null, 'inventory') && (
-              <TabsTrigger value="inventory">
-                <Package className="w-4 h-4 mr-2" />
+              <TabsTrigger 
+                value="inventory"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 font-semibold"
+              >
+                <Package className="w-5 h-5 mr-2" weight="duotone" />
                 Inventario
               </TabsTrigger>
             )}
             {canAccessTab(currentUser ?? null, 'orders') && (
-              <TabsTrigger value="orders">
-                <Receipt className="w-4 h-4 mr-2" />
+              <TabsTrigger 
+                value="orders"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-accent data-[state=active]:to-accent/80 data-[state=active]:text-accent-foreground data-[state=active]:shadow-lg transition-all duration-300 font-semibold"
+              >
+                <Receipt className="w-5 h-5 mr-2" weight="duotone" />
                 Órdenes
               </TabsTrigger>
             )}
             {canAccessTab(currentUser ?? null, 'dailyclose') && (
-              <TabsTrigger value="dailyclose">
-                <CalendarBlank className="w-4 h-4 mr-2" />
+              <TabsTrigger 
+                value="dailyclose"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-success data-[state=active]:to-success/80 data-[state=active]:text-success-foreground data-[state=active]:shadow-lg transition-all duration-300 font-semibold"
+              >
+                <CalendarBlank className="w-5 h-5 mr-2" weight="duotone" />
                 Cierre del Día
               </TabsTrigger>
             )}
             {canAccessTab(currentUser ?? null, 'users') && (
-              <TabsTrigger value="users">
-                <Users className="w-4 h-4 mr-2" />
+              <TabsTrigger 
+                value="users"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-warning data-[state=active]:to-warning/80 data-[state=active]:text-warning-foreground data-[state=active]:shadow-lg transition-all duration-300 font-semibold"
+              >
+                <Users className="w-5 h-5 mr-2" weight="duotone" />
                 Usuarios
               </TabsTrigger>
             )}
