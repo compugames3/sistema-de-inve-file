@@ -11,10 +11,18 @@ export interface Product {
   updatedAt: string;
 }
 
+export type ProductPermission = 'view' | 'edit' | 'delete';
+
+export interface UserProductPermissions {
+  productId: string;
+  permissions: ProductPermission[];
+}
+
 export interface User {
   username: string;
   password: string;
   isAdmin: boolean;
+  productPermissions?: UserProductPermissions[];
 }
 
 export type StockStatus = 'in-stock' | 'low-stock' | 'out-of-stock';

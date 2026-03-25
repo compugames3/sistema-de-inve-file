@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useKV } from '@github/spark/hooks';
-import { User } from '@/lib/types';
+import { User, Product, UserProductPermissions } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +10,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { UserPlus, Pencil, Trash, ShieldCheck, User as UserIcon, Users, Eye, EyeSlash } from '@phosphor-icons/react';
+import { UserPlus, Pencil, Trash, ShieldCheck, User as UserIcon, Users, Eye, EyeSlash, Lock } from '@phosphor-icons/react';
+import { ProductPermissionsManager } from '@/components/ProductPermissionsManager';
 import { toast } from 'sonner';
 
 interface UserManagementProps {
@@ -19,9 +20,11 @@ interface UserManagementProps {
 
 export function UserManagement({ currentUser }: UserManagementProps) {
   const [users, setUsers] = useKV<User[]>('system-users', []);
+  const [products] = useKV<Product[]>('inventory-products', []);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deletingUsername, setDeletingUsername] = useState<string | null>(null);
+  const [permissionsUser, setPermissionsUser] = useState<User | null>(null);
   
   const [formData, setFormData] = useState({
     username: '',
@@ -31,6 +34,7 @@ export function UserManagement({ currentUser }: UserManagementProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   const safeUsers = users || [];
+  const safeProducts = products || [];
 
   const resetForm = () => {
     setFormData({ username: '', password: '', isAdmin: false });
@@ -172,6 +176,23 @@ export function UserManagement({ currentUser }: UserManagementProps) {
     setDeletingUsername(null);
   };
 
+  const handleUpdatePermissions = (username: string, permissions: UserProductPermissions[]) => {
+    setUsers((current) =>
+      (current || []).map((u) =>
+        u.username === username
+          ? { ...u, productPermissions: permissions }
+          : u
+      )
+    );
+
+    if (username === currentUser.username) {
+      window.spark.kv.set('current-user', {
+        ...currentUser,
+        productPermissions: permissions,
+      });
+    }
+  };
+
   const deletingUser = safeUsers.find((u) => u.username === deletingUsername);
 
   return (
@@ -214,6 +235,7 @@ export function UserManagement({ currentUser }: UserManagementProps) {
                   <TableHead>Nombre de Usuario</TableHead>
                   <TableHead>Contraseña</TableHead>
                   <TableHead>Tipo de Usuario</TableHead>
+                  <TableHead>Permisos</TableHead>
                   <TableHead className="text-right">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
@@ -234,8 +256,29 @@ export function UserManagement({ currentUser }: UserManagementProps) {
                         {user.isAdmin ? 'Administrador' : 'Visitante'}
                       </Badge>
                     </TableCell>
+                    <TableCell>
+                      {user.isAdmin ? (
+                        <span className="text-xs text-muted-foreground">Acceso total</span>
+                      ) : user.productPermissions && user.productPermissions.length > 0 ? (
+                        <Badge variant="outline" className="text-xs">
+                          {user.productPermissions.length} producto{user.productPermissions.length !== 1 ? 's' : ''}
+                        </Badge>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">Sin permisos</span>
+                      )}
+                    </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
+                        {!user.isAdmin && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setPermissionsUser(user)}
+                            title="Gestionar permisos de productos"
+                          >
+                            <Lock className="w-4 h-4" />
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="icon"
@@ -455,6 +498,17 @@ export function UserManagement({ currentUser }: UserManagementProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {permissionsUser && (
+        <ProductPermissionsManager
+          user={permissionsUser}
+          products={safeProducts}
+          onUpdatePermissions={(permissions) =>
+            handleUpdatePermissions(permissionsUser.username, permissions)
+          }
+          onClose={() => setPermissionsUser(null)}
+        />
+      )}
     </div>
   );
 }

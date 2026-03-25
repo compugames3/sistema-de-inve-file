@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useKV } from '@github/spark/hooks';
 import { Product, User, AuditLog } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -14,9 +14,10 @@ import { CriticalStockAlert } from '@/components/CriticalStockAlert';
 import { OrdersPage } from '@/components/OrdersPage';
 import { DailyClose } from '@/components/DailyClose';
 import { UserManagement } from '@/components/UserManagement';
-import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon, Database, Upload, ClockCounterClockwise, CheckCircle, Bell, Receipt, CalendarBlank, Users } from '@phosphor-icons/react';
+import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon, Database, Upload, ClockCounterClockwise, CheckCircle, Bell, Receipt, CalendarBlank, Users, LockKey } from '@phosphor-icons/react';
 import { generateId, exportToCSV, formatCurrency, getStockStatus } from '@/lib/inventory-utils';
 import { exportDatabase, importDatabase, createBackup } from '@/lib/database';
+import { filterVisibleProducts, canEditProduct, canDeleteProduct } from '@/lib/permissions-utils';
 import { useAudit } from '@/hooks/use-audit';
 import { toast } from 'sonner';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -49,6 +50,11 @@ export function Dashboard({ onLogout }: DashboardProps) {
 
   const isAdmin = currentUser?.isAdmin ?? false;
   const safeProducts = products || [];
+  
+  const visibleProducts = useMemo(
+    () => filterVisibleProducts(currentUser ?? null, safeProducts),
+    [currentUser, safeProducts]
+  );
 
   useEffect(() => {
     const checkAutoBackup = async () => {
@@ -175,19 +181,21 @@ export function Dashboard({ onLogout }: DashboardProps) {
     toast.success('Alerta ocultada para este producto');
   };
 
-  const totalProducts = safeProducts.length;
-  const lowStockProducts = safeProducts.filter((p) => {
+  const totalProducts = visibleProducts.length;
+  const lowStockProducts = visibleProducts.filter((p) => {
     const status = getStockStatus(p.quantity);
     return status === 'low-stock' || status === 'out-of-stock';
   }).length;
-  const activeCriticalAlerts = safeProducts.filter((p) => {
+  const activeCriticalAlerts = visibleProducts.filter((p) => {
     const status = getStockStatus(p.quantity);
     return (status === 'low-stock' || status === 'out-of-stock') && !(dismissedAlerts || []).includes(p.id);
   }).length;
-  const totalValue = safeProducts.reduce((sum, p) => sum + p.price * p.quantity, 0);
+  const totalValue = visibleProducts.reduce((sum, p) => sum + p.price * p.quantity, 0);
 
   const existingSkus = safeProducts.map((p) => p.sku);
   const deletingProduct = safeProducts.find((p) => p.id === deletingProductId);
+  
+  const productsWithLimitedAccess = !isAdmin && visibleProducts.length < safeProducts.length;
 
   const formatAuditDate = (timestamp: string) => {
     return new Date(timestamp).toLocaleString('es-ES', {
@@ -312,20 +320,28 @@ export function Dashboard({ onLogout }: DashboardProps) {
         </div>
 
         {!isAdmin && safeProducts.length > 0 && (
-          <div className="mb-4 p-4 bg-muted/50 border border-border rounded-lg">
-            <p className="text-sm text-muted-foreground flex items-center gap-2">
-              <UserIcon className="w-4 h-4" />
-              <span>Acceso de solo lectura. No puede agregar, editar o eliminar productos.</span>
-            </p>
+          <div className="mb-4 p-4 bg-accent/10 border border-accent rounded-lg">
+            <div className="flex items-start gap-3">
+              <LockKey className="w-5 h-5 text-accent shrink-0 mt-0.5" weight="duotone" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-accent-foreground">
+                  Permisos Granulares Activos
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Puede ver {visibleProducts.length} de {safeProducts.length} productos. 
+                  Sus permisos de edición y eliminación son específicos por producto.
+                </p>
+              </div>
+            </div>
           </div>
         )}
 
         <div className="mb-6">
-          <StatisticsPanel products={safeProducts} />
+          <StatisticsPanel products={visibleProducts} />
         </div>
 
         <CriticalStockAlert
-          products={safeProducts}
+          products={visibleProducts}
           onDismiss={handleDismissAlert}
           dismissedAlerts={dismissedAlerts || []}
         />
@@ -363,7 +379,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
                 />
               </>
             )}
-            <Button variant="outline" onClick={handleExport} disabled={safeProducts.length === 0}>
+            <Button variant="outline" onClick={handleExport} disabled={visibleProducts.length === 0}>
               <Download className="w-4 h-4 mr-2" />
               Exportar CSV
             </Button>
@@ -377,9 +393,34 @@ export function Dashboard({ onLogout }: DashboardProps) {
         </div>
 
         <InventoryTable
-          products={safeProducts}
-          onEdit={isAdmin ? setEditingProduct : undefined}
-          onDelete={isAdmin ? setDeletingProductId : undefined}
+          products={visibleProducts}
+          onEdit={
+            isAdmin
+              ? setEditingProduct
+              : currentUser
+              ? (product) => {
+                  if (canEditProduct(currentUser, product)) {
+                    setEditingProduct(product);
+                  } else {
+                    toast.error('No tiene permisos para editar este producto');
+                  }
+                }
+              : undefined
+          }
+          onDelete={
+            isAdmin
+              ? setDeletingProductId
+              : currentUser
+              ? (productId) => {
+                  const product = safeProducts.find((p) => p.id === productId);
+                  if (product && canDeleteProduct(currentUser, product)) {
+                    setDeletingProductId(productId);
+                  } else {
+                    toast.error('No tiene permisos para eliminar este producto');
+                  }
+                }
+              : undefined
+          }
         />
           </TabsContent>
 
