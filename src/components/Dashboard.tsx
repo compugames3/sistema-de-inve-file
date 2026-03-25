@@ -9,7 +9,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StatsCard } from '@/components/StatsCard';
 import { ProductForm } from '@/components/ProductForm';
 import { InventoryTable } from '@/components/InventoryTable';
-import { StatisticsPanel } from '@/components/StatisticsPanel';
 import { CriticalStockAlert } from '@/components/CriticalStockAlert';
 import { OrdersPage } from '@/components/OrdersPage';
 import { DailyClose } from '@/components/DailyClose';
@@ -408,10 +407,6 @@ export function Dashboard({ onLogout }: DashboardProps) {
             </div>
           </div>
         )}
-
-        <div>
-          <StatisticsPanel products={visibleProducts} />
-        </div>
 
         <CriticalStockAlert
           products={visibleProducts}
