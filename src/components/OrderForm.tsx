@@ -34,6 +34,7 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
   const [supplier, setSupplier] = useState('');
   const [selectedProduct, setSelectedProduct] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [amountPaid, setAmountPaid] = useState<string>('');
 
   const addItem = () => {
     if (!selectedProduct) {
@@ -322,11 +323,46 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                 })}
               </div>
 
-              <div className="flex justify-end pt-4 border-t mt-4">
-                <div className="text-right">
-                  <p className="text-xs sm:text-sm text-muted-foreground">Total</p>
-                  <p className="text-xl sm:text-2xl font-bold">{formatCurrency(calculateTotal())}</p>
+              <div className="pt-4 border-t mt-4 space-y-4">
+                <div className="flex justify-end">
+                  <div className="text-right">
+                    <p className="text-xs sm:text-sm text-muted-foreground">Total</p>
+                    <p className="text-xl sm:text-2xl font-bold">{formatCurrency(calculateTotal())}</p>
+                  </div>
                 </div>
+                
+                {type === 'sale' && (
+                  <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 justify-end">
+                    <div className="w-full sm:w-64 space-y-2">
+                      <Label htmlFor="amount-paid" className="text-sm">
+                        Dinero Recibido
+                      </Label>
+                      <Input
+                        id="amount-paid"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={amountPaid}
+                        onChange={(e) => setAmountPaid(e.target.value)}
+                        placeholder="0.00"
+                        className="text-base"
+                      />
+                    </div>
+                    
+                    {amountPaid && parseFloat(amountPaid) > 0 && (
+                      <div className="text-right">
+                        <p className="text-xs sm:text-sm text-muted-foreground">Cambio</p>
+                        <p className={`text-lg sm:text-xl font-semibold ${
+                          parseFloat(amountPaid) >= calculateTotal() 
+                            ? 'text-success' 
+                            : 'text-destructive'
+                        }`}>
+                          {formatCurrency(Math.max(0, parseFloat(amountPaid) - calculateTotal()))}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </>
           )}
