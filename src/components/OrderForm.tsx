@@ -182,7 +182,7 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
             </div>
           ) : (
             <>
-              <div className="hidden md:block overflow-x-auto">
+              <div className="hidden lg:block overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b">
@@ -208,7 +208,7 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                             <p className="font-medium text-sm">{product?.name}</p>
                           </td>
                           <td className="py-3 px-4">
-                            <p className="text-sm text-muted-foreground">{product?.sku}</p>
+                            <p className="text-sm text-muted-foreground font-mono">{product?.sku}</p>
                           </td>
                           <td className="py-3 px-4">
                             <div className="flex justify-center">
@@ -247,7 +247,7 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                 </table>
               </div>
 
-              <div className="md:hidden space-y-3">
+              <div className="lg:hidden space-y-3">
                 {items.map((item, index) => {
                   const product = products.find(p => p.id === item.productId);
                   const subtotal = item.quantity * item.unitPrice;
@@ -255,28 +255,28 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                   return (
                     <div 
                       key={index} 
-                      className="border rounded-lg p-3 space-y-3 hover:bg-muted/50 transition-colors"
+                      className="border rounded-lg p-3 sm:p-4 space-y-3 hover:bg-muted/50 transition-colors bg-card shadow-sm"
                     >
                       <div className="flex justify-between items-start gap-2">
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-sm">{product?.name}</p>
-                          <p className="text-xs text-muted-foreground mt-0.5">{product?.sku}</p>
+                          <p className="font-semibold text-sm sm:text-base">{product?.name}</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 font-mono">{product?.sku}</p>
                         </div>
                         <Button
                           type="button"
                           variant="ghost"
                           size="icon"
                           onClick={() => removeItem(index)}
-                          className="h-8 w-8 shrink-0"
+                          className="h-8 w-8 sm:h-9 sm:w-9 shrink-0"
                         >
                           <Trash className="w-4 h-4 text-destructive" />
                         </Button>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-3 sm:gap-4">
                         <div className="space-y-1">
                           <Label className="text-xs text-muted-foreground">Precio</Label>
-                          <p className="text-sm font-medium">{formatCurrency(item.unitPrice)}</p>
+                          <p className="text-sm sm:text-base font-medium">{formatCurrency(item.unitPrice)}</p>
                         </div>
                         <div className="space-y-1">
                           <Label className="text-xs text-muted-foreground">Cantidad</Label>
@@ -285,15 +285,15 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                             min="1"
                             value={item.quantity}
                             onChange={(e) => updateItemQuantity(index, parseInt(e.target.value) || 1)}
-                            className="w-full text-center text-sm h-8"
+                            className="w-full text-center text-sm sm:text-base h-8 sm:h-9"
                           />
                         </div>
                       </div>
 
                       <div className="pt-2 border-t">
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-muted-foreground">Subtotal</span>
-                          <span className="font-bold text-base">{formatCurrency(subtotal)}</span>
+                          <span className="text-xs sm:text-sm text-muted-foreground">Subtotal</span>
+                          <span className="font-bold text-base sm:text-lg">{formatCurrency(subtotal)}</span>
                         </div>
                       </div>
                     </div>
