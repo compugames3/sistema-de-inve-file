@@ -110,10 +110,10 @@ export function Register({ onRegister, onBackToLogin }: RegisterProps) {
             </motion.div>
             <div>
               <CardTitle className="text-3xl lg:text-4xl font-bold bg-gradient-to-br from-accent to-primary bg-clip-text text-transparent mb-2">
-                Registro de Usuario
+                Josimar Cell
               </CardTitle>
               <CardDescription className="text-base">
-                Complete los datos para crear una nueva cuenta
+                Registro de Usuario - Sistema de Inventario
               </CardDescription>
             </div>
           </CardHeader>

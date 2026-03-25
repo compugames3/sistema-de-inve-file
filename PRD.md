@@ -1,6 +1,6 @@
 # Planning Guide
 
-A professional inventory management system with automatic database persistence, user authentication, and comprehensive product tracking capabilities for businesses to efficiently manage their stock.
+Sistema de inventario profesional para Josimar Cell - un sistema de gestión integral con base de datos automática, autenticación de usuarios y seguimiento completo de productos para gestionar eficientemente el inventario del negocio.
 
 **Experience Qualities**:
 1. **Professional** - Clean, organized interface that conveys reliability and trustworthiness for business operations

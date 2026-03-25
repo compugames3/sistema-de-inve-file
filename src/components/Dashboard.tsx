@@ -258,17 +258,17 @@ export function Dashboard({ onLogout }: DashboardProps) {
               </div>
               <div className="flex flex-col">
                 <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-                  Sistema de Inventario
+                  Josimar Cell
                 </h1>
                 <div className="flex items-center gap-3 mt-1.5">
                   <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                     <Database className="w-3.5 h-3.5 text-primary" weight="duotone" />
-                    <span>Base de Datos</span>
+                    <span>Sistema de Inventario</span>
                   </div>
                   <div className="w-1 h-1 rounded-full bg-border" />
                   <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                     <CheckCircle className="w-3.5 h-3.5 text-success" weight="duotone" />
-                    <span>Sistema Profesional</span>
+                    <span>Gestión Profesional</span>
                   </div>
                 </div>
               </div>

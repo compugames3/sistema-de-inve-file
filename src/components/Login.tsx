@@ -38,10 +38,10 @@ export function Login({ onLogin, onShowRegister }: LoginProps) {
             </div>
             <div>
               <CardTitle className="text-3xl font-semibold text-foreground mb-3">
-                Sistema de Inventario
+                Josimar Cell
               </CardTitle>
               <CardDescription className="text-base text-muted-foreground">
-                Ingrese sus credenciales para acceder
+                Sistema de Inventario Profesional
               </CardDescription>
             </div>
           </CardHeader>
