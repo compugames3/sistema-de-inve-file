@@ -17,7 +17,7 @@ import { UserManagement } from '@/components/UserManagement';
 import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon, Database, Upload, ClockCounterClockwise, CheckCircle, Bell, Receipt, CalendarBlank, Users, LockKey } from '@phosphor-icons/react';
 import { generateId, exportToCSV, formatCurrency, getStockStatus } from '@/lib/inventory-utils';
 import { exportDatabase, importDatabase, createBackup } from '@/lib/database';
-import { filterVisibleProducts, canEditProduct, canDeleteProduct } from '@/lib/permissions-utils';
+import { filterVisibleProducts, canEditProduct, canDeleteProduct, canAccessTab, getAccessibleTabs } from '@/lib/permissions-utils';
 import { useAudit } from '@/hooks/use-audit';
 import { toast } from 'sonner';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -27,6 +27,16 @@ interface DashboardProps {
 }
 
 type ViewType = 'inventory' | 'orders' | 'dailyclose' | 'users';
+
+const getTabLabel = (tab: ViewType): string => {
+  const labels: Record<ViewType, string> = {
+    inventory: 'Inventario',
+    orders: 'Órdenes',
+    dailyclose: 'Cierre del Día',
+    users: 'Usuarios',
+  };
+  return labels[tab];
+};
 
 export function Dashboard({ onLogout }: DashboardProps) {
   const [currentView, setCurrentView] = useState<ViewType>('inventory');
@@ -50,11 +60,25 @@ export function Dashboard({ onLogout }: DashboardProps) {
 
   const isAdmin = currentUser?.isAdmin ?? false;
   const safeProducts = products || [];
+  const accessibleTabs = useMemo(
+    () => getAccessibleTabs(currentUser ?? null),
+    [currentUser]
+  );
   
   const visibleProducts = useMemo(
     () => filterVisibleProducts(currentUser ?? null, safeProducts),
     [currentUser, safeProducts]
   );
+
+  useEffect(() => {
+    if (!canAccessTab(currentUser ?? null, currentView)) {
+      const firstAccessibleTab = accessibleTabs[0];
+      if (firstAccessibleTab) {
+        setCurrentView(firstAccessibleTab);
+        toast.info(`Cambiado a ${getTabLabel(firstAccessibleTab)} - acceso restringido`);
+      }
+    }
+  }, [currentUser, currentView, accessibleTabs]);
 
   useEffect(() => {
     const checkAutoBackup = async () => {
@@ -276,20 +300,26 @@ export function Dashboard({ onLogout }: DashboardProps) {
 
       <main className="container mx-auto px-6 py-6">
         <Tabs value={currentView} onValueChange={(value) => setCurrentView(value as ViewType)} className="w-full">
-          <TabsList className={`grid w-full max-w-3xl mb-6 ${isAdmin ? 'grid-cols-4' : 'grid-cols-3'}`}>
-            <TabsTrigger value="inventory">
-              <Package className="w-4 h-4 mr-2" />
-              Inventario
-            </TabsTrigger>
-            <TabsTrigger value="orders">
-              <Receipt className="w-4 h-4 mr-2" />
-              Órdenes
-            </TabsTrigger>
-            <TabsTrigger value="dailyclose">
-              <CalendarBlank className="w-4 h-4 mr-2" />
-              Cierre del Día
-            </TabsTrigger>
-            {isAdmin && (
+          <TabsList className={`grid w-full max-w-3xl mb-6`} style={{ gridTemplateColumns: `repeat(${accessibleTabs.length}, 1fr)` }}>
+            {canAccessTab(currentUser ?? null, 'inventory') && (
+              <TabsTrigger value="inventory">
+                <Package className="w-4 h-4 mr-2" />
+                Inventario
+              </TabsTrigger>
+            )}
+            {canAccessTab(currentUser ?? null, 'orders') && (
+              <TabsTrigger value="orders">
+                <Receipt className="w-4 h-4 mr-2" />
+                Órdenes
+              </TabsTrigger>
+            )}
+            {canAccessTab(currentUser ?? null, 'dailyclose') && (
+              <TabsTrigger value="dailyclose">
+                <CalendarBlank className="w-4 h-4 mr-2" />
+                Cierre del Día
+              </TabsTrigger>
+            )}
+            {canAccessTab(currentUser ?? null, 'users') && (
               <TabsTrigger value="users">
                 <Users className="w-4 h-4 mr-2" />
                 Usuarios

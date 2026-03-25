@@ -18,11 +18,14 @@ export interface UserProductPermissions {
   permissions: ProductPermission[];
 }
 
+export type TabPermission = 'inventory' | 'orders' | 'dailyclose' | 'users';
+
 export interface User {
   username: string;
   password: string;
   isAdmin: boolean;
   productPermissions?: UserProductPermissions[];
+  tabPermissions?: TabPermission[];
 }
 
 export type StockStatus = 'in-stock' | 'low-stock' | 'out-of-stock';

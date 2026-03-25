@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useKV } from '@github/spark/hooks';
-import { User, Product, UserProductPermissions } from '@/lib/types';
+import { User, Product, UserProductPermissions, TabPermission } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +10,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { UserPlus, Pencil, Trash, ShieldCheck, User as UserIcon, Users, Eye, EyeSlash, Lock } from '@phosphor-icons/react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { UserPlus, Pencil, Trash, ShieldCheck, User as UserIcon, Users, Eye, EyeSlash, Lock, Package, Receipt, CalendarBlank } from '@phosphor-icons/react';
 import { ProductPermissionsManager } from '@/components/ProductPermissionsManager';
 import { toast } from 'sonner';
 
@@ -30,14 +31,21 @@ export function UserManagement({ currentUser }: UserManagementProps) {
     username: '',
     password: '',
     isAdmin: false,
+    tabPermissions: [] as TabPermission[],
   });
   const [showPassword, setShowPassword] = useState(false);
 
   const safeUsers = users || [];
   const safeProducts = products || [];
 
+  const allTabs: { id: TabPermission; label: string; icon: typeof Package; description: string }[] = [
+    { id: 'inventory', label: 'Inventario', icon: Package, description: 'Ver y gestionar productos' },
+    { id: 'orders', label: 'Órdenes', icon: Receipt, description: 'Acceso a ventas y compras' },
+    { id: 'dailyclose', label: 'Cierre del Día', icon: CalendarBlank, description: 'Reportes de cierre diario' },
+  ];
+
   const resetForm = () => {
-    setFormData({ username: '', password: '', isAdmin: false });
+    setFormData({ username: '', password: '', isAdmin: false, tabPermissions: [] });
     setShowPassword(false);
   };
 
@@ -51,6 +59,7 @@ export function UserManagement({ currentUser }: UserManagementProps) {
       username: user.username,
       password: user.password,
       isAdmin: user.isAdmin,
+      tabPermissions: user.tabPermissions || [],
     });
     setShowPassword(false);
     setEditingUser(user);
@@ -88,6 +97,7 @@ export function UserManagement({ currentUser }: UserManagementProps) {
       username: formData.username.trim(),
       password: formData.password,
       isAdmin: formData.isAdmin,
+      tabPermissions: formData.isAdmin ? undefined : formData.tabPermissions,
     };
 
     setUsers((current) => [...(current || []), newUser]);
@@ -138,6 +148,8 @@ export function UserManagement({ currentUser }: UserManagementProps) {
               username: formData.username.trim(),
               password: formData.password,
               isAdmin: formData.isAdmin,
+              tabPermissions: formData.isAdmin ? undefined : formData.tabPermissions,
+              productPermissions: u.productPermissions,
             }
           : u
       )
@@ -148,6 +160,8 @@ export function UserManagement({ currentUser }: UserManagementProps) {
         username: formData.username.trim(),
         password: formData.password,
         isAdmin: formData.isAdmin,
+        tabPermissions: formData.isAdmin ? undefined : formData.tabPermissions,
+        productPermissions: editingUser.productPermissions,
       };
       window.spark.kv.set('current-user', updatedCurrentUser);
     }
@@ -259,12 +273,21 @@ export function UserManagement({ currentUser }: UserManagementProps) {
                     <TableCell>
                       {user.isAdmin ? (
                         <span className="text-xs text-muted-foreground">Acceso total</span>
-                      ) : user.productPermissions && user.productPermissions.length > 0 ? (
-                        <Badge variant="outline" className="text-xs">
-                          {user.productPermissions.length} producto{user.productPermissions.length !== 1 ? 's' : ''}
-                        </Badge>
                       ) : (
-                        <span className="text-xs text-muted-foreground">Sin permisos</span>
+                        <div className="space-y-1">
+                          {user.tabPermissions && user.tabPermissions.length > 0 ? (
+                            <Badge variant="outline" className="text-xs">
+                              {user.tabPermissions.length} tab{user.tabPermissions.length !== 1 ? 's' : ''}
+                            </Badge>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">Sin acceso a tabs</span>
+                          )}
+                          {user.productPermissions && user.productPermissions.length > 0 && (
+                            <Badge variant="outline" className="text-xs ml-1">
+                              {user.productPermissions.length} producto{user.productPermissions.length !== 1 ? 's' : ''}
+                            </Badge>
+                          )}
+                        </div>
                       )}
                     </TableCell>
                     <TableCell className="text-right">
@@ -368,6 +391,50 @@ export function UserManagement({ currentUser }: UserManagementProps) {
                 onCheckedChange={(checked) => setFormData({ ...formData, isAdmin: checked })}
               />
             </div>
+
+            {!formData.isAdmin && (
+              <div className="space-y-3 rounded-lg border p-4">
+                <Label className="text-base">Permisos de Vistas (Tabs)</Label>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Seleccione las vistas del sistema a las que el usuario tendrá acceso
+                </p>
+                <div className="space-y-2">
+                  {allTabs.map((tab) => {
+                    const Icon = tab.icon;
+                    return (
+                      <div key={tab.id} className="flex items-center space-x-3">
+                        <Checkbox
+                          id={`add-tab-${tab.id}`}
+                          checked={formData.tabPermissions.includes(tab.id)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setFormData({
+                                ...formData,
+                                tabPermissions: [...formData.tabPermissions, tab.id],
+                              });
+                            } else {
+                              setFormData({
+                                ...formData,
+                                tabPermissions: formData.tabPermissions.filter((t) => t !== tab.id),
+                              });
+                            }
+                          }}
+                        />
+                        <div className="flex items-center gap-2">
+                          <Icon className="w-4 h-4 text-muted-foreground" />
+                          <div>
+                            <Label htmlFor={`add-tab-${tab.id}`} className="text-sm font-medium cursor-pointer">
+                              {tab.label}
+                            </Label>
+                            <p className="text-xs text-muted-foreground">{tab.description}</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex gap-3 justify-end mt-6">
@@ -449,6 +516,50 @@ export function UserManagement({ currentUser }: UserManagementProps) {
                 }
               />
             </div>
+
+            {!formData.isAdmin && (
+              <div className="space-y-3 rounded-lg border p-4">
+                <Label className="text-base">Permisos de Vistas (Tabs)</Label>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Seleccione las vistas del sistema a las que el usuario tendrá acceso
+                </p>
+                <div className="space-y-2">
+                  {allTabs.map((tab) => {
+                    const Icon = tab.icon;
+                    return (
+                      <div key={tab.id} className="flex items-center space-x-3">
+                        <Checkbox
+                          id={`edit-tab-${tab.id}`}
+                          checked={formData.tabPermissions.includes(tab.id)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setFormData({
+                                ...formData,
+                                tabPermissions: [...formData.tabPermissions, tab.id],
+                              });
+                            } else {
+                              setFormData({
+                                ...formData,
+                                tabPermissions: formData.tabPermissions.filter((t) => t !== tab.id),
+                              });
+                            }
+                          }}
+                        />
+                        <div className="flex items-center gap-2">
+                          <Icon className="w-4 h-4 text-muted-foreground" />
+                          <div>
+                            <Label htmlFor={`edit-tab-${tab.id}`} className="text-sm font-medium cursor-pointer">
+                              {tab.label}
+                            </Label>
+                            <p className="text-xs text-muted-foreground">{tab.description}</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {(editingUser?.username === 'admin' || editingUser?.username === currentUser.username) && (
               <div className="rounded-lg bg-muted/50 p-3 border border-border">

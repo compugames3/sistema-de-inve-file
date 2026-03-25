@@ -1,4 +1,4 @@
-import { User, Product, ProductPermission } from '@/lib/types';
+import { User, Product, ProductPermission, TabPermission } from '@/lib/types';
 
 export function hasProductPermission(
   user: User | null,
@@ -39,4 +39,30 @@ export function filterVisibleProducts(user: User | null, products: Product[]): P
   }
   
   return products.filter((product) => canViewProduct(user, product));
+}
+
+export function canAccessTab(user: User | null, tab: TabPermission): boolean {
+  if (!user) return false;
+  
+  if (user.isAdmin) return true;
+  
+  if (!user.tabPermissions || user.tabPermissions.length === 0) {
+    return tab === 'inventory';
+  }
+  
+  return user.tabPermissions.includes(tab);
+}
+
+export function getAccessibleTabs(user: User | null): TabPermission[] {
+  if (!user) return [];
+  
+  if (user.isAdmin) {
+    return ['inventory', 'orders', 'dailyclose', 'users'];
+  }
+  
+  if (!user.tabPermissions || user.tabPermissions.length === 0) {
+    return ['inventory'];
+  }
+  
+  return user.tabPermissions;
 }
