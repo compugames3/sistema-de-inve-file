@@ -149,7 +149,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
     toast.success('Producto actualizado y cambios registrados');
   };
 
-  const handleDeleteProduct = () => {
+  const handleDeleteProduct = async () => {
     if (!deletingProductId) return;
 
     const productToDelete = safeProducts.find((p) => p.id === deletingProductId);
@@ -158,8 +158,48 @@ export function Dashboard({ onLogout }: DashboardProps) {
     }
 
     setProducts((current) => (current || []).filter((p) => p.id !== deletingProductId));
+    
+    const closeHistory = await window.spark.kv.get<any[]>('daily-close-history');
+    if (closeHistory && closeHistory.length > 0) {
+      const updatedHistory = closeHistory.map(report => {
+        const updatedTopProducts = report.topProducts?.filter(
+          (p: any) => p.productId !== deletingProductId
+        ) || [];
+        
+        const removedProduct = report.topProducts?.find(
+          (p: any) => p.productId === deletingProductId
+        );
+        
+        let updatedFinancial = { ...report.financial };
+        
+        if (removedProduct) {
+          const revenueToSubtract = removedProduct.revenue || 0;
+          updatedFinancial = {
+            ...report.financial,
+            grossRevenue: Math.max(0, report.financial.grossRevenue - revenueToSubtract),
+            netProfit: report.financial.netProfit - revenueToSubtract,
+          };
+          
+          if (updatedFinancial.grossRevenue > 0) {
+            updatedFinancial.profitMargin = 
+              (updatedFinancial.netProfit / updatedFinancial.grossRevenue) * 100;
+          } else {
+            updatedFinancial.profitMargin = 0;
+          }
+        }
+        
+        return {
+          ...report,
+          topProducts: updatedTopProducts,
+          financial: updatedFinancial,
+        };
+      });
+      
+      await window.spark.kv.set('daily-close-history', updatedHistory);
+    }
+    
     setDeletingProductId(null);
-    toast.success('Producto eliminado y registrado en auditoría');
+    toast.success('Producto eliminado del inventario y del historial de cierres');
   };
 
   const handleExport = () => {
