@@ -27,7 +27,7 @@ export function Login({ onLogin, onShowRegister }: LoginProps) {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-primary/5 via-accent/5 to-background p-4">
+    <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-accent/5 to-background p-4 overflow-hidden">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center space-y-2">
           <div className="flex justify-center mb-2">

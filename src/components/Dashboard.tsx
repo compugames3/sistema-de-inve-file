@@ -245,9 +245,9 @@ export function Dashboard({ onLogout }: DashboardProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-6 py-4">
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
+      <header className="border-b bg-card shrink-0">
+        <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-semibold">Sistema de Inventario Profesional</h1>
@@ -298,7 +298,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
         </div>
       </header>
 
-      <main className="container mx-auto px-6 py-6">
+      <main className="flex-1 overflow-y-auto px-6 py-6">
         <Tabs value={currentView} onValueChange={(value) => setCurrentView(value as ViewType)} className="w-full">
           <TabsList className={`grid w-full max-w-3xl mb-6`} style={{ gridTemplateColumns: `repeat(${accessibleTabs.length}, 1fr)` }}>
             {canAccessTab(currentUser ?? null, 'inventory') && (
