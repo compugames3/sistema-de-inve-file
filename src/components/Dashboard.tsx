@@ -246,37 +246,45 @@ export function Dashboard({ onLogout }: DashboardProps) {
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
-      <header className="border-b bg-gradient-to-r from-card via-card to-primary/5 shrink-0 shadow-sm">
-        <div className="px-6 py-5">
+      <header className="border-b bg-white shrink-0 shadow-sm relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5" />
+        <div className="relative px-8 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary to-accent blur-md opacity-40" />
-                <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
-                  <Package className="w-6 h-6 text-primary-foreground" weight="duotone" />
+            <div className="flex items-center gap-5">
+              <div className="relative group">
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary via-accent to-primary blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-300" />
+                <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-primary via-accent to-primary flex items-center justify-center shadow-xl">
+                  <Package className="w-8 h-8 text-white" weight="duotone" />
                 </div>
               </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <div className="flex flex-col">
+                <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                   Sistema de Inventario
                 </h1>
-                <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-2">
-                  <Database className="w-3.5 h-3.5" weight="duotone" />
-                  Base de datos persistente · Auditoría completa
-                </p>
+                <div className="flex items-center gap-3 mt-1.5">
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                    <Database className="w-3.5 h-3.5 text-primary" weight="duotone" />
+                    <span>Base de Datos</span>
+                  </div>
+                  <div className="w-1 h-1 rounded-full bg-border" />
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                    <CheckCircle className="w-3.5 h-3.5 text-success" weight="duotone" />
+                    <span>Sistema Profesional</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               {activeCriticalAlerts > 0 && currentView === 'inventory' && (
-                <div className="relative animate-pulse">
+                <div className="relative">
                   <Button
                     variant="outline"
                     size="icon"
-                    className="relative border-warning/50 hover:bg-warning/10 hover:border-warning shadow-lg shadow-warning/20"
+                    className="relative h-12 w-12 border-2 border-warning/30 hover:bg-warning/10 hover:border-warning transition-all duration-200 shadow-lg shadow-warning/10"
                   >
                     <Bell className="w-5 h-5 text-warning" weight="fill" />
                     {activeCriticalAlerts > 0 && (
-                      <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-destructive-foreground text-xs font-bold shadow-lg">
+                      <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-destructive to-destructive/80 text-white text-xs font-bold shadow-lg animate-pulse">
                         {activeCriticalAlerts > 9 ? '9+' : activeCriticalAlerts}
                       </span>
                     )}
@@ -284,26 +292,28 @@ export function Dashboard({ onLogout }: DashboardProps) {
                 </div>
               )}
               {currentUser && (
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-gradient-to-br from-secondary/80 to-secondary/50 border border-border/50 shadow-sm">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isAdmin ? 'bg-primary/10' : 'bg-muted'}`}>
-                      {isAdmin ? (
-                        <ShieldCheck className="w-6 h-6 text-primary" weight="duotone" />
-                      ) : (
-                        <UserIcon className="w-6 h-6 text-muted-foreground" weight="duotone" />
-                      )}
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-semibold">{currentUser.username}</span>
-                      <Badge variant={isAdmin ? "default" : "secondary"} className="w-fit text-xs mt-0.5 shadow-sm">
-                        {isAdmin ? "Administrador" : "Visitante"}
-                      </Badge>
-                    </div>
+                <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-gradient-to-br from-card to-secondary/30 border-2 border-border/50 shadow-md">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isAdmin ? 'bg-gradient-to-br from-primary/20 to-accent/20' : 'bg-muted'} shadow-inner`}>
+                    {isAdmin ? (
+                      <ShieldCheck className="w-7 h-7 text-primary" weight="duotone" />
+                    ) : (
+                      <UserIcon className="w-7 h-7 text-muted-foreground" weight="duotone" />
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-base font-bold text-foreground">{currentUser.username}</span>
+                    <Badge variant={isAdmin ? "default" : "secondary"} className="w-fit text-xs mt-1 px-2 py-0.5 shadow-sm">
+                      {isAdmin ? "Administrador" : "Visitante"}
+                    </Badge>
                   </div>
                 </div>
               )}
-              <Button variant="outline" onClick={onLogout} className="shadow-sm hover:shadow-md transition-shadow">
-                <SignOut className="w-4 h-4 mr-2" />
+              <Button 
+                variant="outline" 
+                onClick={onLogout} 
+                className="h-12 px-5 border-2 hover:bg-destructive/5 hover:border-destructive/30 hover:text-destructive transition-all duration-200 shadow-sm font-medium"
+              >
+                <SignOut className="w-5 h-5 mr-2" weight="bold" />
                 Cerrar Sesión
               </Button>
             </div>
@@ -311,78 +321,86 @@ export function Dashboard({ onLogout }: DashboardProps) {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-6 py-6">
+      <main className="flex-1 overflow-y-auto px-8 py-8">
         <Tabs value={currentView} onValueChange={(value) => setCurrentView(value as ViewType)} className="w-full">
-          <TabsList className={`grid w-full max-w-4xl mb-8 h-14 bg-muted/50 p-1.5 shadow-sm`} style={{ gridTemplateColumns: `repeat(${accessibleTabs.length}, 1fr)` }}>
+          <TabsList className={`grid w-full max-w-5xl mx-auto mb-10 h-16 bg-white/60 backdrop-blur-sm p-2 shadow-lg border-2 border-border/30 rounded-2xl`} style={{ gridTemplateColumns: `repeat(${accessibleTabs.length}, 1fr)` }}>
             {canAccessTab(currentUser ?? null, 'inventory') && (
               <TabsTrigger 
                 value="inventory"
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 font-semibold"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/90 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-primary/30 transition-all duration-300 font-bold text-base rounded-xl"
               >
-                <Package className="w-5 h-5 mr-2" weight="duotone" />
+                <Package className="w-6 h-6 mr-2.5" weight="duotone" />
                 Inventario
               </TabsTrigger>
             )}
             {canAccessTab(currentUser ?? null, 'orders') && (
               <TabsTrigger 
                 value="orders"
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-accent data-[state=active]:to-accent/80 data-[state=active]:text-accent-foreground data-[state=active]:shadow-lg transition-all duration-300 font-semibold"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-accent data-[state=active]:to-accent/90 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-accent/30 transition-all duration-300 font-bold text-base rounded-xl"
               >
-                <Receipt className="w-5 h-5 mr-2" weight="duotone" />
+                <Receipt className="w-6 h-6 mr-2.5" weight="duotone" />
                 Órdenes
               </TabsTrigger>
             )}
             {canAccessTab(currentUser ?? null, 'dailyclose') && (
               <TabsTrigger 
                 value="dailyclose"
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-success data-[state=active]:to-success/80 data-[state=active]:text-success-foreground data-[state=active]:shadow-lg transition-all duration-300 font-semibold"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-success data-[state=active]:to-success/90 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-success/30 transition-all duration-300 font-bold text-base rounded-xl"
               >
-                <CalendarBlank className="w-5 h-5 mr-2" weight="duotone" />
+                <CalendarBlank className="w-6 h-6 mr-2.5" weight="duotone" />
                 Cierre del Día
               </TabsTrigger>
             )}
             {canAccessTab(currentUser ?? null, 'users') && (
               <TabsTrigger 
                 value="users"
-                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-warning data-[state=active]:to-warning/80 data-[state=active]:text-warning-foreground data-[state=active]:shadow-lg transition-all duration-300 font-semibold"
+                className="data-[state=active]:bg-gradient-to-br data-[state=active]:from-warning data-[state=active]:to-warning/90 data-[state=active]:text-warning-foreground data-[state=active]:shadow-xl data-[state=active]:shadow-warning/30 transition-all duration-300 font-bold text-base rounded-xl"
               >
-                <Users className="w-5 h-5 mr-2" weight="duotone" />
+                <Users className="w-6 h-6 mr-2.5" weight="duotone" />
                 Usuarios
               </TabsTrigger>
             )}
           </TabsList>
 
-          <TabsContent value="inventory" className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <StatsCard
-            title="Total de Productos"
-            value={totalProducts}
-            icon={Package}
-            iconColor="text-primary"
-          />
-          <StatsCard
-            title="Stock Bajo / Agotado"
-            value={lowStockProducts}
-            icon={Warning}
-            iconColor="text-warning"
-          />
-          <StatsCard
-            title="Valor Total del Inventario"
-            value={formatCurrency(totalValue)}
-            icon={CurrencyDollar}
-            iconColor="text-success"
-          />
+          <TabsContent value="inventory" className="space-y-8 animate-slide-up">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="group hover:scale-105 transition-transform duration-300">
+            <StatsCard
+              title="Total de Productos"
+              value={totalProducts}
+              icon={Package}
+              iconColor="text-primary"
+            />
+          </div>
+          <div className="group hover:scale-105 transition-transform duration-300">
+            <StatsCard
+              title="Stock Bajo / Agotado"
+              value={lowStockProducts}
+              icon={Warning}
+              iconColor="text-warning"
+            />
+          </div>
+          <div className="group hover:scale-105 transition-transform duration-300">
+            <StatsCard
+              title="Valor Total del Inventario"
+              value={formatCurrency(totalValue)}
+              icon={CurrencyDollar}
+              iconColor="text-success"
+            />
+          </div>
         </div>
 
         {!isAdmin && safeProducts.length > 0 && (
-          <div className="mb-4 p-4 bg-accent/10 border border-accent rounded-lg">
-            <div className="flex items-start gap-3">
-              <LockKey className="w-5 h-5 text-accent shrink-0 mt-0.5" weight="duotone" />
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-accent-foreground">
+          <div className="p-5 bg-gradient-to-br from-accent/10 to-accent/5 border-2 border-accent/30 rounded-2xl shadow-md">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center shrink-0">
+                <LockKey className="w-6 h-6 text-accent" weight="duotone" />
+              </div>
+              <div className="space-y-2">
+                <p className="text-base font-bold text-accent-foreground">
                   Permisos Granulares Activos
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   Puede ver {visibleProducts.length} de {safeProducts.length} productos. 
                   Sus permisos de edición y eliminación son específicos por producto.
                 </p>
@@ -391,7 +409,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
           </div>
         )}
 
-        <div className="mb-6">
+        <div>
           <StatisticsPanel products={visibleProducts} />
         </div>
 
@@ -401,83 +419,110 @@ export function Dashboard({ onLogout }: DashboardProps) {
           dismissedAlerts={dismissedAlerts || []}
         />
 
-        <div className="mb-6 flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
-          <div>
-            <h2 className="text-2xl font-semibold">Productos en Base de Datos</h2>
-            <p className="text-sm text-muted-foreground">
-              Persistencia local automática · Backups con verificación de integridad
-            </p>
-          </div>
-          <div className="flex gap-3 flex-wrap">
-            {isAdmin && (
-              <Button variant="outline" onClick={() => setShowAuditDialog(true)}>
-                <ClockCounterClockwise className="w-4 h-4 mr-2" />
-                Auditoría ({auditLogs.length})
-              </Button>
-            )}
-            <Button variant="outline" onClick={handleBackupDatabase}>
-              <Database className="w-4 h-4 mr-2" />
-              Guardar BD
-            </Button>
-            {isAdmin && (
-              <>
-                <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
-                  <Upload className="w-4 h-4 mr-2" />
-                  Cargar BD
+        <div className="bg-white rounded-2xl shadow-lg border-2 border-border/30 overflow-hidden">
+          <div className="px-8 py-6 bg-gradient-to-r from-card to-secondary/20 border-b-2 border-border/30">
+            <div className="flex flex-col sm:flex-row gap-5 justify-between items-start sm:items-center">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground mb-1.5">Productos en Base de Datos</h2>
+                <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <Database className="w-4 h-4" weight="duotone" />
+                  Persistencia local automática · Backups verificados
+                </p>
+              </div>
+              <div className="flex gap-3 flex-wrap">
+                {isAdmin && (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setShowAuditDialog(true)}
+                    className="border-2 hover:bg-accent/5 hover:border-accent/50 transition-all shadow-sm font-semibold"
+                  >
+                    <ClockCounterClockwise className="w-4 h-4 mr-2" weight="duotone" />
+                    Auditoría ({auditLogs.length})
+                  </Button>
+                )}
+                <Button 
+                  variant="outline" 
+                  onClick={handleBackupDatabase}
+                  className="border-2 hover:bg-primary/5 hover:border-primary/50 transition-all shadow-sm font-semibold"
+                >
+                  <Database className="w-4 h-4 mr-2" weight="duotone" />
+                  Guardar BD
                 </Button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".json,.sib"
-                  onChange={handleRestoreDatabase}
-                  className="hidden"
-                />
-              </>
-            )}
-            <Button variant="outline" onClick={handleExport} disabled={visibleProducts.length === 0}>
-              <Download className="w-4 h-4 mr-2" />
-              Exportar CSV
-            </Button>
-            {isAdmin && (
-              <Button onClick={() => setIsAddDialogOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Agregar Producto
-              </Button>
-            )}
+                {isAdmin && (
+                  <>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => fileInputRef.current?.click()}
+                      className="border-2 hover:bg-success/5 hover:border-success/50 transition-all shadow-sm font-semibold"
+                    >
+                      <Upload className="w-4 h-4 mr-2" weight="duotone" />
+                      Cargar BD
+                    </Button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".json,.sib"
+                      onChange={handleRestoreDatabase}
+                      className="hidden"
+                    />
+                  </>
+                )}
+                <Button 
+                  variant="outline" 
+                  onClick={handleExport} 
+                  disabled={visibleProducts.length === 0}
+                  className="border-2 hover:bg-accent/5 hover:border-accent/50 transition-all shadow-sm font-semibold"
+                >
+                  <Download className="w-4 h-4 mr-2" weight="duotone" />
+                  Exportar CSV
+                </Button>
+                {isAdmin && (
+                  <Button 
+                    onClick={() => setIsAddDialogOpen(true)}
+                    className="bg-gradient-to-br from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all font-bold"
+                  >
+                    <Plus className="w-5 h-5 mr-2" weight="bold" />
+                    Agregar Producto
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6">
+            <InventoryTable
+              products={visibleProducts}
+              currentUser={currentUser}
+              onEdit={
+                isAdmin
+                  ? setEditingProduct
+                  : currentUser
+                  ? (product) => {
+                      if (canEditProduct(currentUser, product)) {
+                        setEditingProduct(product);
+                      } else {
+                        toast.error('No tiene permisos para editar este producto');
+                      }
+                    }
+                  : undefined
+              }
+              onDelete={
+                isAdmin
+                  ? setDeletingProductId
+                  : currentUser
+                  ? (productId) => {
+                      const product = safeProducts.find((p) => p.id === productId);
+                      if (product && canDeleteProduct(currentUser, product)) {
+                        setDeletingProductId(productId);
+                      } else {
+                        toast.error('No tiene permisos para eliminar este producto');
+                      }
+                    }
+                  : undefined
+              }
+            />
           </div>
         </div>
-
-        <InventoryTable
-          products={visibleProducts}
-          currentUser={currentUser}
-          onEdit={
-            isAdmin
-              ? setEditingProduct
-              : currentUser
-              ? (product) => {
-                  if (canEditProduct(currentUser, product)) {
-                    setEditingProduct(product);
-                  } else {
-                    toast.error('No tiene permisos para editar este producto');
-                  }
-                }
-              : undefined
-          }
-          onDelete={
-            isAdmin
-              ? setDeletingProductId
-              : currentUser
-              ? (productId) => {
-                  const product = safeProducts.find((p) => p.id === productId);
-                  if (product && canDeleteProduct(currentUser, product)) {
-                    setDeletingProductId(productId);
-                  } else {
-                    toast.error('No tiene permisos para eliminar este producto');
-                  }
-                }
-              : undefined
-          }
-        />
           </TabsContent>
 
           <TabsContent value="orders">

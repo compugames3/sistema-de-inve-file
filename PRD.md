@@ -126,21 +126,22 @@ The design should evoke trust, organization, and efficiency - like a well-manage
 
 ## Color Selection
 
-A professional business palette with navy blue primary, complemented by clean grays and status-driven accent colors.
+A clean, professional business palette with navy blue primary, modern cyan accents, and bright white cards for a polished corporate aesthetic.
 
-- **Primary Color**: Deep navy blue (oklch(0.35 0.08 250)) - Conveys professionalism, trust, and corporate stability
+- **Primary Color**: Deep navy blue (oklch(0.35 0.08 250)) - Conveys professionalism, trust, and authority
 - **Secondary Colors**: 
-  - Light gray (oklch(0.96 0 0)) for subtle backgrounds and cards
+  - Ultra-light gray background (oklch(0.98 0 0)) for main page background
+  - Pure white (oklch(1 0 0)) for elevated cards and panels
   - Medium gray (oklch(0.45 0.02 250)) for secondary text
-- **Accent Color**: Vibrant cyan (oklch(0.65 0.15 220)) for CTAs, active states, and interactive elements
+- **Accent Color**: Vibrant cyan (oklch(0.65 0.15 220)) for interactive elements, highlights, and active states
 - **Status Colors**:
-  - Success green (oklch(0.65 0.15 145)) for good stock levels
-  - Warning amber (oklch(0.75 0.15 85)) for low stock alerts
-  - Critical red (oklch(0.60 0.22 25)) for out of stock
+  - Success green (oklch(0.65 0.15 145)) for positive metrics and confirmations
+  - Warning amber (oklch(0.75 0.15 85)) for low stock alerts and cautions
+  - Destructive red (oklch(0.60 0.22 25)) for critical alerts and dangerous actions
 - **Foreground/Background Pairings**:
   - Primary Navy (oklch(0.35 0.08 250)): White text (oklch(1 0 0)) - Ratio 9.2:1 ✓
   - Accent Cyan (oklch(0.65 0.15 220)): White text (oklch(1 0 0)) - Ratio 4.9:1 ✓
-  - Background (oklch(0.98 0 0)): Dark text (oklch(0.20 0.01 250)) - Ratio 13.1:1 ✓
+  - Card White (oklch(1 0 0)): Dark text (oklch(0.20 0.01 250)) - Ratio 15.2:1 ✓
   - Warning Amber (oklch(0.75 0.15 85)): Dark text (oklch(0.25 0.02 85)) - Ratio 7.8:1 ✓
 
 ## Font Selection
@@ -161,7 +162,7 @@ Typography should convey precision and professionalism, using modern sans-serif 
 
 ## Animations
 
-Animations should feel immediate and businesslike - quick confirmations and subtle state changes. Use micro-interactions to confirm actions (form submissions, deletions) with brief scale/fade effects. Table row highlights on hover should be instant. Success toasts slide in smoothly but briefly. Avoid decorative animations; focus on functional feedback that reinforces user actions without delay.
+Animations are crisp, immediate, and purposeful - reinforcing the professional nature of the system with subtle spring-based transitions. Use gentle scale and fade effects on stat cards (0.4s spring), smooth slide-up transitions for content sections (0.3s ease-out), and instant table row highlights. Tab transitions feature smooth color changes with shadow effects. Buttons respond with subtle hover states. All animations prioritize speed and clarity over decoration, maintaining the business-focused aesthetic.
 
 ## Component Selection
 
