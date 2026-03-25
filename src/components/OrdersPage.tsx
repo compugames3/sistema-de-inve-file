@@ -354,19 +354,23 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
       </Tabs>
 
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="max-w-[100vw] w-[100vw] h-[100vh] max-h-[100vh] m-0 rounded-none overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Nueva {orderType === 'sale' ? 'Venta' : 'Compra'}</DialogTitle>
-            <DialogDescription>
-              Complete la información para crear una nueva {orderType === 'sale' ? 'venta' : 'compra'}
-            </DialogDescription>
-          </DialogHeader>
-          <OrderForm
-            type={orderType}
-            products={products}
-            onSubmit={handleCreateOrder}
-            onCancel={() => setIsCreateDialogOpen(false)}
-          />
+        <DialogContent className="max-w-[100vw] w-[100vw] h-[100vh] max-h-[100vh] m-0 rounded-none p-0 overflow-hidden flex flex-col">
+          <div className="px-8 pt-6 pb-4 border-b shrink-0">
+            <DialogHeader>
+              <DialogTitle className="text-2xl">Nueva {orderType === 'sale' ? 'Venta' : 'Compra'}</DialogTitle>
+              <DialogDescription className="text-base">
+                Complete la información para crear una nueva {orderType === 'sale' ? 'venta' : 'compra'}
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+          <div className="flex-1 px-8 py-6 overflow-hidden">
+            <OrderForm
+              type={orderType}
+              products={products}
+              onSubmit={handleCreateOrder}
+              onCancel={() => setIsCreateDialogOpen(false)}
+            />
+          </div>
         </DialogContent>
       </Dialog>
 

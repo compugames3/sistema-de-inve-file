@@ -94,145 +94,161 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
   const isValidForm = items.length > 0 && items.every(item => item.productId && item.quantity > 0);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Productos</h3>
-          <Button type="button" onClick={addItem} size="sm">
-            <Plus className="w-4 h-4 mr-2" />
-            Agregar Producto
-          </Button>
+    <form onSubmit={handleSubmit} className="h-full flex flex-col">
+      <div className="flex-1 grid grid-cols-[1fr_400px] gap-8 min-h-0">
+        <div className="flex flex-col space-y-4 min-h-0">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-semibold">Productos</h3>
+            <Button type="button" onClick={addItem}>
+              <Plus className="w-5 h-5 mr-2" />
+              Agregar Producto
+            </Button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto pr-2 min-h-0">
+            {items.length === 0 ? (
+              <Card className="p-12 text-center flex flex-col items-center justify-center h-full">
+                <p className="text-lg text-muted-foreground">No hay productos agregados</p>
+                <p className="text-sm text-muted-foreground mt-2">Haz clic en "Agregar Producto" para comenzar</p>
+              </Card>
+            ) : (
+              <div className="space-y-4">
+                {items.map((item, index) => {
+                  const product = products.find(p => p.id === item.productId);
+                  const subtotal = item.quantity * item.unitPrice;
+
+                  return (
+                    <Card key={index} className="p-5">
+                      <div className="grid grid-cols-12 gap-4 items-end">
+                        <div className="col-span-5">
+                          <Label htmlFor={`product-${index}`} className="text-sm font-semibold">Producto</Label>
+                          <Select
+                            value={item.productId}
+                            onValueChange={(value) => updateItem(index, 'productId', value)}
+                          >
+                            <SelectTrigger id={`product-${index}`} className="h-11 text-base">
+                              <SelectValue placeholder="Seleccionar producto" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {products.map((p) => (
+                                <SelectItem key={p.id} value={p.id}>
+                                  {p.name} - {p.sku} ({p.quantity} disponibles)
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="col-span-2">
+                          <Label htmlFor={`quantity-${index}`} className="text-sm font-semibold">Cantidad</Label>
+                          <Input
+                            id={`quantity-${index}`}
+                            type="number"
+                            min="1"
+                            max={type === 'sale' && product ? product.quantity : undefined}
+                            value={item.quantity}
+                            onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value) || 0)}
+                            className="h-11 text-base"
+                          />
+                        </div>
+
+                        <div className="col-span-2">
+                          <Label htmlFor={`price-${index}`} className="text-sm font-semibold">Precio Unit.</Label>
+                          <Input
+                            id={`price-${index}`}
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={item.unitPrice}
+                            onChange={(e) => updateItem(index, 'unitPrice', parseFloat(e.target.value) || 0)}
+                            className="h-11 text-base"
+                          />
+                        </div>
+
+                        <div className="col-span-2">
+                          <Label className="text-sm font-semibold">Subtotal</Label>
+                          <div className="font-bold text-xl pt-2">{formatCurrency(subtotal)}</div>
+                        </div>
+
+                        <div className="col-span-1 flex justify-center">
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            onClick={() => removeItem(index)}
+                            className="h-11 w-11"
+                          >
+                            <Trash className="w-5 h-5" />
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
 
-        {items.length === 0 ? (
-          <Card className="p-8 text-center">
-            <p className="text-muted-foreground">No hay productos agregados</p>
-            <p className="text-sm text-muted-foreground mt-1">Haz clic en "Agregar Producto" para comenzar</p>
-          </Card>
-        ) : (
-          <div className="space-y-3">
-            {items.map((item, index) => {
-              const product = products.find(p => p.id === item.productId);
-              const subtotal = item.quantity * item.unitPrice;
+        <div className="flex flex-col space-y-6 border-l pl-8">
+          <div className="space-y-6 flex-1">
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Información de {type === 'sale' ? 'Venta' : 'Compra'}</h3>
+              
+              {type === 'sale' ? (
+                <div>
+                  <Label htmlFor="client" className="text-sm font-semibold">Cliente</Label>
+                  <Input
+                    id="client"
+                    value={client}
+                    onChange={(e) => setClient(e.target.value)}
+                    placeholder="Nombre del cliente"
+                    className="h-11 text-base mt-2"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <Label htmlFor="supplier" className="text-sm font-semibold">Proveedor</Label>
+                  <Input
+                    id="supplier"
+                    value={supplier}
+                    onChange={(e) => setSupplier(e.target.value)}
+                    placeholder="Nombre del proveedor"
+                    className="h-11 text-base mt-2"
+                  />
+                </div>
+              )}
+            </div>
 
-              return (
-                <Card key={index} className="p-4">
-                  <div className="grid grid-cols-12 gap-4 items-end">
-                    <div className="col-span-5">
-                      <Label htmlFor={`product-${index}`}>Producto</Label>
-                      <Select
-                        value={item.productId}
-                        onValueChange={(value) => updateItem(index, 'productId', value)}
-                      >
-                        <SelectTrigger id={`product-${index}`}>
-                          <SelectValue placeholder="Seleccionar producto" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {products.map((p) => (
-                            <SelectItem key={p.id} value={p.id}>
-                              {p.name} - {p.sku} ({p.quantity} disponibles)
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+            <div>
+              <Label htmlFor="notes" className="text-sm font-semibold">Notas (Opcional)</Label>
+              <Textarea
+                id="notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Observaciones adicionales"
+                rows={4}
+                className="text-base mt-2 resize-none"
+              />
+            </div>
 
-                    <div className="col-span-2">
-                      <Label htmlFor={`quantity-${index}`}>Cantidad</Label>
-                      <Input
-                        id={`quantity-${index}`}
-                        type="number"
-                        min="1"
-                        max={type === 'sale' && product ? product.quantity : undefined}
-                        value={item.quantity}
-                        onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value) || 0)}
-                      />
-                    </div>
-
-                    <div className="col-span-2">
-                      <Label htmlFor={`price-${index}`}>Precio Unit.</Label>
-                      <Input
-                        id={`price-${index}`}
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={item.unitPrice}
-                        onChange={(e) => updateItem(index, 'unitPrice', parseFloat(e.target.value) || 0)}
-                      />
-                    </div>
-
-                    <div className="col-span-2">
-                      <Label>Subtotal</Label>
-                      <div className="font-semibold text-lg pt-2">{formatCurrency(subtotal)}</div>
-                    </div>
-
-                    <div className="col-span-1">
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="icon"
-                        onClick={() => removeItem(index)}
-                      >
-                        <Trash className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              );
-            })}
+            <Card className="p-6 bg-muted">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-2">Total</p>
+                <p className="text-5xl font-bold">{formatCurrency(calculateTotal())}</p>
+              </div>
+            </Card>
           </div>
-        )}
 
-        <div className="flex justify-end pt-4 border-t">
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">Total</p>
-            <p className="text-2xl font-bold">{formatCurrency(calculateTotal())}</p>
+          <div className="flex flex-col gap-3 pt-6 border-t">
+            <Button type="submit" disabled={!isValidForm} size="lg" className="h-14 text-lg">
+              Crear {type === 'sale' ? 'Venta' : 'Compra'}
+            </Button>
+            <Button type="button" variant="outline" onClick={onCancel} size="lg" className="h-14 text-lg">
+              Cancelar
+            </Button>
           </div>
         </div>
-      </div>
-
-      <div className="space-y-4">
-        {type === 'sale' ? (
-          <div>
-            <Label htmlFor="client">Cliente</Label>
-            <Input
-              id="client"
-              value={client}
-              onChange={(e) => setClient(e.target.value)}
-              placeholder="Nombre del cliente"
-            />
-          </div>
-        ) : (
-          <div>
-            <Label htmlFor="supplier">Proveedor</Label>
-            <Input
-              id="supplier"
-              value={supplier}
-              onChange={(e) => setSupplier(e.target.value)}
-              placeholder="Nombre del proveedor"
-            />
-          </div>
-        )}
-
-        <div>
-          <Label htmlFor="notes">Notas (Opcional)</Label>
-          <Textarea
-            id="notes"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Observaciones adicionales"
-            rows={3}
-          />
-        </div>
-      </div>
-
-      <div className="flex gap-3 justify-end">
-        <Button type="button" variant="outline" onClick={onCancel}>
-          Cancelar
-        </Button>
-        <Button type="submit" disabled={!isValidForm}>
-          Crear {type === 'sale' ? 'Venta' : 'Compra'}
-        </Button>
       </div>
     </form>
   );
