@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useKV } from '@github/spark/hooks';
-import { Product } from '@/lib/types';
+import { Product, User } from '@/lib/types';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { StatsCard } from '@/components/StatsCard';
 import { ProductForm } from '@/components/ProductForm';
 import { InventoryTable } from '@/components/InventoryTable';
-import { Plus, SignOut, Download, Package, Warning, CurrencyDollar } from '@phosphor-icons/react';
+import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon } from '@phosphor-icons/react';
 import { generateId, exportToCSV, formatCurrency, getStockStatus } from '@/lib/inventory-utils';
 import { toast } from 'sonner';
 
@@ -17,9 +18,12 @@ interface DashboardProps {
 
 export function Dashboard({ onLogout }: DashboardProps) {
   const [products, setProducts] = useKV<Product[]>('inventory-products', []);
+  const [currentUser] = useKV<User | null>('current-user', null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
+
+  const isAdmin = currentUser?.isAdmin ?? false;
 
   const handleAddProduct = (data: {
     sku: string;
@@ -104,10 +108,29 @@ export function Dashboard({ onLogout }: DashboardProps) {
                 Gestión profesional de inventario
               </p>
             </div>
-            <Button variant="outline" onClick={onLogout}>
-              <SignOut className="w-4 h-4 mr-2" />
-              Cerrar Sesión
-            </Button>
+            <div className="flex items-center gap-4">
+              {currentUser && (
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary/50">
+                    {isAdmin ? (
+                      <ShieldCheck className="w-5 h-5 text-primary" weight="duotone" />
+                    ) : (
+                      <UserIcon className="w-5 h-5 text-muted-foreground" weight="duotone" />
+                    )}
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold">{currentUser.username}</span>
+                      <Badge variant={isAdmin ? "default" : "secondary"} className="w-fit text-xs">
+                        {isAdmin ? "Administrador" : "Visitante"}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <Button variant="outline" onClick={onLogout}>
+                <SignOut className="w-4 h-4 mr-2" />
+                Cerrar Sesión
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -134,6 +157,15 @@ export function Dashboard({ onLogout }: DashboardProps) {
           />
         </div>
 
+        {!isAdmin && safeProducts.length > 0 && (
+          <div className="mb-4 p-4 bg-muted/50 border border-border rounded-lg">
+            <p className="text-sm text-muted-foreground flex items-center gap-2">
+              <UserIcon className="w-4 h-4" />
+              <span>Acceso de solo lectura. No puede agregar, editar o eliminar productos.</span>
+            </p>
+          </div>
+        )}
+
         <div className="mb-6 flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
           <h2 className="text-2xl font-semibold">Productos</h2>
           <div className="flex gap-3">
@@ -141,71 +173,77 @@ export function Dashboard({ onLogout }: DashboardProps) {
               <Download className="w-4 h-4 mr-2" />
               Exportar CSV
             </Button>
-            <Button onClick={() => setIsAddDialogOpen(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Agregar Producto
-            </Button>
+            {isAdmin && (
+              <Button onClick={() => setIsAddDialogOpen(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Agregar Producto
+              </Button>
+            )}
           </div>
         </div>
 
         <InventoryTable
           products={safeProducts}
-          onEdit={setEditingProduct}
-          onDelete={setDeletingProductId}
+          onEdit={isAdmin ? setEditingProduct : undefined}
+          onDelete={isAdmin ? setDeletingProductId : undefined}
         />
       </main>
 
-      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Agregar Nuevo Producto</DialogTitle>
-            <DialogDescription>
-              Complete el formulario para agregar un nuevo producto al inventario
-            </DialogDescription>
-          </DialogHeader>
-          <ProductForm
-            onSubmit={handleAddProduct}
-            onCancel={() => setIsAddDialogOpen(false)}
-            existingSkus={existingSkus}
-          />
-        </DialogContent>
-      </Dialog>
+      {isAdmin && (
+        <>
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Agregar Nuevo Producto</DialogTitle>
+                <DialogDescription>
+                  Complete el formulario para agregar un nuevo producto al inventario
+                </DialogDescription>
+              </DialogHeader>
+              <ProductForm
+                onSubmit={handleAddProduct}
+                onCancel={() => setIsAddDialogOpen(false)}
+                existingSkus={existingSkus}
+              />
+            </DialogContent>
+          </Dialog>
 
-      <Dialog open={!!editingProduct} onOpenChange={(open) => !open && setEditingProduct(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Editar Producto</DialogTitle>
-            <DialogDescription>
-              Modifique la información del producto
-            </DialogDescription>
-          </DialogHeader>
-          {editingProduct && (
-            <ProductForm
-              product={editingProduct}
-              onSubmit={handleEditProduct}
-              onCancel={() => setEditingProduct(null)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+          <Dialog open={!!editingProduct} onOpenChange={(open) => !open && setEditingProduct(null)}>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Editar Producto</DialogTitle>
+                <DialogDescription>
+                  Modifique la información del producto
+                </DialogDescription>
+              </DialogHeader>
+              {editingProduct && (
+                <ProductForm
+                  product={editingProduct}
+                  onSubmit={handleEditProduct}
+                  onCancel={() => setEditingProduct(null)}
+                />
+              )}
+            </DialogContent>
+          </Dialog>
 
-      <AlertDialog open={!!deletingProductId} onOpenChange={(open) => !open && setDeletingProductId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Está seguro?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción no se puede deshacer. Esto eliminará permanentemente el producto{' '}
-              <span className="font-semibold">{deletingProduct?.name}</span> del inventario.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteProduct} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Eliminar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+          <AlertDialog open={!!deletingProductId} onOpenChange={(open) => !open && setDeletingProductId(null)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>¿Está seguro?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta acción no se puede deshacer. Esto eliminará permanentemente el producto{' '}
+                  <span className="font-semibold">{deletingProduct?.name}</span> del inventario.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteProduct} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  Eliminar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
+      )}
     </div>
   );
 }

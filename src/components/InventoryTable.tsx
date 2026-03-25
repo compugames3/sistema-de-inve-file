@@ -10,8 +10,8 @@ import { Card } from '@/components/ui/card';
 
 interface InventoryTableProps {
   products: Product[];
-  onEdit: (product: Product) => void;
-  onDelete: (productId: string) => void;
+  onEdit?: (product: Product) => void;
+  onDelete?: (productId: string) => void;
 }
 
 export function InventoryTable({ products, onEdit, onDelete }: InventoryTableProps) {
@@ -78,7 +78,9 @@ export function InventoryTable({ products, onEdit, onDelete }: InventoryTablePro
                   <TableHead className="text-right">Precio</TableHead>
                   <TableHead>Proveedor</TableHead>
                   <TableHead>Estado</TableHead>
-                  <TableHead className="text-right w-[120px]">Acciones</TableHead>
+                  {(onEdit || onDelete) && (
+                    <TableHead className="text-right w-[120px]">Acciones</TableHead>
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -99,26 +101,32 @@ export function InventoryTable({ products, onEdit, onDelete }: InventoryTablePro
                           {getStockLabel(status)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-1">
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={() => onEdit(product)}
-                            className="h-8 w-8"
-                          >
-                            <PencilSimple className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={() => onDelete(product.id)}
-                            className="h-8 w-8 text-destructive hover:text-destructive"
-                          >
-                            <Trash className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+                      {(onEdit || onDelete) && (
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-1">
+                            {onEdit && (
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                onClick={() => onEdit(product)}
+                                className="h-8 w-8"
+                              >
+                                <PencilSimple className="w-4 h-4" />
+                              </Button>
+                            )}
+                            {onDelete && (
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                onClick={() => onDelete(product.id)}
+                                className="h-8 w-8 text-destructive hover:text-destructive"
+                              >
+                                <Trash className="w-4 h-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      )}
                     </TableRow>
                   );
                 })}

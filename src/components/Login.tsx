@@ -3,14 +3,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Lock } from '@phosphor-icons/react';
+import { Lock, UserPlus } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 interface LoginProps {
   onLogin: (username: string, password: string) => void;
+  onShowRegister: () => void;
 }
 
-export function Login({ onLogin }: LoginProps) {
+export function Login({ onLogin, onShowRegister }: LoginProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -65,6 +66,21 @@ export function Login({ onLogin }: LoginProps) {
               Iniciar Sesión
             </Button>
           </form>
+          
+          <div className="mt-6 pt-6 border-t border-border">
+            <p className="text-sm text-muted-foreground text-center mb-3">
+              ¿No tiene una cuenta?
+            </p>
+            <Button 
+              variant="outline" 
+              onClick={onShowRegister}
+              className="w-full"
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              Crear Nuevo Usuario
+            </Button>
+          </div>
+          
           <p className="text-xs text-muted-foreground text-center mt-4">
             Usuario predeterminado: <span className="font-mono font-semibold">admin</span> / Contraseña: <span className="font-mono font-semibold">admin123</span>
           </p>
