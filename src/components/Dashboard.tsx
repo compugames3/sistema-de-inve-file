@@ -159,43 +159,51 @@ export function Dashboard({ onLogout }: DashboardProps) {
 
     setProducts((current) => (current || []).filter((p) => p.id !== deletingProductId));
     
-    const closeHistory = await window.spark.kv.get<any[]>('daily-close-history');
-    if (closeHistory && closeHistory.length > 0) {
-      const updatedHistory = closeHistory.map(report => {
-        const updatedTopProducts = report.topProducts?.filter(
-          (p: any) => p.productId !== deletingProductId
-        ) || [];
-        
-        const removedProduct = report.topProducts?.find(
-          (p: any) => p.productId === deletingProductId
-        );
-        
-        let updatedFinancial = { ...report.financial };
-        
-        if (removedProduct) {
-          const revenueToSubtract = removedProduct.revenue || 0;
-          updatedFinancial = {
-            ...report.financial,
-            grossRevenue: Math.max(0, report.financial.grossRevenue - revenueToSubtract),
-            netProfit: report.financial.netProfit - revenueToSubtract,
-          };
-          
-          if (updatedFinancial.grossRevenue > 0) {
-            updatedFinancial.profitMargin = 
-              (updatedFinancial.netProfit / updatedFinancial.grossRevenue) * 100;
-          } else {
-            updatedFinancial.profitMargin = 0;
+    try {
+      const closeHistory = await window.spark.kv.get<any[]>('daily-close-history');
+      if (closeHistory && closeHistory.length > 0) {
+        const updatedHistory = closeHistory.map(report => {
+          if (!report.topProducts || report.topProducts.length === 0) {
+            return report;
           }
-        }
+
+          const updatedTopProducts = report.topProducts.filter(
+            (p: any) => p.productId !== deletingProductId
+          );
+          
+          const removedProduct = report.topProducts.find(
+            (p: any) => p.productId === deletingProductId
+          );
+          
+          let updatedFinancial = { ...report.financial };
+          
+          if (removedProduct) {
+            const revenueToSubtract = removedProduct.revenue || 0;
+            updatedFinancial = {
+              ...report.financial,
+              grossRevenue: Math.max(0, report.financial.grossRevenue - revenueToSubtract),
+              netProfit: Math.max(0, report.financial.netProfit - revenueToSubtract),
+            };
+            
+            if (updatedFinancial.grossRevenue > 0) {
+              updatedFinancial.profitMargin = 
+                (updatedFinancial.netProfit / updatedFinancial.grossRevenue) * 100;
+            } else {
+              updatedFinancial.profitMargin = 0;
+            }
+          }
+          
+          return {
+            ...report,
+            topProducts: updatedTopProducts,
+            financial: updatedFinancial,
+          };
+        });
         
-        return {
-          ...report,
-          topProducts: updatedTopProducts,
-          financial: updatedFinancial,
-        };
-      });
-      
-      await window.spark.kv.set('daily-close-history', updatedHistory);
+        await window.spark.kv.set('daily-close-history', updatedHistory);
+      }
+    } catch (error) {
+      console.error('Error al actualizar historial de cierres:', error);
     }
     
     setDeletingProductId(null);

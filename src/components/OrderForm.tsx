@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card } from '@/components/ui/card';
 import { Trash, Plus, Check } from '@phosphor-icons/react';
 import { formatCurrency } from '@/lib/inventory-utils';
+import { toast } from 'sonner';
 
 interface OrderFormProps {
   type: OrderType;
@@ -35,10 +36,21 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
   const [quantity, setQuantity] = useState(1);
 
   const addItem = () => {
-    if (!selectedProduct) return;
+    if (!selectedProduct) {
+      toast.error('Seleccione un producto');
+      return;
+    }
+    
+    if (quantity <= 0) {
+      toast.error('La cantidad debe ser mayor a 0');
+      return;
+    }
     
     const product = products.find(p => p.id === selectedProduct);
-    if (!product) return;
+    if (!product) {
+      toast.error('Producto no encontrado');
+      return;
+    }
 
     const existingIndex = items.findIndex(item => item.productId === selectedProduct);
     
@@ -46,12 +58,14 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
       const newItems = [...items];
       newItems[existingIndex].quantity += quantity;
       setItems(newItems);
+      toast.success(`Cantidad actualizada para ${product.name}`);
     } else {
       setItems([...items, { 
         productId: selectedProduct, 
         quantity: quantity, 
         unitPrice: product.price 
       }]);
+      toast.success(`${product.name} agregado`);
     }
 
     setSelectedProduct('');
@@ -76,6 +90,13 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
     e.preventDefault();
 
     if (items.length === 0) {
+      toast.error('Agregue al menos un producto a la orden');
+      return;
+    }
+
+    const clientOrSupplier = type === 'sale' ? client.trim() : supplier.trim();
+    if (!clientOrSupplier) {
+      toast.error(`Ingrese el nombre del ${type === 'sale' ? 'cliente' : 'proveedor'}`);
       return;
     }
 
@@ -94,13 +115,13 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
     onSubmit({
       items: orderItems,
       total: calculateTotal(),
-      client: type === 'sale' ? client : undefined,
-      supplier: type === 'purchase' ? supplier : undefined,
+      client: type === 'sale' ? client.trim() : undefined,
+      supplier: type === 'purchase' ? supplier.trim() : undefined,
       notes: undefined,
     });
   };
 
-  const isValidForm = items.length > 0 && (type === 'sale' ? client : supplier);
+  const isValidForm = items.length > 0 && (type === 'sale' ? client.trim() : supplier.trim());
 
   return (
     <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6">
