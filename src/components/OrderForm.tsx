@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Product, OrderItem, OrderType } from '@/lib/types';
+import { Product, OrderItem, OrderType, PaymentMethod } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,6 +18,9 @@ interface OrderFormProps {
     client?: string;
     supplier?: string;
     notes?: string;
+    paymentMethod?: PaymentMethod;
+    amountReceived?: number;
+    changeGiven?: number;
   }) => void;
   onCancel: () => void;
 }
@@ -34,6 +37,7 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
   const [supplier, setSupplier] = useState('');
   const [selectedProduct, setSelectedProduct] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('efectivo');
   const [amountPaid, setAmountPaid] = useState<string>('');
 
   const addItem = () => {
@@ -113,12 +117,19 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
       };
     });
 
+    const totalAmount = calculateTotal();
+    const amountReceivedNum = amountPaid ? parseFloat(amountPaid) : totalAmount;
+    const changeGivenNum = Math.max(0, amountReceivedNum - totalAmount);
+
     onSubmit({
       items: orderItems,
-      total: calculateTotal(),
+      total: totalAmount,
       client: type === 'sale' ? client.trim() : undefined,
       supplier: type === 'purchase' ? supplier.trim() : undefined,
       notes: undefined,
+      paymentMethod: type === 'sale' ? paymentMethod : undefined,
+      amountReceived: type === 'sale' ? amountReceivedNum : undefined,
+      changeGiven: type === 'sale' ? changeGivenNum : undefined,
     });
   };
 
@@ -332,33 +343,56 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                 </div>
                 
                 {type === 'sale' && (
-                  <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 justify-end">
-                    <div className="w-full sm:w-64 space-y-2">
-                      <Label htmlFor="amount-paid" className="text-sm">
-                        Dinero Recibido
-                      </Label>
-                      <Input
-                        id="amount-paid"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={amountPaid}
-                        onChange={(e) => setAmountPaid(e.target.value)}
-                        placeholder="0.00"
-                        className="text-base"
-                      />
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="payment-method" className="text-sm">
+                          Método de Pago
+                        </Label>
+                        <Select value={paymentMethod} onValueChange={(value) => setPaymentMethod(value as PaymentMethod)}>
+                          <SelectTrigger id="payment-method" className="text-sm sm:text-base">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="efectivo">💵 Efectivo</SelectItem>
+                            <SelectItem value="tarjeta">💳 Tarjeta</SelectItem>
+                            <SelectItem value="transferencia">🏦 Transferencia</SelectItem>
+                            <SelectItem value="yape">📱 Yape</SelectItem>
+                            <SelectItem value="plin">📲 Plin</SelectItem>
+                            <SelectItem value="otro">➕ Otro</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="amount-paid" className="text-sm">
+                          Dinero Recibido
+                        </Label>
+                        <Input
+                          id="amount-paid"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={amountPaid}
+                          onChange={(e) => setAmountPaid(e.target.value)}
+                          placeholder="0.00"
+                          className="text-base"
+                        />
+                      </div>
                     </div>
                     
                     {amountPaid && parseFloat(amountPaid) > 0 && (
-                      <div className="text-right">
-                        <p className="text-xs sm:text-sm text-muted-foreground">Cambio</p>
-                        <p className={`text-lg sm:text-xl font-semibold ${
-                          parseFloat(amountPaid) >= calculateTotal() 
-                            ? 'text-success' 
-                            : 'text-destructive'
-                        }`}>
-                          {formatCurrency(Math.max(0, parseFloat(amountPaid) - calculateTotal()))}
-                        </p>
+                      <div className="flex justify-end">
+                        <div className="text-right bg-muted/30 rounded-lg p-4">
+                          <p className="text-xs sm:text-sm text-muted-foreground">Cambio</p>
+                          <p className={`text-lg sm:text-xl font-semibold ${
+                            parseFloat(amountPaid) >= calculateTotal() 
+                              ? 'text-success' 
+                              : 'text-destructive'
+                          }`}>
+                            {formatCurrency(Math.max(0, parseFloat(amountPaid) - calculateTotal()))}
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>

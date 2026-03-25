@@ -72,6 +72,9 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
     client?: string;
     supplier?: string;
     notes?: string;
+    paymentMethod?: Order['paymentMethod'];
+    amountReceived?: number;
+    changeGiven?: number;
   }) => {
     const newOrder: Order = {
       id: generateId(),
@@ -83,6 +86,9 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
       client: data.client,
       supplier: data.supplier,
       notes: data.notes,
+      paymentMethod: data.paymentMethod,
+      amountReceived: data.amountReceived,
+      changeGiven: data.changeGiven,
       createdBy: currentUser?.username || 'unknown',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

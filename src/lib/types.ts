@@ -72,6 +72,7 @@ export interface BackupMetadata {
 
 export type OrderType = 'sale' | 'purchase';
 export type OrderStatus = 'pending' | 'completed' | 'cancelled';
+export type PaymentMethod = 'efectivo' | 'tarjeta' | 'transferencia' | 'yape' | 'plin' | 'otro';
 
 export interface OrderItem {
   productId: string;
@@ -92,6 +93,9 @@ export interface Order {
   client?: string;
   supplier?: string;
   notes?: string;
+  paymentMethod?: PaymentMethod;
+  amountReceived?: number;
+  changeGiven?: number;
   createdBy: string;
   createdAt: string;
   updatedAt: string;
@@ -138,6 +142,18 @@ export interface DailyCloseReport {
     totalCosts: number;
     netProfit: number;
     profitMargin: number;
+  };
+  
+  paymentMethods: {
+    method: PaymentMethod;
+    count: number;
+    total: number;
+  }[];
+  
+  cashFlow: {
+    totalReceived: number;
+    totalChangeGiven: number;
+    netCash: number;
   };
   
   topProducts: {

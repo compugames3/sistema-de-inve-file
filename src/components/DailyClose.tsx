@@ -598,6 +598,61 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                   </CardContent>
                 </Card>
 
+                <Card>
+                  <CardHeader className="p-3 md:p-6">
+                    <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+                      <CurrencyDollar className="w-4 h-4 md:w-5 md:h-5 text-primary" weight="duotone" />
+                      Métodos de Pago
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-3 md:p-6 pt-0 md:pt-0">
+                    <div className="space-y-3">
+                      {currentReport.paymentMethods.map((pm) => (
+                        <div key={pm.method} className="flex items-center justify-between p-2 md:p-3 bg-muted/50 rounded-lg">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">
+                              {pm.method === 'efectivo' ? '💵' : 
+                               pm.method === 'tarjeta' ? '💳' :
+                               pm.method === 'transferencia' ? '🏦' :
+                               pm.method === 'yape' ? '📱' :
+                               pm.method === 'plin' ? '📲' : '➕'}
+                            </span>
+                            <div>
+                              <p className="font-medium text-xs md:text-sm capitalize">{pm.method}</p>
+                              <p className="text-[10px] md:text-xs text-muted-foreground">{pm.count} transacción{pm.count !== 1 ? 'es' : ''}</p>
+                            </div>
+                          </div>
+                          <p className="font-semibold text-sm md:text-base">{formatCurrency(pm.total)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="p-3 md:p-6">
+                    <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+                      <CurrencyDollar className="w-4 h-4 md:w-5 md:h-5 text-success" weight="duotone" />
+                      Flujo de Efectivo
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-3 md:p-6 pt-0 md:pt-0 space-y-3">
+                    <div className="flex justify-between text-sm md:text-base">
+                      <span className="text-muted-foreground">Total Recibido:</span>
+                      <span className="font-semibold">{formatCurrency(currentReport.cashFlow.totalReceived)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm md:text-base">
+                      <span className="text-muted-foreground">Cambio Entregado:</span>
+                      <span className="font-semibold">{formatCurrency(currentReport.cashFlow.totalChangeGiven)}</span>
+                    </div>
+                    <Separator />
+                    <div className="flex justify-between text-base md:text-lg">
+                      <span className="font-semibold">Efectivo Neto:</span>
+                      <span className="font-bold text-success">{formatCurrency(currentReport.cashFlow.netCash)}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+
                 {currentReport.topProducts.length > 0 && (
                   <Card>
                     <CardHeader className="p-3 md:p-6">

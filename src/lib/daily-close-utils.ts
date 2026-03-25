@@ -1,54 +1,4 @@
-import { Order, Product } from './types';
-
-export interface DailyCloseReport {
-  id: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  closedBy: string;
-  
-  sales: {
-    totalOrders: number;
-    completedOrders: number;
-    pendingOrders: number;
-    cancelledOrders: number;
-    totalRevenue: number;
-    totalItems: number;
-    averageOrderValue: number;
-  };
-  
-  purchases: {
-    totalOrders: number;
-    completedOrders: number;
-    pendingOrders: number;
-    cancelledOrders: number;
-    totalCost: number;
-    totalItems: number;
-    averageOrderValue: number;
-  };
-  
-  inventory: {
-    totalProducts: number;
-    totalValue: number;
-    lowStockProducts: number;
-    outOfStockProducts: number;
-    categoriesCount: number;
-  };
-  
-  financial: {
-    grossRevenue: number;
-    totalCosts: number;
-    netProfit: number;
-    profitMargin: number;
-  };
-  
-  topProducts: {
-    productId: string;
-    productName: string;
-    quantitySold: number;
-    revenue: number;
-  }[];
-}
+import { Order, Product, DailyCloseReport, PaymentMethod } from './types';
 
 export function generateDailyCloseReport(
   orders: Order[],
@@ -112,6 +62,44 @@ export function generateDailyCloseReport(
     .sort((a, b) => b.revenue - a.revenue)
     .slice(0, 10);
 
+  const paymentMethodsMap = new Map<PaymentMethod, { count: number; total: number }>();
+  const allMethods: PaymentMethod[] = ['efectivo', 'tarjeta', 'transferencia', 'yape', 'plin', 'otro'];
+  
+  allMethods.forEach(method => {
+    paymentMethodsMap.set(method, { count: 0, total: 0 });
+  });
+
+  let totalReceived = 0;
+  let totalChangeGiven = 0;
+
+  sales.forEach(order => {
+    if (order.status === 'completed') {
+      const method = order.paymentMethod || 'efectivo';
+      const existing = paymentMethodsMap.get(method);
+      if (existing) {
+        existing.count += 1;
+        existing.total += order.total;
+      } else {
+        paymentMethodsMap.set(method, { count: 1, total: order.total });
+      }
+
+      if (order.amountReceived !== undefined) {
+        totalReceived += order.amountReceived;
+      }
+      if (order.changeGiven !== undefined) {
+        totalChangeGiven += order.changeGiven;
+      }
+    }
+  });
+
+  const paymentMethods = Array.from(paymentMethodsMap.entries())
+    .map(([method, data]) => ({
+      method,
+      count: data.count,
+      total: data.total,
+    }))
+    .sort((a, b) => b.total - a.total);
+
   return {
     id: `CLOSE-${Date.now()}`,
     date: new Date().toISOString().split('T')[0],
@@ -132,6 +120,12 @@ export function generateDailyCloseReport(
       totalCosts,
       netProfit,
       profitMargin,
+    },
+    paymentMethods,
+    cashFlow: {
+      totalReceived,
+      totalChangeGiven,
+      netCash: totalReceived - totalChangeGiven,
     },
     topProducts,
   };
