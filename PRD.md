@@ -61,6 +61,13 @@ A professional inventory management system with automatic database persistence, 
 - Progression: Click export → Generate CSV from current inventory → Download file
 - Success criteria: CSV contains all inventory data in readable format
 
+**Statistics Dashboard**
+- Functionality: Visual analytics with interactive charts showing inventory distribution, value, and trends
+- Purpose: Provide data-driven insights for inventory management decisions and quick pattern recognition
+- Trigger: Automatic display on dashboard load, above product table
+- Progression: Load dashboard → Calculate statistics → Render charts in tabbed interface → User switches between chart views
+- Success criteria: Charts accurately reflect product data with category distribution, supplier analysis, stock levels, price ranges, and top products by value
+
 ## Edge Case Handling
 
 - **Empty Inventory**: Display helpful empty state with clear call-to-action to add first product
@@ -128,12 +135,16 @@ Animations should feel immediate and businesslike - quick confirmations and subt
   - Form (react-hook-form): Structured validation for product data entry
   - Select: Dropdown for category selection
   - Tooltip: Display full product names/descriptions on hover
+  - Tabs: For switching between different statistics chart views
+  - Charts (Recharts): Bar charts, pie charts, area charts, and line charts for data visualization
 
 - **Customizations**:
   - Custom login card component with centered layout and branded header
   - Dashboard statistics cards showing total products, low stock count, total value
+  - Statistics panel with tabbed interface displaying five chart categories
   - Stock level badge component with color-coded severity levels
   - Table row hover state with subtle background highlight
+  - Interactive charts with tooltips showing detailed data on hover
 
 - **States**:
   - Buttons: Default with solid backgrounds, hover with slight lightening, active with scale press effect, disabled with reduced opacity

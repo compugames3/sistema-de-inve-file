@@ -8,6 +8,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { StatsCard } from '@/components/StatsCard';
 import { ProductForm } from '@/components/ProductForm';
 import { InventoryTable } from '@/components/InventoryTable';
+import { StatisticsPanel } from '@/components/StatisticsPanel';
 import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon, Database, Upload } from '@phosphor-icons/react';
 import { generateId, exportToCSV, formatCurrency, getStockStatus } from '@/lib/inventory-utils';
 import { exportDatabase, importDatabase } from '@/lib/database';
@@ -200,6 +201,10 @@ export function Dashboard({ onLogout }: DashboardProps) {
             </p>
           </div>
         )}
+
+        <div className="mb-6">
+          <StatisticsPanel products={safeProducts} />
+        </div>
 
         <div className="mb-6 flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
           <h2 className="text-2xl font-semibold">Productos</h2>
