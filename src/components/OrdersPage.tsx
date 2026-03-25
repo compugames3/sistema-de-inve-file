@@ -9,9 +9,10 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { OrderForm } from '@/components/OrderForm';
-import { Plus, ShoppingCart, ShoppingBag, Eye, CheckCircle, XCircle, Receipt } from '@phosphor-icons/react';
+import { Plus, ShoppingCart, ShoppingBag, Eye, CheckCircle, XCircle, Receipt, FilePdf } from '@phosphor-icons/react';
 import { generateOrderNumber, getOrderStatusBadgeVariant, getOrderStatusLabel, getOrderTypeLabel } from '@/lib/order-utils';
 import { generateId, formatCurrency } from '@/lib/inventory-utils';
+import { generateSalesPDF, generateRestockPDF } from '@/lib/pdf-utils';
 import { toast } from 'sonner';
 
 interface OrdersPageProps {
@@ -280,8 +281,43 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
   const completingOrder = safeOrders.find((o) => o.id === completingOrderId);
   const cancellingOrder = safeOrders.find((o) => o.id === cancellingOrderId);
 
+  const handleGenerateSalesPDF = () => {
+    generateSalesPDF(safeOrders);
+    toast.success('Reporte de ventas generado en PDF');
+  };
+
+  const handleGenerateRestockPDF = () => {
+    generateRestockPDF(safeOrders, products);
+    toast.success('Reporte de restock/compras generado en PDF');
+  };
+
   return (
     <div className="space-y-6">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-3xl font-bold text-foreground">Órdenes y Reportes</h2>
+          <p className="text-muted-foreground mt-1">Gestión de ventas, compras y generación de reportes PDF</p>
+        </div>
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            onClick={handleGenerateSalesPDF}
+            className="border-2 hover:bg-success/5 hover:border-success/50 transition-all shadow-sm font-semibold"
+          >
+            <FilePdf className="w-4 h-4 mr-2" weight="duotone" />
+            Reporte Ventas PDF
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleGenerateRestockPDF}
+            className="border-2 hover:bg-primary/5 hover:border-primary/50 transition-all shadow-sm font-semibold"
+          >
+            <FilePdf className="w-4 h-4 mr-2" weight="duotone" />
+            Reporte Restock PDF
+          </Button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-2">

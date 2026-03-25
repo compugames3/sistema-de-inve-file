@@ -21,10 +21,12 @@ import {
   Download,
   Printer,
   FileText,
-  Lock
+  Lock,
+  FilePdf
 } from '@phosphor-icons/react';
 import { generateDailyCloseReport, exportDailyCloseReport, printDailyCloseReport } from '@/lib/daily-close-utils';
 import { formatCurrency } from '@/lib/inventory-utils';
+import { generateDailyClosePDF } from '@/lib/pdf-utils';
 import { toast } from 'sonner';
 
 interface DailyCloseProps {
@@ -74,6 +76,11 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
   const handlePrintReport = (report: DailyCloseReport) => {
     printDailyCloseReport(report);
     toast.success('Imprimiendo reporte...');
+  };
+
+  const handleGeneratePDF = (report: DailyCloseReport) => {
+    generateDailyClosePDF(report);
+    toast.success('Reporte PDF generado exitosamente');
   };
 
   const formatDate = (dateStr: string) => {
@@ -258,6 +265,15 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                                 </div>
 
                                 <div className="flex gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="flex-1"
+                                    onClick={() => handleGeneratePDF(report)}
+                                  >
+                                    <FilePdf className="w-4 h-4 mr-2" />
+                                    PDF
+                                  </Button>
                                   <Button
                                     variant="outline"
                                     size="sm"
