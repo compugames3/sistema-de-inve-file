@@ -193,7 +193,7 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                     return (
                       <Card key={index} className="p-5 bg-card border-input">
                         <div className="grid grid-cols-12 gap-4 items-end">
-                          <div className="col-span-5">
+                          <div className="col-span-6">
                             <Label htmlFor={`product-${index}`} className="text-sm font-semibold text-foreground mb-2 block">
                               Producto *
                             </Label>
@@ -213,7 +213,7 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                                     <div className="flex flex-col gap-1">
                                       <span className="font-semibold">{p.name}</span>
                                       <span className="text-xs text-muted-foreground">
-                                        {p.sku} · Stock: {p.quantity} · {formatCurrency(p.price)}
+                                        {p.sku} · Stock: {p.quantity}
                                       </span>
                                     </div>
                                   </SelectItem>
@@ -242,22 +242,7 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                             />
                           </div>
 
-                          <div className="col-span-2">
-                            <Label htmlFor={`price-${index}`} className="text-sm font-semibold text-foreground mb-2 block">
-                              Precio Unit. *
-                            </Label>
-                            <Input
-                              id={`price-${index}`}
-                              type="number"
-                              min="0"
-                              step="0.01"
-                              value={item.unitPrice}
-                              onChange={(e) => updateItem(index, 'unitPrice', parseFloat(e.target.value) || 0)}
-                              className="h-11 text-base font-semibold bg-background border-input focus:border-primary focus:ring-1 focus:ring-primary"
-                            />
-                          </div>
-
-                          <div className="col-span-2">
+                          <div className="col-span-3">
                             <Label className="text-sm font-semibold text-foreground mb-2 block">
                               Subtotal
                             </Label>
