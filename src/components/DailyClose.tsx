@@ -360,7 +360,7 @@ export function DailyClose({ products, currentUser }: DailyCloseProps) {
                                   to: range?.to,
                                 });
                               }}
-                              numberOfMonths={2}
+                              numberOfMonths={1}
                               locale={es}
                             />
                           </PopoverContent>
