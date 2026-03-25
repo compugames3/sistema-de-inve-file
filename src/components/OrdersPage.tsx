@@ -354,7 +354,7 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
       </Tabs>
 
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-[100vw] w-[100vw] h-[100vh] max-h-[100vh] m-0 rounded-none overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Nueva {orderType === 'sale' ? 'Venta' : 'Compra'}</DialogTitle>
             <DialogDescription>
