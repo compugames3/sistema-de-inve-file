@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación de Compatibilidad - Josimar Cell</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .status {
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .compatible {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 2px solid #48bb78;
+        }
+        
+        .incompatible {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 2px solid #f56565;
+        }
+        
+        .warning {
+            background: #feebc8;
+            color: #744210;
+            border: 2px solid #ed8936;
+        }
+        
+        .info {
+            background: #e6fffa;
+            color: #234e52;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #319795;
+        }
+        
+        .details {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+        
+        .details h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: #4a5568;
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            color: #2d3748;
+        }
+        
+        .icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+        
+        .btn:hover {
+            background: #5568d3;
+        }
+        
+        .recommendations {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff5f5;
+            border-radius: 8px;
+            border-left: 4px solid #f56565;
+        }
+        
+        .recommendations h4 {
+            color: #742a2a;
+            margin-bottom: 10px;
+        }
+        
+        .recommendations ul {
+            margin-left: 20px;
+            color: #742a2a;
+        }
+        
+        .recommendations li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Verificación de Compatibilidad</h1>
+        <p class="subtitle">Josimar Cell - Sistema de Inventario</p>
+        
+        <div id="status" class="status">
+            <span class="icon" id="statusIcon"></span>
+            <div id="statusMessage"></div>
+        </div>
+        
+        <div class="details">
+            <h3>Información del Sistema</h3>
+            <div class="detail-item">
+                <span class="detail-label">Navegador:</span>
+                <span class="detail-value" id="browser"></span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Versión:</span>
+                <span class="detail-value" id="version"></span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Sistema Operativo:</span>
+                <span class="detail-value" id="os"></span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">ES2020 Support:</span>
+                <span class="detail-value" id="es2020"></span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">LocalStorage:</span>
+                <span class="detail-value" id="localStorage"></span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">IndexedDB:</span>
+                <span class="detail-value" id="indexedDB"></span>
+            </div>
+        </div>
+        
+        <div id="recommendations"></div>
+        
+        <div id="continueBtn"></div>
+        
+        <div class="info">
+            <strong>ℹ️ Navegadores Recomendados:</strong><br>
+            Chrome 90+, Firefox 88+, Safari 14+, Edge 90+, Opera 76+
+        </div>
+    </div>
+    
+    <script>
+        function detectBrowser() {
+            const ua = navigator.userAgent;
+            let browserName = 'Desconocido';
+            let version = 'N/A';
+            
+            if (ua.indexOf('Firefox') > -1) {
+                browserName = 'Firefox';
+                version = ua.match(/Firefox\/([0-9.]+)/)?.[1] || 'N/A';
+            } else if (ua.indexOf('Edg') > -1) {
+                browserName = 'Edge';
+                version = ua.match(/Edg\/([0-9.]+)/)?.[1] || 'N/A';
+            } else if (ua.indexOf('Chrome') > -1 && ua.indexOf('Edg') === -1) {
+                browserName = 'Chrome';
+                version = ua.match(/Chrome\/([0-9.]+)/)?.[1] || 'N/A';
+            } else if (ua.indexOf('Safari') > -1 && ua.indexOf('Chrome') === -1) {
+                browserName = 'Safari';
+                version = ua.match(/Version\/([0-9.]+)/)?.[1] || 'N/A';
+            } else if (ua.indexOf('Opera') > -1 || ua.indexOf('OPR') > -1) {
+                browserName = 'Opera';
+                version = ua.match(/(?:Opera|OPR)\/([0-9.]+)/)?.[1] || 'N/A';
+            }
+            
+            return { name: browserName, version: parseFloat(version) };
+        }
+        
+        function detectOS() {
+            const ua = navigator.userAgent;
+            if (ua.indexOf('Win') > -1) return 'Windows';
+            if (ua.indexOf('Mac') > -1) return 'macOS';
+            if (ua.indexOf('Linux') > -1) return 'Linux';
+            if (ua.indexOf('Android') > -1) return 'Android';
+            if (ua.indexOf('iOS') > -1) return 'iOS';
+            return 'Desconocido';
+        }
+        
+        function checkFeatures() {
+            const features = {
+                es2020: false,
+                localStorage: false,
+                indexedDB: false
+            };
+            
+            try {
+                features.es2020 = typeof BigInt !== 'undefined' && 
+                                  typeof Promise.allSettled !== 'undefined' &&
+                                  typeof globalThis !== 'undefined';
+            } catch (e) {
+                features.es2020 = false;
+            }
+            
+            try {
+                localStorage.setItem('test', 'test');
+                localStorage.removeItem('test');
+                features.localStorage = true;
+            } catch (e) {
+                features.localStorage = false;
+            }
+            
+            features.indexedDB = 'indexedDB' in window;
+            
+            return features;
+        }
+        
+        function isCompatible(browser) {
+            const minVersions = {
+                'Chrome': 90,
+                'Firefox': 88,
+                'Safari': 14,
+                'Edge': 90,
+                'Opera': 76
+            };
+            
+            if (!minVersions[browser.name]) {
+                return { compatible: false, reason: 'unsupported' };
+            }
+            
+            if (browser.version < minVersions[browser.name]) {
+                return { compatible: false, reason: 'outdated', minVersion: minVersions[browser.name] };
+            }
+            
+            return { compatible: true };
+        }
+        
+        window.addEventListener('load', function() {
+            const browser = detectBrowser();
+            const os = detectOS();
+            const features = checkFeatures();
+            const compatibility = isCompatible(browser);
+            
+            document.getElementById('browser').textContent = browser.name;
+            document.getElementById('version').textContent = browser.version || 'N/A';
+            document.getElementById('os').textContent = os;
+            document.getElementById('es2020').textContent = features.es2020 ? '✅ Soportado' : '❌ No soportado';
+            document.getElementById('localStorage').textContent = features.localStorage ? '✅ Disponible' : '❌ No disponible';
+            document.getElementById('indexedDB').textContent = features.indexedDB ? '✅ Disponible' : '❌ No disponible';
+            
+            const statusDiv = document.getElementById('status');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusMessage = document.getElementById('statusMessage');
+            const recommendationsDiv = document.getElementById('recommendations');
+            const continueBtnDiv = document.getElementById('continueBtn');
+            
+            if (compatibility.compatible && features.es2020 && features.localStorage) {
+                statusDiv.className = 'status compatible';
+                statusIcon.textContent = '✅';
+                statusMessage.innerHTML = '<strong>¡Compatible!</strong><br>Tu navegador es compatible con esta aplicación.';
+                continueBtnDiv.innerHTML = '<a href="/" class="btn">Continuar a la aplicación →</a>';
+            } else if (compatibility.compatible && (!features.es2020 || !features.localStorage)) {
+                statusDiv.className = 'status warning';
+                statusIcon.textContent = '⚠️';
+                statusMessage.innerHTML = '<strong>Compatibilidad Parcial</strong><br>Tu navegador puede ejecutar la aplicación pero con funcionalidad limitada.';
+                continueBtnDiv.innerHTML = '<a href="/" class="btn">Continuar de todos modos →</a>';
+                
+                recommendationsDiv.innerHTML = `
+                    <div class="recommendations">
+                        <h4>⚠️ Advertencias:</h4>
+                        <ul>
+                            ${!features.es2020 ? '<li>Algunas características modernas de JavaScript pueden no funcionar correctamente</li>' : ''}
+                            ${!features.localStorage ? '<li>El almacenamiento local no está disponible. Los datos no persistirán</li>' : ''}
+                        </ul>
+                    </div>
+                `;
+            } else {
+                statusDiv.className = 'status incompatible';
+                statusIcon.textContent = '❌';
+                statusMessage.innerHTML = '<strong>No Compatible</strong><br>Tu navegador no cumple con los requisitos mínimos.';
+                
+                let recommendations = '<div class="recommendations"><h4>📋 Recomendaciones:</h4><ul>';
+                
+                if (compatibility.reason === 'outdated') {
+                    recommendations += `<li>Actualiza ${browser.name} a la versión ${compatibility.minVersion} o superior</li>`;
+                } else if (compatibility.reason === 'unsupported') {
+                    recommendations += '<li>Usa un navegador moderno como Chrome, Firefox, Safari, Edge u Opera</li>';
+                }
+                
+                recommendations += `
+                    <li>Descarga la versión de escritorio para Windows (ejecutable .exe)</li>
+                    <li>Consulta DEPLOYMENT.md para más opciones de instalación</li>
+                </ul></div>`;
+                
+                recommendationsDiv.innerHTML = recommendations;
+            }
+        });
+    </script>
+</body>
+</html>

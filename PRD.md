@@ -1,33 +1,46 @@
 # Planning Guide
 
-Sistema de inventario profesional para Josimar Cell - un sistema de gestión integral con base de datos automática, autenticación de usuarios y seguimiento completo de productos para gestionar eficientemente el inventario del negocio. **Compatible con todos los navegadores modernos y preparado para convertirse en aplicación de escritorio ejecutable.**
+Sistema de inventario profesional para Josimar Cell - un sistema de gestión integral con base de datos automática, autenticación de usuarios y seguimiento completo de productos para gestionar eficientemente el inventario del negocio. **Compatible con todos los navegadores modernos, optimizado para producción web y preparado para convertirse en aplicación de escritorio ejecutable compatible con Windows.**
 
 **Experience Qualities**:
 1. **Professional** - Clean, organized interface that conveys reliability and trustworthiness for business operations
 2. **Efficient** - Quick data entry and instant search capabilities to minimize time spent on inventory tasks
 3. **Secure** - Password-protected access with clear admin controls to protect sensitive business data
-4. **Universal** - Works across all modern browsers and can be installed as a desktop application
+4. **Universal** - Works across all modern browsers and can be installed as a desktop application or deployed to any web domain
+5. **Production-Ready** - Fully optimized for deployment with comprehensive build scripts, server configurations, and cross-platform compatibility
 
 **Complexity Level**: Complex Application (advanced functionality, likely with multiple views)
-- The application manages inventory records with CRUD operations, user authentication with role-based access control, granular permissions system, persistent storage, order management, daily close reporting, and comprehensive audit logging, making it a feature-rich enterprise-grade system. Additionally, it's optimized for cross-browser compatibility and can be packaged as a standalone desktop executable for Windows, macOS, and Linux.
+- The application manages inventory records with CRUD operations, user authentication with role-based access control, granular permissions system, persistent storage, order management, daily close reporting, and comprehensive audit logging, making it a feature-rich enterprise-grade system. Additionally, it's optimized for cross-browser compatibility, production deployment on web servers, and can be packaged as a standalone desktop executable for Windows with full offline functionality.
 
 ## Platform Support
 
+**Production Web Deployment**
+- Functionality: Optimized build process for deploying to web servers with comprehensive configuration files
+- Purpose: Enable easy deployment to any web domain with maximum performance and compatibility
+- Features: Minified assets, code splitting, gzip compression, browser caching, Apache/Nginx configurations, SSL-ready
+- Build Scripts: Windows (.bat) and Unix (.sh) scripts for automated production builds
+- Trigger: Run build-production script or npm run build command
+- Progression: Execute build → Dependencies checked → Previous build cleaned → Vite optimization → Assets minified → dist/ folder generated → Ready for upload
+- Success criteria: dist/ folder contains optimized production files; builds complete in under 2 minutes; all assets properly minified; configuration files included (.htaccess, nginx.conf)
+
 **Cross-Browser Compatibility**
-- Functionality: Full support for all modern browsers with automatic compatibility detection
+- Functionality: Full support for all modern browsers with automatic compatibility detection and verification page
 - Purpose: Ensure the application works reliably across different browsers and operating systems
 - Supported Browsers: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+, Opera 76+, Brave, Samsung Internet 13+
+- Browser Detection: Automatic capability detection with fallback messages for unsupported browsers
+- Compatibility Check Page: Dedicated /compatibility-check.html page for system verification
 - Trigger: Automatic browser detection on application load
-- Progression: User opens app → Browser capabilities detected → Compatibility verified → App loads or shows upgrade message
-- Success criteria: Application functions identically across all supported browsers; unsupported browsers show clear upgrade instructions
+- Progression: User opens app → Browser capabilities detected → ES2020, localStorage, IndexedDB verified → App loads or shows upgrade message
+- Success criteria: Application functions identically across all supported browsers; unsupported browsers show clear upgrade instructions with browser/version details
 
 **Desktop Application (Electron)**
-- Functionality: Package the web application as a native desktop executable for Windows, macOS, and Linux
+- Functionality: Package the web application as a native desktop executable for Windows with installer and portable versions
 - Purpose: Provide offline functionality and native OS integration for users who prefer desktop applications
-- Features: Persistent local database, offline operation, native file system access, OS notifications
-- Trigger: User downloads and installs the desktop version
+- Features: Persistent local database, offline operation, native file system access, OS notifications, auto-updates
+- Build Options: NSIS installer (customizable installation) and portable executable (no installation required)
+- Trigger: User downloads and installs the desktop version or runs generar-ejecutable.bat script
 - Progression: Download installer → Install application → Launch from desktop/start menu → Runs independently without browser
-- Success criteria: Desktop app works offline with full functionality; data persists on local file system; auto-updates work; native OS integration (file dialogs, notifications)
+- Success criteria: Desktop app works offline with full functionality; data persists on local file system; installers for both x64 and x86 architectures; file size under 200MB
 
 ## Essential Features
 

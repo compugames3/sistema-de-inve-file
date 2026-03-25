@@ -1,17 +1,28 @@
 {
   "name": "Josimar Cell - Sistema de Inventario",
+  "short_name": "Josimar Cell",
+  "description": "Sistema profesional de gestión de inventario para Josimar Cell - Control completo de productos, órdenes y estadísticas",
   "start_url": "/",
-  "description": "Sistema profesional de gestión de inventario para tienda de celulares",
-  "icons": [
+  "scope": "/",
   "display": "standalone",
-      "type": "image/svg+xml",
+  "background_color": "#4338CA",
   "theme_color": "#4338CA",
-}
+  "orientation": "any",
+  "dir": "ltr",
+  "lang": "es",
+  "icons": [
     {
-
+      "src": "/icon.svg",
       "sizes": "any",
-
+      "type": "image/svg+xml",
       "purpose": "any maskable"
-
-  ]
-
+    }
+  ],
+  "categories": [
+    "business",
+    "productivity",
+    "finance"
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}
