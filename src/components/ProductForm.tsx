@@ -144,45 +144,23 @@ export function ProductForm({ product, onSubmit, onCancel, existingSkus = [] }: 
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="quantity" className="text-sm font-semibold text-foreground">
-                  Cantidad *
-                </Label>
-                <Input
-                  id="quantity"
-                  type="number"
-                  min="0"
-                  {...register('quantity', { 
-                    required: 'Cantidad es requerida',
-                    valueAsNumber: true,
-                    min: { value: 0, message: 'La cantidad no puede ser negativa' }
-                  })}
-                  placeholder="0"
-                  className="h-11 bg-background border-input text-base focus:border-primary focus:ring-1 focus:ring-primary"
-                />
-                {errors.quantity && <p className="text-xs text-destructive mt-1">{errors.quantity.message}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="price" className="text-sm font-semibold text-foreground">
-                  Precio (SOL) *
-                </Label>
-                <Input
-                  id="price"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  {...register('price', { 
-                    required: 'Precio es requerido',
-                    valueAsNumber: true,
-                    min: { value: 0, message: 'El precio no puede ser negativo' }
-                  })}
-                  placeholder="0"
-                  className="h-11 bg-background border-input text-base focus:border-primary focus:ring-1 focus:ring-primary"
-                />
-                {errors.price && <p className="text-xs text-destructive mt-1">{errors.price.message}</p>}
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="quantity" className="text-sm font-semibold text-foreground">
+                Cantidad *
+              </Label>
+              <Input
+                id="quantity"
+                type="number"
+                min="0"
+                {...register('quantity', { 
+                  required: 'Cantidad es requerida',
+                  valueAsNumber: true,
+                  min: { value: 0, message: 'La cantidad no puede ser negativa' }
+                })}
+                placeholder="0"
+                className="h-11 bg-background border-input text-base focus:border-primary focus:ring-1 focus:ring-primary"
+              />
+              {errors.quantity && <p className="text-xs text-destructive mt-1">{errors.quantity.message}</p>}
             </div>
 
             <div className="space-y-2">

@@ -80,7 +80,6 @@ export function InventoryTable({ products, currentUser, onEdit, onDelete }: Inve
                   <TableHead>Producto</TableHead>
                   <TableHead>Categoría</TableHead>
                   <TableHead className="text-right">Cantidad</TableHead>
-                  <TableHead className="text-right">Precio</TableHead>
                   <TableHead>Proveedor</TableHead>
                   <TableHead>Estado</TableHead>
                   {(onEdit || onDelete) && (
@@ -100,9 +99,6 @@ export function InventoryTable({ products, currentUser, onEdit, onDelete }: Inve
                       <TableCell className="font-medium">{product.name}</TableCell>
                       <TableCell className="text-muted-foreground">{product.category}</TableCell>
                       <TableCell className="text-right font-mono">{product.quantity}</TableCell>
-                      <TableCell className="text-right font-mono">
-                        {formatCurrency(product.price)}
-                      </TableCell>
                       <TableCell className="text-muted-foreground">{product.supplier}</TableCell>
                       <TableCell>
                         <Badge className={getStockBadgeStyles(status)}>
