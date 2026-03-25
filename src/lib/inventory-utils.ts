@@ -2,7 +2,7 @@ import { Product, StockStatus } from './types';
 
 export const getStockStatus = (quantity: number): StockStatus => {
   if (quantity === 0) return 'out-of-stock';
-  if (quantity <= 10) return 'low-stock';
+  if (quantity < 3) return 'low-stock';
   return 'in-stock';
 };
 

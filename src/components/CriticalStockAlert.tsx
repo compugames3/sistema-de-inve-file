@@ -23,7 +23,7 @@ export function CriticalStockAlert({ products, onDismiss, dismissedAlerts }: Cri
   if (criticalProducts.length === 0) return null;
 
   const outOfStock = criticalProducts.filter((p) => p.quantity === 0);
-  const lowStock = criticalProducts.filter((p) => p.quantity > 0 && p.quantity <= 10);
+  const lowStock = criticalProducts.filter((p) => p.quantity > 0 && p.quantity < 3);
 
   return (
     <AnimatePresence>
