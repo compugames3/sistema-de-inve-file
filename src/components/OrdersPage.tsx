@@ -354,16 +354,16 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
       </Tabs>
 
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="max-w-[100vw] w-[100vw] h-[100vh] max-h-[100vh] m-0 rounded-none p-0 overflow-hidden flex flex-col">
-          <div className="px-8 pt-6 pb-4 border-b shrink-0">
+        <DialogContent className="max-w-[100vw] w-[100vw] h-[100vh] max-h-[100vh] m-0 rounded-none p-0 overflow-hidden flex flex-col gap-0">
+          <div className="shrink-0 px-8 py-6 border-b-2 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 shadow-sm">
             <DialogHeader>
-              <DialogTitle className="text-2xl">Nueva {orderType === 'sale' ? 'Venta' : 'Compra'}</DialogTitle>
-              <DialogDescription className="text-base">
+              <DialogTitle className="text-3xl font-bold">Nueva {orderType === 'sale' ? 'Venta' : 'Compra'}</DialogTitle>
+              <DialogDescription className="text-lg text-muted-foreground">
                 Complete la información para crear una nueva {orderType === 'sale' ? 'venta' : 'compra'}
               </DialogDescription>
             </DialogHeader>
           </div>
-          <div className="flex-1 px-8 py-6 overflow-hidden">
+          <div className="flex-1 overflow-hidden">
             <OrderForm
               type={orderType}
               products={products}
