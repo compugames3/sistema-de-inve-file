@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Product, User } from '@/lib/types';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { PencilSimple, Trash, MagnifyingGlass, Package, Lock, Barcode, Tag, Stack, User as UserIconPh } from '@phosphor-icons/react';
+import { PencilSimple, Trash, MagnifyingGlass, Package, Lock, Barcode, Tag, Stack, User as UserIconPh, CaretUp, CaretDown, CaretUpDown } from '@phosphor-icons/react';
 import { getStockStatus, getStockBadgeStyles, getStockLabel, formatCurrency } from '@/lib/inventory-utils';
 import { canEditProduct, canDeleteProduct } from '@/lib/permissions-utils';
 import { Card } from '@/components/ui/card';
@@ -18,22 +18,77 @@ interface InventoryTableProps {
   onDelete?: (productId: string) => void;
 }
 
+type SortField = 'sku' | 'name' | 'category' | 'quantity' | 'supplier' | 'status';
+type SortDirection = 'asc' | 'desc';
+
 export function InventoryTable({ products, currentUser, onEdit, onDelete }: InventoryTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortField, setSortField] = useState<SortField>('name');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   
   const isAdmin = currentUser?.isAdmin ?? false;
 
-  const filteredProducts = products.filter((product) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      product.name.toLowerCase().includes(query) ||
-      product.sku.toLowerCase().includes(query) ||
-      product.category.toLowerCase().includes(query) ||
-      product.supplier.toLowerCase().includes(query)
-    );
-  });
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const filteredProducts = useMemo(() => {
+    const filtered = products.filter((product) => {
+      const query = searchQuery.toLowerCase();
+      return (
+        product.name.toLowerCase().includes(query) ||
+        product.sku.toLowerCase().includes(query) ||
+        product.category.toLowerCase().includes(query) ||
+        product.supplier.toLowerCase().includes(query)
+      );
+    });
+
+    return filtered.sort((a, b) => {
+      let comparison = 0;
+
+      switch (sortField) {
+        case 'sku':
+          comparison = a.sku.localeCompare(b.sku);
+          break;
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case 'category':
+          comparison = a.category.localeCompare(b.category);
+          break;
+        case 'quantity':
+          comparison = a.quantity - b.quantity;
+          break;
+        case 'supplier':
+          comparison = a.supplier.localeCompare(b.supplier);
+          break;
+        case 'status':
+          const statusA = getStockStatus(a.quantity);
+          const statusB = getStockStatus(b.quantity);
+          const statusOrder: Record<string, number> = { 'out-of-stock': 0, 'low-stock': 1, 'in-stock': 2 };
+          comparison = statusOrder[statusA] - statusOrder[statusB];
+          break;
+      }
+
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+  }, [products, searchQuery, sortField, sortDirection]);
 
   const isMobile = useIsMobile();
+
+  const SortIcon = ({ field }: { field: SortField }) => {
+    if (sortField !== field) {
+      return <CaretUpDown className="w-4 h-4 ml-1 text-muted-foreground" />;
+    }
+    return sortDirection === 'asc' 
+      ? <CaretUp className="w-4 h-4 ml-1" weight="fill" />
+      : <CaretDown className="w-4 h-4 ml-1" weight="fill" />;
+  };
 
   if (products.length === 0) {
     return (
@@ -183,12 +238,72 @@ export function InventoryTable({ products, currentUser, onEdit, onDelete }: Inve
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[120px]">SKU</TableHead>
-                      <TableHead>Producto</TableHead>
-                      <TableHead>Categoría</TableHead>
-                      <TableHead className="text-right">Cantidad</TableHead>
-                      <TableHead>Proveedor</TableHead>
-                      <TableHead>Estado</TableHead>
+                      <TableHead className="w-[120px]">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 hover:bg-transparent font-semibold"
+                          onClick={() => handleSort('sku')}
+                        >
+                          SKU
+                          <SortIcon field="sku" />
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 hover:bg-transparent font-semibold"
+                          onClick={() => handleSort('name')}
+                        >
+                          Producto
+                          <SortIcon field="name" />
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 hover:bg-transparent font-semibold"
+                          onClick={() => handleSort('category')}
+                        >
+                          Categoría
+                          <SortIcon field="category" />
+                        </Button>
+                      </TableHead>
+                      <TableHead className="text-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 hover:bg-transparent font-semibold ml-auto"
+                          onClick={() => handleSort('quantity')}
+                        >
+                          Cantidad
+                          <SortIcon field="quantity" />
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 hover:bg-transparent font-semibold"
+                          onClick={() => handleSort('supplier')}
+                        >
+                          Proveedor
+                          <SortIcon field="supplier" />
+                        </Button>
+                      </TableHead>
+                      <TableHead>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 hover:bg-transparent font-semibold"
+                          onClick={() => handleSort('status')}
+                        >
+                          Estado
+                          <SortIcon field="status" />
+                        </Button>
+                      </TableHead>
                       {(onEdit || onDelete) && (
                         <TableHead className="text-right w-[120px]">Acciones</TableHead>
                       )}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useKV } from '@github/spark/hooks';
 import { Order, OrderType, Product, User } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { OrderForm } from '@/components/OrderForm';
-import { Plus, ShoppingCart, ShoppingBag, Eye, CheckCircle, XCircle, Receipt, FilePdf, CalendarBlank, User as UserIconPh, Package } from '@phosphor-icons/react';
+import { Plus, ShoppingCart, ShoppingBag, Eye, CheckCircle, XCircle, Receipt, FilePdf, CalendarBlank, User as UserIconPh, Package, CaretUp, CaretDown, CaretUpDown } from '@phosphor-icons/react';
 import { generateOrderNumber, getOrderStatusBadgeVariant, getOrderStatusLabel, getOrderTypeLabel } from '@/lib/order-utils';
 import { generateId, formatCurrency } from '@/lib/inventory-utils';
 import { generateSalesPDF, generateRestockPDF } from '@/lib/pdf-utils';
@@ -22,6 +22,9 @@ interface OrdersPageProps {
   onUpdateProducts: (updater: (products: Product[]) => Product[]) => void;
 }
 
+type SortField = 'orderNumber' | 'client' | 'supplier' | 'items' | 'total' | 'status' | 'date';
+type SortDirection = 'asc' | 'desc';
+
 export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPageProps) {
   const [orders, setOrders] = useKV<Order[]>('system-orders', []);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -29,9 +32,29 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
   const [viewingOrder, setViewingOrder] = useState<Order | null>(null);
   const [completingOrderId, setCompletingOrderId] = useState<string | null>(null);
   const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
+  const [sortField, setSortField] = useState<SortField>('date');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   const safeOrders = orders || [];
   const isAdmin = currentUser?.isAdmin ?? false;
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const SortIcon = ({ field }: { field: SortField }) => {
+    if (sortField !== field) {
+      return <CaretUpDown className="w-4 h-4 ml-1 text-muted-foreground" />;
+    }
+    return sortDirection === 'asc' 
+      ? <CaretUp className="w-4 h-4 ml-1" weight="fill" />
+      : <CaretDown className="w-4 h-4 ml-1" weight="fill" />;
+  };
 
   const openCreateDialog = (type: OrderType) => {
     setOrderType(type);
@@ -177,7 +200,40 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
   const isMobile = useIsMobile();
 
   const renderOrdersTable = (type: OrderType) => {
-    const filteredOrders = safeOrders.filter((o) => o.type === type);
+    const filteredOrders = useMemo(() => {
+      const filtered = safeOrders.filter((o) => o.type === type);
+      
+      return filtered.sort((a, b) => {
+        let comparison = 0;
+
+        switch (sortField) {
+          case 'orderNumber':
+            comparison = a.orderNumber.localeCompare(b.orderNumber);
+            break;
+          case 'client':
+            comparison = (a.client || a.supplier || '').localeCompare(b.client || b.supplier || '');
+            break;
+          case 'supplier':
+            comparison = (a.supplier || a.client || '').localeCompare(b.supplier || b.client || '');
+            break;
+          case 'items':
+            comparison = a.items.length - b.items.length;
+            break;
+          case 'total':
+            comparison = a.total - b.total;
+            break;
+          case 'status':
+            const statusOrder: Record<string, number> = { pending: 0, completed: 1, cancelled: 2 };
+            comparison = statusOrder[a.status] - statusOrder[b.status];
+            break;
+          case 'date':
+            comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+            break;
+        }
+
+        return sortDirection === 'asc' ? comparison : -comparison;
+      });
+    }, [safeOrders, type, sortField, sortDirection]);
 
     if (filteredOrders.length === 0) {
       return (
@@ -287,12 +343,72 @@ export function OrdersPage({ products, currentUser, onUpdateProducts }: OrdersPa
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>N° Orden</TableHead>
-                  <TableHead>{type === 'sale' ? 'Cliente' : 'Proveedor'}</TableHead>
-                  <TableHead>Items</TableHead>
-                  <TableHead>Total</TableHead>
-                  <TableHead>Estado</TableHead>
-                  <TableHead>Fecha</TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-2 hover:bg-transparent font-semibold"
+                      onClick={() => handleSort('orderNumber')}
+                    >
+                      N° Orden
+                      <SortIcon field="orderNumber" />
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-2 hover:bg-transparent font-semibold"
+                      onClick={() => handleSort(type === 'sale' ? 'client' : 'supplier')}
+                    >
+                      {type === 'sale' ? 'Cliente' : 'Proveedor'}
+                      <SortIcon field={type === 'sale' ? 'client' : 'supplier'} />
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-2 hover:bg-transparent font-semibold"
+                      onClick={() => handleSort('items')}
+                    >
+                      Items
+                      <SortIcon field="items" />
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-2 hover:bg-transparent font-semibold"
+                      onClick={() => handleSort('total')}
+                    >
+                      Total
+                      <SortIcon field="total" />
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-2 hover:bg-transparent font-semibold"
+                      onClick={() => handleSort('status')}
+                    >
+                      Estado
+                      <SortIcon field="status" />
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-2 hover:bg-transparent font-semibold"
+                      onClick={() => handleSort('date')}
+                    >
+                      Fecha
+                      <SortIcon field="date" />
+                    </Button>
+                  </TableHead>
                   <TableHead>Acciones</TableHead>
                 </TableRow>
               </TableHeader>
