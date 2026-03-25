@@ -103,23 +103,23 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
   const isValidForm = items.length > 0 && (type === 'sale' ? client : supplier);
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <form onSubmit={handleSubmit} className="w-full max-w-5xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6">
+      <form onSubmit={handleSubmit} className="w-full max-w-6xl mx-auto space-y-4 md:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h2 className="text-3xl font-bold text-foreground">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
               Nueva {type === 'sale' ? 'Venta' : 'Compra'}
             </h2>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-sm sm:text-base text-muted-foreground mt-1">
               Registra una nueva {type === 'sale' ? 'venta' : 'compra'} en el sistema
             </p>
           </div>
         </div>
 
-        <Card className="p-6">
-          <div className="space-y-6">
+        <Card className="p-4 sm:p-6">
+          <div className="space-y-4 md:space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="client-supplier">
+              <Label htmlFor="client-supplier" className="text-sm sm:text-base">
                 {type === 'sale' ? 'Cliente' : 'Proveedor'}
               </Label>
               <Input
@@ -127,19 +127,20 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                 value={type === 'sale' ? client : supplier}
                 onChange={(e) => type === 'sale' ? setClient(e.target.value) : setSupplier(e.target.value)}
                 placeholder={type === 'sale' ? 'Nombre del cliente' : 'Nombre del proveedor'}
+                className="text-sm sm:text-base"
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-[1fr,auto,auto] gap-4 items-end">
-              <div className="space-y-2">
-                <Label htmlFor="product">Producto</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr,auto,auto] gap-3 sm:gap-4 items-end">
+              <div className="space-y-2 sm:col-span-2 lg:col-span-1">
+                <Label htmlFor="product" className="text-sm sm:text-base">Producto</Label>
                 <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-                  <SelectTrigger id="product">
+                  <SelectTrigger id="product" className="text-sm sm:text-base">
                     <SelectValue placeholder="Seleccionar producto" />
                   </SelectTrigger>
                   <SelectContent>
                     {products.map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
+                      <SelectItem key={p.id} value={p.id} className="text-sm sm:text-base">
                         {p.name} - {p.sku} (Stock: {p.quantity})
                       </SelectItem>
                     ))}
@@ -148,14 +149,14 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="quantity">Cantidad</Label>
+                <Label htmlFor="quantity" className="text-sm sm:text-base">Cantidad</Label>
                 <Input
                   id="quantity"
                   type="number"
                   min="1"
                   value={quantity}
                   onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                  className="w-24"
+                  className="w-full sm:w-24 text-sm sm:text-base"
                 />
               </div>
 
@@ -163,6 +164,7 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                 type="button"
                 onClick={addItem}
                 disabled={!selectedProduct}
+                className="w-full sm:w-auto text-sm sm:text-base"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Añadir
@@ -171,11 +173,11 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
           </div>
         </Card>
 
-        <Card className="p-6">
-          <h3 className="font-semibold mb-4">Items de la {type === 'sale' ? 'Venta' : 'Compra'}</h3>
+        <Card className="p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold mb-4">Items de la {type === 'sale' ? 'Venta' : 'Compra'}</h3>
           
           {items.length === 0 ? (
-            <div className="py-12 text-center text-muted-foreground">
+            <div className="py-8 sm:py-12 text-center text-muted-foreground text-sm sm:text-base">
               No hay items agregados. Selecciona un producto y haz clic en "Añadir".
             </div>
           ) : (
@@ -187,28 +189,28 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                 return (
                   <div 
                     key={index} 
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg hover:bg-muted/50 transition-colors"
                   >
-                    <div className="flex-1">
-                      <p className="font-semibold">{product?.name}</p>
-                      <p className="text-sm text-muted-foreground">{product?.sku}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm sm:text-base truncate">{product?.name}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">{product?.sku}</p>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <Label className="text-sm">Cantidad:</Label>
+                    <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                      <div className="flex items-center gap-2 flex-1 sm:flex-initial">
+                        <Label className="text-xs sm:text-sm whitespace-nowrap">Cantidad:</Label>
                         <Input
                           type="number"
                           min="1"
                           value={item.quantity}
                           onChange={(e) => updateItemQuantity(index, parseInt(e.target.value) || 1)}
-                          className="w-20 text-center"
+                          className="w-16 sm:w-20 text-center text-sm sm:text-base"
                         />
                       </div>
 
-                      <div className="text-right min-w-[100px]">
-                        <p className="text-sm text-muted-foreground">Subtotal</p>
-                        <p className="font-semibold">{formatCurrency(subtotal)}</p>
+                      <div className="text-right min-w-[80px] sm:min-w-[100px]">
+                        <p className="text-xs sm:text-sm text-muted-foreground">Subtotal</p>
+                        <p className="font-semibold text-sm sm:text-base">{formatCurrency(subtotal)}</p>
                       </div>
 
                       <Button
@@ -216,6 +218,7 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
                         variant="ghost"
                         size="icon"
                         onClick={() => removeItem(index)}
+                        className="h-8 w-8 sm:h-10 sm:w-10"
                       >
                         <Trash className="w-4 h-4 text-destructive" />
                       </Button>
@@ -226,25 +229,27 @@ export function OrderForm({ type, products, onSubmit, onCancel }: OrderFormProps
 
               <div className="flex justify-end pt-4 border-t">
                 <div className="text-right">
-                  <p className="text-sm text-muted-foreground">Total</p>
-                  <p className="text-2xl font-bold">{formatCurrency(calculateTotal())}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Total</p>
+                  <p className="text-xl sm:text-2xl font-bold">{formatCurrency(calculateTotal())}</p>
                 </div>
               </div>
             </div>
           )}
         </Card>
 
-        <div className="flex justify-end gap-3">
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sticky bottom-0 sm:static bg-background pt-4 pb-2 sm:pb-0">
           <Button
             type="button"
             variant="outline"
             onClick={onCancel}
+            className="w-full sm:w-auto text-sm sm:text-base"
           >
             Cancelar
           </Button>
           <Button
             type="submit"
             disabled={!isValidForm}
+            className="w-full sm:w-auto text-sm sm:text-base"
           >
             <Check className="w-4 h-4 mr-2" />
             Guardar {type === 'sale' ? 'Venta' : 'Compra'}
