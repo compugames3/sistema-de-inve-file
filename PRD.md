@@ -143,6 +143,30 @@ Sistema de inventario profesional para Josimar Cell - un sistema de gestión int
 
 The design should evoke trust, organization, and efficiency - like a well-managed warehouse. Professional corporate aesthetic with emphasis on data clarity and quick scanning. Clean tables, clear hierarchy, and purposeful use of color for status indicators.
 
+## Application Icon Design
+
+The custom application icon is a modern, professional representation of Josimar Cell's core business - mobile phone inventory management.
+
+- **Visual Elements**: 
+  - Central smartphone device with gradient screen showcasing the digital interface
+  - Flanking inventory boxes on both sides representing stock management
+  - Status indicator dots (green, amber, red) symbolizing real-time inventory tracking
+  - Clean geometric shapes with rounded corners matching the app's modern aesthetic
+  
+- **Color Palette**: 
+  - Deep indigo gradient background (#4338CA to #6366F1) - conveying trust and professionalism
+  - White/light gray device for clarity and contrast
+  - Cyan/blue accents on screen matching the app's primary colors
+  - Status colors for inventory states
+  
+- **Technical Implementation**:
+  - SVG format for infinite scalability and crisp rendering at any size
+  - Optimized shadows and glows for depth and modern 3D appearance
+  - PWA-ready with manifest.json for installable web app support
+  - Favicon integration for browser tab identification
+  
+- **Design Philosophy**: The icon instantly communicates the app's purpose - professional mobile phone inventory management - through iconic visual metaphors that are immediately recognizable even at small sizes (16x16px browser favicon to 512x512px splash screens).
+
 ## Color Selection
 
 A clean, professional business palette with navy blue primary, modern cyan accents, and bright white cards for a polished corporate aesthetic.

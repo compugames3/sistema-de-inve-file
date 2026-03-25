@@ -1,0 +1,17 @@
+{
+  "name": "Josimar Cell - Sistema de Inventario",
+  "short_name": "Josimar Cell",
+  "description": "Sistema profesional de gestión de inventario para tienda de celulares",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#4338CA",
+  "theme_color": "#4338CA",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
