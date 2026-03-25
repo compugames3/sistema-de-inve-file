@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { UserPlus, User, ShieldCheck, ArrowLeft, IdentificationCard } from '@phosphor-icons/react';
+import { JosimarLogo } from '@/components/JosimarLogo';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
@@ -90,23 +91,7 @@ export function Register({ onRegister, onBackToLogin }: RegisterProps) {
               animate={{ scale: 1, rotate: 0 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
             >
-              <div className="relative">
-                <motion.div 
-                  className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent to-primary blur-xl"
-                  animate={{
-                    opacity: [0.3, 0.6, 0.3],
-                    scale: [1, 1.1, 1],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                />
-                <div className="relative w-24 h-24 rounded-2xl bg-gradient-to-br from-accent via-primary to-accent flex items-center justify-center shadow-2xl">
-                  <IdentificationCard className="w-12 h-12 text-primary-foreground" weight="duotone" />
-                </div>
-              </div>
+              <JosimarLogo size={96} className="animate-float" />
             </motion.div>
             <div>
               <CardTitle className="text-3xl lg:text-4xl font-bold bg-gradient-to-br from-accent to-primary bg-clip-text text-transparent mb-2">

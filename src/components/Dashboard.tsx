@@ -13,6 +13,7 @@ import { CriticalStockAlert } from '@/components/CriticalStockAlert';
 import { OrdersPage } from '@/components/OrdersPage';
 import { DailyClose } from '@/components/DailyClose';
 import { UserManagement } from '@/components/UserManagement';
+import { JosimarLogo } from '@/components/JosimarLogo';
 import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon, Database, Upload, ClockCounterClockwise, CheckCircle, Bell, Receipt, CalendarBlank, Users, LockKey } from '@phosphor-icons/react';
 import { generateId, exportToCSV, formatCurrency, getStockStatus } from '@/lib/inventory-utils';
 import { exportDatabase, importDatabase, createBackup } from '@/lib/database';
@@ -251,10 +252,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-5">
               <div className="relative group">
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary via-accent to-primary blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-300" />
-                <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-primary via-accent to-primary flex items-center justify-center shadow-xl">
-                  <Package className="w-8 h-8 text-white" weight="duotone" />
-                </div>
+                <JosimarLogo size={64} />
               </div>
               <div className="flex flex-col">
                 <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">

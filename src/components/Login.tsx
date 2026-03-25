@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { ShoppingBag, UserPlus } from '@phosphor-icons/react';
+import { UserPlus } from '@phosphor-icons/react';
+import { JosimarLogo } from '@/components/JosimarLogo';
 import { toast } from 'sonner';
 
 interface LoginProps {
@@ -32,9 +33,7 @@ export function Login({ onLogin, onShowRegister }: LoginProps) {
         <Card className="shadow-lg border border-border/60">
           <CardHeader className="text-center space-y-6 pb-8 pt-10">
             <div className="flex justify-center mb-2">
-              <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ backgroundColor: 'oklch(0.88 0.01 250)' }}>
-                <ShoppingBag className="w-10 h-10" style={{ color: 'oklch(0.45 0.05 250)' }} weight="regular" />
-              </div>
+              <JosimarLogo size={96} className="animate-float" />
             </div>
             <div>
               <CardTitle className="text-3xl font-semibold text-foreground mb-3">
