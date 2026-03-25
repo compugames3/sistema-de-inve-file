@@ -13,6 +13,7 @@ import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import { UserPlus, Pencil, Trash, ShieldCheck, User as UserIcon, Users, Eye, EyeSlash, Lock, Package, Receipt, CalendarBlank } from '@phosphor-icons/react';
 import { ProductPermissionsManager } from '@/components/ProductPermissionsManager';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 
 interface UserManagementProps {
@@ -37,6 +38,7 @@ export function UserManagement({ currentUser }: UserManagementProps) {
 
   const safeUsers = users || [];
   const safeProducts = products || [];
+  const isMobile = useIsMobile();
 
   const allTabs: { id: TabPermission; label: string; icon: typeof Package; description: string }[] = [
     { id: 'inventory', label: 'Inventario', icon: Package, description: 'Ver y gestionar productos' },
@@ -239,6 +241,98 @@ export function UserManagement({ currentUser }: UserManagementProps) {
           <div className="text-center py-12 text-muted-foreground">
             <Users className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 opacity-50" />
             <p className="text-sm md:text-base">No hay usuarios registrados</p>
+          </div>
+        ) : isMobile ? (
+          <div className="space-y-3">
+            {safeUsers.map((user) => (
+              <Card key={user.username} className="p-4 hover:shadow-md transition-shadow">
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${user.isAdmin ? 'bg-primary/10' : 'bg-muted'}`}>
+                        {user.isAdmin ? (
+                          <ShieldCheck className="w-6 h-6 text-primary" weight="fill" />
+                        ) : (
+                          <UserIcon className="w-6 h-6 text-muted-foreground" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-base text-foreground truncate">
+                          {user.username}
+                        </h4>
+                        <Badge variant={user.isAdmin ? 'default' : 'secondary'} className="text-xs mt-1">
+                          {user.isAdmin ? 'Admin' : 'Visitante'}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                      <Lock className="w-3 h-3" />
+                      <span>Contraseña:</span>
+                      <span className="font-mono">{'•'.repeat(user.password.length)}</span>
+                    </div>
+                    {!user.isAdmin && (
+                      <div className="text-xs text-muted-foreground">
+                        {user.tabPermissions && user.tabPermissions.length > 0 ? (
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span>Permisos:</span>
+                            <Badge variant="outline" className="text-xs">
+                              {user.tabPermissions.length} tab{user.tabPermissions.length !== 1 ? 's' : ''}
+                            </Badge>
+                            {user.productPermissions && user.productPermissions.length > 0 && (
+                              <Badge variant="outline" className="text-xs">
+                                {user.productPermissions.length} producto{user.productPermissions.length !== 1 ? 's' : ''}
+                              </Badge>
+                            )}
+                          </div>
+                        ) : (
+                          <span>Sin permisos de tabs asignados</span>
+                        )}
+                      </div>
+                    )}
+                    {user.isAdmin && (
+                      <div className="text-xs text-muted-foreground">
+                        Acceso total al sistema
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2 pt-2 border-t">
+                    {!user.isAdmin && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPermissionsUser(user)}
+                        className="flex-1"
+                      >
+                        <Lock className="w-4 h-4 mr-2" />
+                        Permisos
+                      </Button>
+                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleOpenEditDialog(user)}
+                      className={`${user.isAdmin ? 'flex-1' : ''}`}
+                    >
+                      <Pencil className="w-4 h-4 mr-2" />
+                      Editar
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setDeletingUsername(user.username)}
+                      disabled={user.username === 'admin' || user.username === currentUser.username}
+                      className="text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            ))}
           </div>
         ) : (
           <div className="rounded-lg border overflow-x-auto">
