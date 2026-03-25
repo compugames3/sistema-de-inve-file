@@ -35,7 +35,7 @@ interface DailyCloseProps {
 }
 
 export function DailyClose({ products, currentUser, isOpen, onClose }: DailyCloseProps) {
-  const [orders] = useKV<Order[]>('inventory-orders', []);
+  const [orders] = useKV<Order[]>('system-orders', []);
   const [closeHistory, setCloseHistory] = useKV<DailyCloseReport[]>('daily-close-history', []);
   const [isClosing, setIsClosing] = useState(false);
   const [currentReport, setCurrentReport] = useState<DailyCloseReport | null>(null);
