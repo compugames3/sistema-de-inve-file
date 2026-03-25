@@ -48,11 +48,11 @@ A professional inventory management system with automatic database persistence, 
 - Success criteria: Deleted products are permanently removed and don't reappear on refresh
 
 **Stock Level Alerts**
-- Functionality: Visual indicators for low stock items
-- Purpose: Prevent stockouts by highlighting products needing reorder
-- Trigger: Automatic based on quantity thresholds
-- Progression: System checks stock levels → Applies warning styling to low stock items → Admin sees alerts
-- Success criteria: Products with quantity below threshold display with warning indicators
+- Functionality: Visual indicators for low stock items with notification badges and detailed alert panel
+- Purpose: Prevent stockouts by highlighting products needing reorder with persistent notifications
+- Trigger: Automatic based on quantity thresholds (≤10 for low stock, 0 for out of stock)
+- Progression: System checks stock levels → Displays notification badge in header → Shows critical stock alert panel above inventory → User can view details or dismiss individual alerts
+- Success criteria: Products with quantity below threshold display with warning indicators; notification badge shows count of active alerts; dismissed alerts persist across sessions
 
 **Export Functionality**
 - Functionality: Download inventory data as CSV file
@@ -124,19 +124,20 @@ Animations should feel immediate and businesslike - quick confirmations and subt
 ## Component Selection
 
 - **Components**:
-  - Dialog: For product add/edit forms with clear modal overlay
+  - Dialog: For product add/edit forms with clear modal overlay and critical stock alerts detail view
   - Alert Dialog: For deletion confirmations requiring explicit user choice
   - Table: Core component for inventory list with sortable columns
   - Input: Standard form fields with clear labels and validation states
   - Button: Primary (add, save), Secondary (cancel), Destructive (delete) variants
-  - Badge: For stock status indicators (In Stock, Low Stock, Out of Stock)
-  - Card: For dashboard statistics and key metrics overview
-  - Toast (Sonner): Success/error notifications for CRUD operations
+  - Badge: For stock status indicators (In Stock, Low Stock, Out of Stock) and notification counts
+  - Card: For dashboard statistics, key metrics overview, and critical stock alerts
+  - Toast (Sonner): Success/error notifications for CRUD operations and alert dismissals
   - Form (react-hook-form): Structured validation for product data entry
   - Select: Dropdown for category selection
   - Tooltip: Display full product names/descriptions on hover
   - Tabs: For switching between different statistics chart views
   - Charts (Recharts): Bar charts, pie charts, area charts, and line charts for data visualization
+  - ScrollArea: For scrollable content in audit logs and critical stock details
 
 - **Customizations**:
   - Custom login card component with centered layout and branded header
@@ -145,6 +146,8 @@ Animations should feel immediate and businesslike - quick confirmations and subt
   - Stock level badge component with color-coded severity levels
   - Table row hover state with subtle background highlight
   - Interactive charts with tooltips showing detailed data on hover
+  - Critical stock alert panel with animated cards, dismissible alerts, and notification badge
+  - Notification bell icon with count badge in header for active critical alerts
 
 - **States**:
   - Buttons: Default with solid backgrounds, hover with slight lightening, active with scale press effect, disabled with reduced opacity
@@ -162,6 +165,9 @@ Animations should feel immediate and businesslike - quick confirmations and subt
   - Package (Inventory/product icons)
   - Warning (Low stock alerts)
   - Lock (Login/security)
+  - Bell (Notification badge for critical alerts)
+  - X (Dismiss alerts)
+  - TrendDown (Out of stock indicator)
 
 - **Spacing**:
   - Page padding: p-6 (24px)

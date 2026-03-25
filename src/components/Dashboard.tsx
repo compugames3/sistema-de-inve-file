@@ -9,7 +9,8 @@ import { StatsCard } from '@/components/StatsCard';
 import { ProductForm } from '@/components/ProductForm';
 import { InventoryTable } from '@/components/InventoryTable';
 import { StatisticsPanel } from '@/components/StatisticsPanel';
-import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon, Database, Upload, ClockCounterClockwise, CheckCircle } from '@phosphor-icons/react';
+import { CriticalStockAlert } from '@/components/CriticalStockAlert';
+import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon, Database, Upload, ClockCounterClockwise, CheckCircle, Bell } from '@phosphor-icons/react';
 import { generateId, exportToCSV, formatCurrency, getStockStatus } from '@/lib/inventory-utils';
 import { exportDatabase, importDatabase, createBackup } from '@/lib/database';
 import { useAudit } from '@/hooks/use-audit';
@@ -24,6 +25,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
   const [products, setProducts] = useKV<Product[]>('inventory-products', []);
   const [currentUser] = useKV<User | null>('current-user', null);
   const [users] = useKV<User[]>('system-users', []);
+  const [dismissedAlerts, setDismissedAlerts] = useKV<string[]>('dismissed-stock-alerts', []);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
@@ -161,10 +163,19 @@ export function Dashboard({ onLogout }: DashboardProps) {
     }
   };
   
+  const handleDismissAlert = (productId: string) => {
+    setDismissedAlerts((current) => [...(current || []), productId]);
+    toast.success('Alerta ocultada para este producto');
+  };
+
   const totalProducts = safeProducts.length;
   const lowStockProducts = safeProducts.filter((p) => {
     const status = getStockStatus(p.quantity);
     return status === 'low-stock' || status === 'out-of-stock';
+  }).length;
+  const activeCriticalAlerts = safeProducts.filter((p) => {
+    const status = getStockStatus(p.quantity);
+    return (status === 'low-stock' || status === 'out-of-stock') && !(dismissedAlerts || []).includes(p.id);
   }).length;
   const totalValue = safeProducts.reduce((sum, p) => sum + p.price * p.quantity, 0);
 
@@ -206,6 +217,22 @@ export function Dashboard({ onLogout }: DashboardProps) {
               </p>
             </div>
             <div className="flex items-center gap-4">
+              {activeCriticalAlerts > 0 && (
+                <div className="relative">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="relative border-warning hover:bg-warning/10"
+                  >
+                    <Bell className="w-5 h-5 text-warning" weight="fill" />
+                    {activeCriticalAlerts > 0 && (
+                      <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-destructive-foreground text-xs font-bold">
+                        {activeCriticalAlerts > 9 ? '9+' : activeCriticalAlerts}
+                      </span>
+                    )}
+                  </Button>
+                </div>
+              )}
               {currentUser && (
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary/50">
@@ -266,6 +293,12 @@ export function Dashboard({ onLogout }: DashboardProps) {
         <div className="mb-6">
           <StatisticsPanel products={safeProducts} />
         </div>
+
+        <CriticalStockAlert
+          products={safeProducts}
+          onDismiss={handleDismissAlert}
+          dismissedAlerts={dismissedAlerts || []}
+        />
 
         <div className="mb-6 flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
           <div>
