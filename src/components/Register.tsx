@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { UserPlus, User, ShieldCheck, ArrowLeft, IdentificationCard } from '@phosphor-icons/react';
 import { JosimarLogo } from '@/components/JosimarLogo';
+import { BackgroundLogo } from '@/components/BackgroundLogo';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
@@ -48,6 +49,7 @@ export function Register({ onRegister, onBackToLogin }: RegisterProps) {
 
   return (
     <div className="h-screen w-screen flex items-center justify-center p-4 lg:p-8 overflow-hidden relative bg-black">
+      <BackgroundLogo />
       <div className="absolute inset-0 flex items-center justify-center opacity-30">
         <svg
           className="w-full h-full max-w-[600px] max-h-[600px]"

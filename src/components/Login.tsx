@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { UserPlus } from '@phosphor-icons/react';
 import { JosimarLogo } from '@/components/JosimarLogo';
+import { BackgroundLogo } from '@/components/BackgroundLogo';
 import { toast } from 'sonner';
 
 interface LoginProps {
@@ -29,6 +30,7 @@ export function Login({ onLogin, onShowRegister }: LoginProps) {
 
   return (
     <div className="min-h-screen w-screen flex items-center justify-center p-4 relative bg-black overflow-hidden">
+      <BackgroundLogo />
       <div className="absolute inset-0 flex items-center justify-center opacity-30">
         <svg
           className="w-full h-full max-w-[600px] max-h-[600px]"

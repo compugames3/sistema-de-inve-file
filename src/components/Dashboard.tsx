@@ -14,6 +14,7 @@ import { OrdersPage } from '@/components/OrdersPage';
 import { DailyClose } from '@/components/DailyClose';
 import { UserManagement } from '@/components/UserManagement';
 import { JosimarLogo } from '@/components/JosimarLogo';
+import { BackgroundLogo } from '@/components/BackgroundLogo';
 import { Plus, SignOut, Download, Package, Warning, CurrencyDollar, ShieldCheck, User as UserIcon, Database, Upload, ClockCounterClockwise, CheckCircle, Bell, Receipt, CalendarBlank, Users, LockKey } from '@phosphor-icons/react';
 import { generateId, exportToCSV, formatCurrency, getStockStatus } from '@/lib/inventory-utils';
 import { exportDatabase, importDatabase, createBackup } from '@/lib/database';
@@ -293,8 +294,9 @@ export function Dashboard({ onLogout }: DashboardProps) {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-background overflow-hidden">
-      <header className="border-b bg-white shrink-0 shadow-sm relative overflow-hidden">
+    <div className="h-screen flex flex-col bg-background overflow-hidden relative">
+      <BackgroundLogo />
+      <header className="border-b bg-white shrink-0 shadow-sm relative overflow-hidden z-10">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5" />
         <div className="relative px-3 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6">
           <div className="flex items-center justify-between gap-2 sm:gap-4">
