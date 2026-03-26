@@ -47,35 +47,39 @@ export function Register({ onRegister, onBackToLogin }: RegisterProps) {
   };
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center p-4 lg:p-8 overflow-hidden relative bg-gradient-to-br from-accent/8 via-primary/5 to-background">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(96,165,250,0.12),transparent_50%),radial-gradient(ellipse_at_bottom_right,rgba(99,102,241,0.12),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:32px_32px]" />
-      
-      <motion.div
-        className="absolute top-20 right-20 w-80 h-80 bg-accent/10 rounded-full blur-3xl"
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.5, 0.3],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-      <motion.div
-        className="absolute bottom-20 left-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl"
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.3, 0.6, 0.3],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1
-        }}
-      />
+    <div className="h-screen w-screen flex items-center justify-center p-4 lg:p-8 overflow-hidden relative bg-black">
+      <div className="absolute inset-0 flex items-center justify-center opacity-30">
+        <svg
+          className="w-full h-full max-w-[600px] max-h-[600px]"
+          viewBox="0 0 640 640"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <g transform="translate(80 100)">
+            <rect x="0" y="0" width="140" height="220" rx="15" fill="#FFFFFF" stroke="#FFFFFF" strokeWidth="8"/>
+            <rect x="15" y="20" width="110" height="60" rx="8" fill="#DC2626" opacity="0.8"/>
+            <circle cx="70" cy="140" r="12" fill="#FFFFFF" opacity="0.3"/>
+            <rect x="30" y="180" width="20" height="8" rx="4" fill="#FFFFFF" opacity="0.2"/>
+            <rect x="60" y="180" width="20" height="8" rx="4" fill="#FFFFFF" opacity="0.2"/>
+            <rect x="90" y="180" width="20" height="8" rx="4" fill="#FFFFFF" opacity="0.2"/>
+          </g>
+          <g transform="translate(180 60)">
+            <circle cx="30" cy="30" r="25" fill="#DC2626"/>
+            <path d="M20 30 L30 20 L40 30" stroke="#FFFFFF" strokeWidth="4" fill="none"/>
+          </g>
+          <g transform="translate(180 130)">
+            <circle cx="30" cy="30" r="20" fill="none" stroke="#DC2626" strokeWidth="4"/>
+            <path d="M25 30 L35 20" stroke="#DC2626" strokeWidth="4"/>
+            <path d="M35 30 L25 20" stroke="#DC2626" strokeWidth="4"/>
+          </g>
+          <text x="240" y="200" fontFamily="Arial, sans-serif" fontSize="100" fontWeight="bold" fill="#FFFFFF" letterSpacing="8">JOSIMAR</text>
+          <g transform="translate(220 220)">
+            <rect x="0" y="0" width="180" height="6" fill="#DC2626"/>
+            <text x="230" y="50" fontFamily="Arial, sans-serif" fontSize="80" fontWeight="bold" fill="#DC2626" letterSpacing="15">CELL</text>
+            <rect x="380" y="44" width="180" height="6" fill="#DC2626"/>
+          </g>
+        </svg>
+      </div>
       
       <motion.div
         initial={{ opacity: 0, y: 20 }}

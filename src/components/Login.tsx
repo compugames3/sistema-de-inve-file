@@ -28,9 +28,42 @@ export function Login({ onLogin, onShowRegister }: LoginProps) {
   };
 
   return (
-    <div className="min-h-screen w-screen flex items-center justify-center p-4" style={{ backgroundColor: 'oklch(0.93 0.005 250)' }}>
-      <div className="w-full max-w-md">
-        <Card className="shadow-lg border border-border/60">
+    <div className="min-h-screen w-screen flex items-center justify-center p-4 relative bg-black overflow-hidden">
+      <div className="absolute inset-0 flex items-center justify-center opacity-30">
+        <svg
+          className="w-full h-full max-w-[600px] max-h-[600px]"
+          viewBox="0 0 640 640"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <g transform="translate(80 100)">
+            <rect x="0" y="0" width="140" height="220" rx="15" fill="#FFFFFF" stroke="#FFFFFF" strokeWidth="8"/>
+            <rect x="15" y="20" width="110" height="60" rx="8" fill="#DC2626" opacity="0.8"/>
+            <circle cx="70" cy="140" r="12" fill="#FFFFFF" opacity="0.3"/>
+            <rect x="30" y="180" width="20" height="8" rx="4" fill="#FFFFFF" opacity="0.2"/>
+            <rect x="60" y="180" width="20" height="8" rx="4" fill="#FFFFFF" opacity="0.2"/>
+            <rect x="90" y="180" width="20" height="8" rx="4" fill="#FFFFFF" opacity="0.2"/>
+          </g>
+          <g transform="translate(180 60)">
+            <circle cx="30" cy="30" r="25" fill="#DC2626"/>
+            <path d="M20 30 L30 20 L40 30" stroke="#FFFFFF" strokeWidth="4" fill="none"/>
+          </g>
+          <g transform="translate(180 130)">
+            <circle cx="30" cy="30" r="20" fill="none" stroke="#DC2626" strokeWidth="4"/>
+            <path d="M25 30 L35 20" stroke="#DC2626" strokeWidth="4"/>
+            <path d="M35 30 L25 20" stroke="#DC2626" strokeWidth="4"/>
+          </g>
+          <text x="240" y="200" fontFamily="Arial, sans-serif" fontSize="100" fontWeight="bold" fill="#FFFFFF" letterSpacing="8">JOSIMAR</text>
+          <g transform="translate(220 220)">
+            <rect x="0" y="0" width="180" height="6" fill="#DC2626"/>
+            <text x="230" y="50" fontFamily="Arial, sans-serif" fontSize="80" fontWeight="bold" fill="#DC2626" letterSpacing="15">CELL</text>
+            <rect x="380" y="44" width="180" height="6" fill="#DC2626"/>
+          </g>
+        </svg>
+      </div>
+      
+      <div className="w-full max-w-md relative z-10">
+        <Card className="shadow-2xl border border-border/40 bg-card/95 backdrop-blur-sm">
           <CardHeader className="text-center space-y-6 pb-8 pt-10">
             <div className="flex justify-center mb-2">
               <JosimarLogo size="clamp(64px, 15vw, 96px)" className="animate-float" />
